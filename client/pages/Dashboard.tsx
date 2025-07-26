@@ -2,22 +2,16 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-  BarChart3, 
-  Users, 
-  Target, 
-  AlertTriangle, 
+import {
+  Users,
+  Target,
+  AlertTriangle,
   TrendingUp,
   Shield,
-  Globe,
-  Settings,
-  FolderOpen,
   UserCheck,
-  RotateCcw,
-  Database,
   Activity
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import Sidebar from "@/components/Sidebar";
 
 interface DashboardStats {
   totalCompletes: number;
