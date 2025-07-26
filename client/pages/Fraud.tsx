@@ -24,7 +24,8 @@ import {
   XCircle,
   Settings,
   Filter,
-  Download
+  Download,
+  Globe
 } from "lucide-react";
 import Sidebar from "@/components/Sidebar";
 
