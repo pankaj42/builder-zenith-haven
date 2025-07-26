@@ -183,6 +183,11 @@ export default function Projects() {
     navigator.clipboard.writeText(link);
   };
 
+  const showProjectDetails = (project: Project) => {
+    setSelectedProjectForDetails(project);
+    setShowDetailsDialog(true);
+  };
+
   const getStatusColor = (status: string) => {
     switch(status) {
       case 'active': return 'bg-green-100 text-green-800 border-green-200';
