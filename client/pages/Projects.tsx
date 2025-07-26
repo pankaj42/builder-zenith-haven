@@ -518,6 +518,288 @@ export default function Projects() {
           </div>
         </main>
       </div>
+
+      {/* Project Details Dialog */}
+      <Dialog open={showDetailsDialog} onOpenChange={setShowDetailsDialog}>
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FolderOpen className="w-5 h-5" />
+              Project Details - {selectedProjectForDetails?.name}
+            </DialogTitle>
+          </DialogHeader>
+
+          {selectedProjectForDetails && (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Basic Information */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold mb-3">Basic Information</h3>
+
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Project ID:</span>
+                    <span className="font-mono font-medium">{selectedProjectForDetails.id}</span>
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <span className="text-muted-foreground">Project Name:</span>
+                    <span className="font-medium">{selectedProjectForDetails.name}</span>
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <span className="text-muted-foreground">Client Name:</span>
+                    <span className="font-medium">{selectedProjectForDetails.clientName}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground">Status:</span>
+                    <Badge className={getStatusColor(selectedProjectForDetails.status)}>
+                      {getStatusIcon(selectedProjectForDetails.status)}
+                      {selectedProjectForDetails.status}
+                    </Badge>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Created Date:</span>
+                    <span className="font-medium">{selectedProjectForDetails.createdDate}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Duration:</span>
+                    <span className="font-medium">{selectedProjectForDetails.estimatedDuration} minutes</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Incentive:</span>
+                    <span className="font-medium text-green-600">{selectedProjectForDetails.incentive}</span>
+                  </div>
+                </div>
+
+                {/* Description */}
+                <div className="mt-4">
+                  <h4 className="text-md font-semibold mb-2">Description</h4>
+                  <div className="p-3 bg-muted rounded-lg">
+                    <p className="text-sm">{selectedProjectForDetails.description}</p>
+                  </div>
+                </div>
+
+                {/* Client Link */}
+                <div className="mt-4">
+                  <h4 className="text-md font-semibold mb-2">Client Survey Link</h4>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      value={selectedProjectForDetails.clientLink}
+                      readOnly
+                      className="text-sm"
+                    />
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => navigator.clipboard.writeText(selectedProjectForDetails.clientLink)}
+                    >
+                      <Copy className="w-3 h-3" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => window.open(selectedProjectForDetails.clientLink, '_blank')}
+                    >
+                      <ExternalLink className="w-3 h-3" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Statistics and Progress */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold mb-3">Statistics & Progress</h3>
+
+                {/* Progress Bar */}
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>Overall Progress</span>
+                    <span>{selectedProjectForDetails.completes}/{selectedProjectForDetails.totalQuota}</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-3">
+                    <div
+                      className="bg-primary h-3 rounded-full"
+                      style={{ width: `${(selectedProjectForDetails.completes / selectedProjectForDetails.totalQuota) * 100}%` }}
+                    ></div>
+                  </div>
+                  <div className="text-xs text-muted-foreground text-center">
+                    {((selectedProjectForDetails.completes / selectedProjectForDetails.totalQuota) * 100).toFixed(1)}% completed
+                  </div>
+                </div>
+
+                {/* Response Statistics */}
+                <div className="grid grid-cols-2 gap-3 mt-4">
+                  <div className="text-center p-3 bg-green-50 rounded-lg">
+                    <div className="text-2xl font-bold text-green-700">{selectedProjectForDetails.completes}</div>
+                    <div className="text-sm text-green-600">Completes</div>
+                  </div>
+                  <div className="text-center p-3 bg-orange-50 rounded-lg">
+                    <div className="text-2xl font-bold text-orange-700">{selectedProjectForDetails.terminates}</div>
+                    <div className="text-sm text-orange-600">Terminates</div>
+                  </div>
+                  <div className="text-center p-3 bg-blue-50 rounded-lg">
+                    <div className="text-2xl font-bold text-blue-700">{selectedProjectForDetails.quotaFull}</div>
+                    <div className="text-sm text-blue-600">Quota Full</div>
+                  </div>
+                  <div className="text-center p-3 bg-purple-50 rounded-lg">
+                    <div className="text-2xl font-bold text-purple-700">{selectedProjectForDetails.totalQuota}</div>
+                    <div className="text-sm text-purple-600">Target Quota</div>
+                  </div>
+                </div>
+
+                {/* Completion Rate */}
+                <div className="mt-4 p-4 bg-gradient-to-r from-blue-50 to-green-50 rounded-lg">
+                  <div className="text-center">
+                    <div className="text-3xl font-bold text-blue-700">
+                      {((selectedProjectForDetails.completes / (selectedProjectForDetails.completes + selectedProjectForDetails.terminates)) * 100).toFixed(1)}%
+                    </div>
+                    <div className="text-sm text-blue-600">Completion Rate</div>
+                  </div>
+                </div>
+
+                {/* Assigned Vendors */}
+                <div className="mt-4">
+                  <h4 className="text-md font-semibold mb-2">Assigned Vendors ({selectedProjectForDetails.vendors.length})</h4>
+                  <div className="space-y-2">
+                    {selectedProjectForDetails.vendors.length > 0 ? (
+                      selectedProjectForDetails.vendors.map((vendorId, index) => (
+                        <div key={index} className="flex items-center justify-between p-2 bg-muted rounded-lg">
+                          <span className="font-mono text-sm">{vendorId}</span>
+                          <div className="flex gap-1">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => copyProjectLink(selectedProjectForDetails.id, vendorId)}
+                              className="gap-1"
+                            >
+                              <Copy className="w-3 h-3" />
+                              Copy Start Link
+                            </Button>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-muted-foreground text-sm">No vendors assigned</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Quota Information */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold mb-3">Quota Settings</h3>
+
+                {/* Age Quota */}
+                <div className="p-4 bg-blue-50 rounded-lg">
+                  <h4 className="text-md font-semibold mb-2 text-blue-800">Age Requirements</h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-blue-700">Age Range:</span>
+                      <span className="font-medium text-blue-900">
+                        {selectedProjectForDetails.quotas.age.min} - {selectedProjectForDetails.quotas.age.max} years
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-blue-700">Target Quota:</span>
+                      <span className="font-medium text-blue-900">{selectedProjectForDetails.quotas.age.quota}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-blue-700">Current:</span>
+                      <span className="font-medium text-blue-900">{selectedProjectForDetails.quotas.age.current}</span>
+                    </div>
+                    <div className="w-full bg-blue-200 rounded-full h-2 mt-2">
+                      <div
+                        className="bg-blue-600 h-2 rounded-full"
+                        style={{ width: `${(selectedProjectForDetails.quotas.age.current / selectedProjectForDetails.quotas.age.quota) * 100}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Gender Quota */}
+                <div className="p-4 bg-pink-50 rounded-lg">
+                  <h4 className="text-md font-semibold mb-2 text-pink-800">Gender Distribution</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <div className="flex justify-between mb-1">
+                        <span className="text-pink-700">Male:</span>
+                        <span className="font-medium text-pink-900">
+                          {selectedProjectForDetails.quotas.gender.male} / {selectedProjectForDetails.quotas.gender.maleQuota}
+                        </span>
+                      </div>
+                      <div className="w-full bg-pink-200 rounded-full h-2">
+                        <div
+                          className="bg-pink-600 h-2 rounded-full"
+                          style={{ width: `${(selectedProjectForDetails.quotas.gender.male / selectedProjectForDetails.quotas.gender.maleQuota) * 100}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                    <div>
+                      <div className="flex justify-between mb-1">
+                        <span className="text-pink-700">Female:</span>
+                        <span className="font-medium text-pink-900">
+                          {selectedProjectForDetails.quotas.gender.female} / {selectedProjectForDetails.quotas.gender.femaleQuota}
+                        </span>
+                      </div>
+                      <div className="w-full bg-pink-200 rounded-full h-2">
+                        <div
+                          className="bg-pink-600 h-2 rounded-full"
+                          style={{ width: `${(selectedProjectForDetails.quotas.gender.female / selectedProjectForDetails.quotas.gender.femaleQuota) * 100}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Location Quota */}
+                <div className="p-4 bg-green-50 rounded-lg">
+                  <h4 className="text-md font-semibold mb-2 text-green-800">Location Requirements</h4>
+                  <div className="space-y-2">
+                    <div className="flex justify-between">
+                      <span className="text-green-700">Target Countries:</span>
+                      <span className="font-medium text-green-900">
+                        {selectedProjectForDetails.quotas.location.countries.join(', ')}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-green-700">Quota per Country:</span>
+                      <span className="font-medium text-green-900">{selectedProjectForDetails.quotas.location.quotaPerCountry}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Project Actions */}
+                <div className="mt-6 space-y-2">
+                  <h4 className="text-md font-semibold mb-2">Quick Actions</h4>
+                  <div className="grid grid-cols-1 gap-2">
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start gap-2"
+                      onClick={() => copyProjectLink(selectedProjectForDetails.id)}
+                    >
+                      <Copy className="w-4 h-4" />
+                      Copy Vendor Start Link Template
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start gap-2"
+                      onClick={() => window.open(selectedProjectForDetails.clientLink, '_blank')}
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      Test Client Survey Link
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start gap-2"
+                    >
+                      <Edit className="w-4 h-4" />
+                      Edit Project Settings
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
