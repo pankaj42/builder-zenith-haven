@@ -9,15 +9,13 @@ import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { 
-  Target, 
-  Users, 
-  Globe, 
-  Settings, 
-  Play, 
-  Pause, 
+import {
+  Target,
+  Users,
+  Settings,
+  Play,
+  Pause,
   AlertTriangle,
-  BarChart3,
   TrendingUp,
   Clock,
   CheckCircle,
@@ -27,7 +25,7 @@ import {
   Trash2,
   Activity
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import Sidebar from "@/components/Sidebar";
 
 interface QuotaRule {
   id: string;
@@ -312,43 +310,9 @@ export default function Quotas() {
     }
   };
 
-  const sidebarItems = [
-    { icon: BarChart3, label: "Dashboard", href: "/", active: false },
-    { icon: Target, label: "Quotas", href: "/quotas", active: true },
-  ];
-
   return (
     <div className="flex min-h-screen bg-background">
-      {/* Sidebar */}
-      <div className="w-64 bg-sidebar border-r border-sidebar-border">
-        <div className="p-6">
-          <Link to="/" className="flex items-center gap-3 mb-8">
-            <div className="w-8 h-8 bg-sidebar-primary rounded-lg flex items-center justify-center">
-              <Globe className="w-5 h-5 text-sidebar-primary-foreground" />
-            </div>
-            <div>
-              <h1 className="text-lg font-bold text-sidebar-foreground">SurveyPanel</h1>
-              <p className="text-xs text-sidebar-foreground/60">Admin Dashboard</p>
-            </div>
-          </Link>
-          <nav className="space-y-2">
-            {sidebarItems.map((item) => (
-              <Link
-                key={item.href}
-                to={item.href}
-                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
-                  item.active
-                    ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                    : "text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
-                }`}
-              >
-                <item.icon className="w-4 h-4" />
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-        </div>
-      </div>
+      <Sidebar />
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
