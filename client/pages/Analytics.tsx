@@ -5,11 +5,11 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
-import { 
-  BarChart3, 
-  TrendingUp, 
+import {
+  BarChart3,
+  TrendingUp,
   TrendingDown,
-  Users, 
+  Users,
   Target,
   Clock,
   Globe,
@@ -22,7 +22,8 @@ import {
   CheckCircle,
   XCircle,
   Activity,
-  Zap
+  Zap,
+  Settings
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
