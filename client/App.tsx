@@ -9,6 +9,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import Projects from "./pages/Projects";
 import Vendors from "./pages/Vendors";
+import LinkFlow from "./pages/LinkFlow";
 import Redirects from "./pages/Redirects";
 import Responses from "./pages/Responses";
 import Quotas from "./pages/Quotas";
