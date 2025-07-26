@@ -181,21 +181,32 @@ export default function Projects() {
 
   const copyProjectLink = (projectId: string, vendorId: string = "VENDOR_ID") => {
     const link = `https://yourpanel.com/start/${projectId}/${vendorId}/?ID=`;
-    navigator.clipboard.writeText(link).then(() => {
-      // Show success message
-      console.log("Link copied:", link);
-      alert(`Vendor start link copied!\n\n${link}`);
-    }).catch(err => {
-      console.error("Failed to copy:", err);
-      // Fallback for older browsers
+
+    try {
+      // Use fallback method that works in all contexts
       const textArea = document.createElement("textarea");
       textArea.value = link;
+      textArea.style.position = "fixed";
+      textArea.style.left = "-999999px";
+      textArea.style.top = "-999999px";
       document.body.appendChild(textArea);
+      textArea.focus();
       textArea.select();
-      document.execCommand('copy');
+
+      const successful = document.execCommand('copy');
       document.body.removeChild(textArea);
-      alert(`Vendor start link copied!\n\n${link}`);
-    });
+
+      if (successful) {
+        alert(`✅ Vendor Start Link Copied!\n\n${link}\n\nShare this with your vendor and they append respondent IDs after "ID="`);
+      } else {
+        // Show link in prompt for manual copy
+        prompt("Copy this vendor start link:", link);
+      }
+    } catch (err) {
+      console.error("Copy failed:", err);
+      // Last resort - show in prompt
+      prompt("Copy this vendor start link:", link);
+    }
   };
 
   const generatePanelLink = (project: Project) => {
