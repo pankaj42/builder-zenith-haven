@@ -637,7 +637,7 @@ export default function Projects() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => navigator.clipboard.writeText(selectedProjectForDetails.clientLink)}
+                        onClick={() => copyToClipboard(selectedProjectForDetails.clientLink, "Client Survey URL")}
                       >
                         <Copy className="w-3 h-3" />
                       </Button>
@@ -665,7 +665,7 @@ export default function Projects() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => navigator.clipboard.writeText(getRedirectParameter(selectedProjectForDetails))}
+                          onClick={() => copyToClipboard(getRedirectParameter(selectedProjectForDetails), "Redirect Parameter")}
                         >
                           <Copy className="w-3 h-3" />
                         </Button>
@@ -684,12 +684,12 @@ export default function Projects() {
                         className="text-sm bg-purple-50 font-mono"
                       />
                       <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => navigator.clipboard.writeText(generatePanelLink(selectedProjectForDetails))}
-                      >
-                        <Copy className="w-3 h-3" />
-                      </Button>
+                      variant="outline"
+                      size="sm"
+                      onClick={() => copyToClipboard(generatePanelLink(selectedProjectForDetails), "Panel Start Link")}
+                    >
+                      <Copy className="w-3 h-3" />
+                    </Button>
                     </div>
                     <p className="text-xs text-purple-600">Vendors append their respondent ID after 'ID=' parameter</p>
                   </div>
