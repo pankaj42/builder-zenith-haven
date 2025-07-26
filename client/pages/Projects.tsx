@@ -486,12 +486,16 @@ export default function Projects() {
                       View
                     </Button>
                     <Button variant="outline" size="sm" className="gap-1"
-                            onClick={() => copyProjectLink(project.id)}>
+                            onClick={() => copyProjectLink(project.id)}
+                            title="Copy Vendor Start Link">
                       <Copy className="w-3 h-3" />
+                      Copy Link
                     </Button>
                     <Button variant="outline" size="sm" className="gap-1"
-                            onClick={() => window.open(project.clientLink, '_blank')}>
+                            onClick={() => window.open(project.clientLink, '_blank')}
+                            title="Open Client Survey">
                       <ExternalLink className="w-3 h-3" />
+                      Test
                     </Button>
                   </div>
 
