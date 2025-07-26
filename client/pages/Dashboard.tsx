@@ -10,7 +10,8 @@ import {
   Shield,
   UserCheck,
   Activity,
-  RotateCcw
+  RotateCcw,
+  FolderOpen
 } from "lucide-react";
 import Sidebar from "@/components/Sidebar";
 
