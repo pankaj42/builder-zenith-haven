@@ -738,7 +738,7 @@ export default function Analytics() {
                       </div>
                     </div>
                     <Button variant="outline" className="w-full gap-2">
-                      <Settings className="w-4 h-4" />
+                      <SettingsIcon className="w-4 h-4" />
                       Configure Reports
                     </Button>
                   </CardContent>
