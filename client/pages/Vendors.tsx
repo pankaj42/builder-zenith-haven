@@ -47,6 +47,13 @@ interface Vendor {
     complete: string;
     terminate: string;
     quotaFull: string;
+    studyClosed?: string;
+  };
+  redirectSettings: {
+    enabled: boolean;
+    passthrough: boolean;
+    appendParams: boolean;
+    customParams: string;
   };
   assignedProjects: string[];
   paymentMethod: string;
@@ -81,9 +88,16 @@ export default function Vendors() {
       totalSent: 2450,
       totalCompletes: 1923,
       redirectUrls: {
-        complete: "https://vendor1.com/complete",
-        terminate: "https://vendor1.com/terminate",
-        quotaFull: "https://vendor1.com/quota-full"
+        complete: "https://dynamic-survey-view.vercel.app/thankyou",
+        terminate: "https://dynamic-survey-view.vercel.app/terminate",
+        quotaFull: "https://dynamic-survey-view.vercel.app/quotafull",
+        studyClosed: "https://dynamic-survey-view.vercel.app/closed"
+      },
+      redirectSettings: {
+        enabled: true,
+        passthrough: true,
+        appendParams: true,
+        customParams: "source=panel&vendor=V001"
       },
       assignedProjects: ["P12345", "P12346"],
       paymentMethod: "PayPal",
@@ -105,7 +119,14 @@ export default function Vendors() {
       redirectUrls: {
         complete: "https://surveysource.net/redirect/complete",
         terminate: "https://surveysource.net/redirect/terminate",
-        quotaFull: "https://surveysource.net/redirect/quota"
+        quotaFull: "https://surveysource.net/redirect/quota",
+        studyClosed: "https://surveysource.net/redirect/closed"
+      },
+      redirectSettings: {
+        enabled: true,
+        passthrough: true,
+        appendParams: true,
+        customParams: "utm_source=panel&vendor_id=V002"
       },
       assignedProjects: ["P12345", "P12347"],
       paymentMethod: "Bank Transfer",
@@ -127,7 +148,14 @@ export default function Vendors() {
       redirectUrls: {
         complete: "https://panelpartners.com/done",
         terminate: "https://panelpartners.com/exit",
-        quotaFull: "https://panelpartners.com/full"
+        quotaFull: "https://panelpartners.com/full",
+        studyClosed: "https://panelpartners.com/closed"
+      },
+      redirectSettings: {
+        enabled: false,
+        passthrough: false,
+        appendParams: true,
+        customParams: "panel_source=survey&v=V003"
       },
       assignedProjects: [],
       paymentMethod: "PayPal",
