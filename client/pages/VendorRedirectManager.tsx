@@ -398,7 +398,7 @@ ${config.settings.enabled ?
                       </div>
                       <div className="space-y-2">
                         <Label>Custom Parameters</Label>
-                        <Input value={selectedConfig.settings.customParams} />
+                        <Input value={selectedConfig.settings.customParams} onChange={() => {}} />
                       </div>
                     </div>
 
