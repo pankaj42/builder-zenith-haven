@@ -538,7 +538,12 @@ export default function Vendors() {
                       {/* Actions */}
                       <div className="space-y-2">
                         <div className="flex gap-2">
-                          <Button variant="outline" size="sm" className="flex-1 gap-1">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="flex-1 gap-1"
+                            onClick={() => showVendorDetails(vendor)}
+                          >
                             <Eye className="w-3 h-3" />
                             View Details
                           </Button>
