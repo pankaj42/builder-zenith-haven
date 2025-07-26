@@ -261,7 +261,7 @@ const finalVendorLink = vendorStartLink + "RESPONDENT_ID";
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div className="space-y-3">
                         <h4 className="font-semibold text-green-800">For You (Panel Owner):</h4>
                         <ul className="space-y-1 text-sm text-green-700">
@@ -269,7 +269,8 @@ const finalVendorLink = vendorStartLink + "RESPONDENT_ID";
                           <li>• Monitor completion rates by vendor</li>
                           <li>• Control quality and fraud prevention</li>
                           <li>• Manage quotas automatically</li>
-                          <li>• Show custom branded redirect pages</li>
+                          <li>• Forward to vendor dashboards automatically</li>
+                          <li>• Maintain complete audit trail</li>
                         </ul>
                       </div>
                       <div className="space-y-3">
@@ -280,6 +281,16 @@ const finalVendorLink = vendorStartLink + "RESPONDENT_ID";
                           <li>• All traffic appears to come from your panel</li>
                           <li>• Gets responses in their preferred format</li>
                           <li>• Maintains survey experience consistency</li>
+                        </ul>
+                      </div>
+                      <div className="space-y-3">
+                        <h4 className="font-semibold text-purple-800">For Your Vendors:</h4>
+                        <ul className="space-y-1 text-sm text-purple-700">
+                          <li>• Real-time completion tracking on dashboards</li>
+                          <li>• Automatic status updates (complete/terminate/quota)</li>
+                          <li>• Receive PIDs and UIDs for reconciliation</li>
+                          <li>• Performance metrics and conversion data</li>
+                          <li>• No manual reporting required</li>
                         </ul>
                       </div>
                     </div>
