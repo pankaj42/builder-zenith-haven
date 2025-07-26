@@ -1,14 +1,15 @@
-import { 
-  BarChart3, 
-  FolderOpen, 
-  Users, 
-  RotateCcw, 
-  Database, 
-  Target, 
-  Shield, 
-  Activity, 
+import {
+  BarChart3,
+  FolderOpen,
+  Users,
+  RotateCcw,
+  Database,
+  Target,
+  Shield,
+  Activity,
   Settings,
-  Globe
+  Globe,
+  ArrowRight
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
@@ -19,6 +20,7 @@ export default function Sidebar() {
     { icon: BarChart3, label: "Dashboard", href: "/" },
     { icon: FolderOpen, label: "Projects", href: "/projects" },
     { icon: Users, label: "Vendors", href: "/vendors" },
+    { icon: ArrowRight, label: "Link Flow", href: "/linkflow" },
     { icon: RotateCcw, label: "Redirects", href: "/redirects" },
     { icon: Database, label: "Responses", href: "/responses" },
     { icon: Target, label: "Quotas", href: "/quotas" },
