@@ -15,6 +15,7 @@ import Quotas from "./pages/Quotas";
 import Fraud from "./pages/Fraud";
 import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
+import Login from "./pages/Login";
 import { CompletePage, TerminatePage, QuotaFullPage, StudyClosedPage } from "./pages/RedirectPage";
 import StartSurvey from "./pages/StartSurvey";
 import NotFound from "./pages/NotFound";
@@ -37,6 +38,8 @@ const App = () => (
           <Route path="/fraud" element={<Fraud />} />
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/settings" element={<Settings />} />
+          {/* Authentication */}
+          <Route path="/login" element={<Login />} />
           {/* Vendor Start Links */}
           <Route path="/start/:projectId/:vendorId" element={<StartSurvey />} />
           {/* Redirect Pages for Survey Respondents */}
