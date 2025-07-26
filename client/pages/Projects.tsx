@@ -24,7 +24,8 @@ import {
   Clock,
   CheckCircle,
   XCircle,
-  AlertTriangle
+  AlertTriangle,
+  FolderOpen
 } from "lucide-react";
 import Sidebar from "@/components/Sidebar";
 
