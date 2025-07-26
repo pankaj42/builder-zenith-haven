@@ -250,6 +250,11 @@ export default function Vendors() {
     navigator.clipboard.writeText(link);
   };
 
+  const showVendorDetails = (vendor: Vendor) => {
+    setSelectedVendorForDetails(vendor);
+    setShowDetailsDialog(true);
+  };
+
   const getStatusColor = (status: string) => {
     switch(status) {
       case 'active': return 'bg-green-100 text-green-800 border-green-200';
