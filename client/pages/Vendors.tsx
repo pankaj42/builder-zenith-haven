@@ -10,19 +10,16 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Plus, 
-  Edit, 
-  Trash2, 
-  Copy, 
-  ExternalLink, 
-  Users, 
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Copy,
+  ExternalLink,
+  Users,
   Target,
-  Globe,
-  ArrowLeft,
   Settings,
   Eye,
-  BarChart3,
   CheckCircle,
   XCircle,
   AlertTriangle,
@@ -31,7 +28,7 @@ import {
   TrendingUp,
   Activity
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import Sidebar from "@/components/Sidebar";
 
 interface Vendor {
   id: string;
