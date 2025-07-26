@@ -23,7 +23,8 @@ import {
   Plus,
   Edit,
   Trash2,
-  Activity
+  Activity,
+  Globe
 } from "lucide-react";
 import Sidebar from "@/components/Sidebar";
 
