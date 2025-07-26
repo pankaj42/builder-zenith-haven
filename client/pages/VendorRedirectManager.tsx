@@ -358,19 +358,19 @@ ${config.settings.enabled ?
                       <div className="grid grid-cols-1 gap-4">
                         <div className="space-y-2">
                           <Label className="text-green-700">Complete URL</Label>
-                          <Input value={selectedConfig.redirectUrls.complete} />
+                          <Input value={selectedConfig.redirectUrls.complete} onChange={() => {}} />
                         </div>
                         <div className="space-y-2">
                           <Label className="text-orange-700">Terminate URL</Label>
-                          <Input value={selectedConfig.redirectUrls.terminate} />
+                          <Input value={selectedConfig.redirectUrls.terminate} onChange={() => {}} />
                         </div>
                         <div className="space-y-2">
                           <Label className="text-blue-700">Quota Full URL</Label>
-                          <Input value={selectedConfig.redirectUrls.quotaFull} />
+                          <Input value={selectedConfig.redirectUrls.quotaFull} onChange={() => {}} />
                         </div>
                         <div className="space-y-2">
                           <Label className="text-gray-700">Study Closed URL</Label>
-                          <Input value={selectedConfig.redirectUrls.studyClosed} />
+                          <Input value={selectedConfig.redirectUrls.studyClosed} onChange={() => {}} />
                         </div>
                       </div>
                     </div>
@@ -393,7 +393,7 @@ ${config.settings.enabled ?
                         </div>
                         <div className="space-y-2">
                           <Label>Delay (ms)</Label>
-                          <Input type="number" value={selectedConfig.settings.delay} />
+                          <Input type="number" value={selectedConfig.settings.delay} onChange={() => {}} />
                         </div>
                       </div>
                       <div className="space-y-2">
