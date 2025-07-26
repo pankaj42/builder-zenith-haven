@@ -15,6 +15,7 @@ import Quotas from "./pages/Quotas";
 import Fraud from "./pages/Fraud";
 import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
+import { CompletePage, TerminatePage, QuotaFullPage, StudyClosedPage } from "./pages/RedirectPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -35,6 +36,11 @@ const App = () => (
           <Route path="/fraud" element={<Fraud />} />
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/settings" element={<Settings />} />
+          {/* Redirect Pages for Survey Respondents */}
+          <Route path="/redirect/complete" element={<CompletePage />} />
+          <Route path="/redirect/terminate" element={<TerminatePage />} />
+          <Route path="/redirect/quota-full" element={<QuotaFullPage />} />
+          <Route path="/redirect/study-closed" element={<StudyClosedPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
