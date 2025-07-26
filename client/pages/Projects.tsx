@@ -184,6 +184,16 @@ export default function Projects() {
     navigator.clipboard.writeText(link);
   };
 
+  const generatePanelLink = (project: Project) => {
+    return `https://yourpanel.com/start/${project.id}/VENDOR_ID/?ID=`;
+  };
+
+  const getRedirectParameter = (project: Project) => {
+    // This is what you add to your client's original survey link
+    const redirectBase = "https://yourpanel.com/collect";
+    return `&redirect_url=${encodeURIComponent(redirectBase)}/${project.id}`;
+  };
+
   const showProjectDetails = (project: Project) => {
     setSelectedProjectForDetails(project);
     setShowDetailsDialog(true);
@@ -578,29 +588,104 @@ export default function Projects() {
                   </div>
                 </div>
 
-                {/* Client Link */}
-                <div className="mt-4">
-                  <h4 className="text-md font-semibold mb-2">Client Survey Link</h4>
-                  <div className="flex items-center gap-2">
-                    <Input
-                      value={selectedProjectForDetails.clientLink}
-                      readOnly
-                      className="text-sm"
-                    />
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => navigator.clipboard.writeText(selectedProjectForDetails.clientLink)}
-                    >
-                      <Copy className="w-3 h-3" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => window.open(selectedProjectForDetails.clientLink, '_blank')}
-                    >
-                      <ExternalLink className="w-3 h-3" />
-                    </Button>
+                {/* Link Flow Management */}
+                <div className="mt-4 space-y-4">
+                  <h4 className="text-md font-semibold mb-2">Link Flow Management</h4>
+
+                  {/* Original Client Link */}
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-blue-600">1. Original Client Survey Link</Label>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        value={selectedProjectForDetails.clientLink}
+                        readOnly
+                        className="text-sm bg-blue-50"
+                      />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigator.clipboard.writeText(selectedProjectForDetails.clientLink)}
+                      >
+                        <Copy className="w-3 h-3" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => window.open(selectedProjectForDetails.clientLink, '_blank')}
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Modified Client Link with Redirect */}
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-green-600">2. Modified Client Link (Add this to your client's survey)</Label>
+                    <div className="p-3 bg-green-50 rounded-lg">
+                      <p className="text-xs text-green-700 mb-2">Add this parameter to your client's survey URL:</p>
+                      <div className="flex items-center gap-2">
+                        <Input
+                          value={getRedirectParameter(selectedProjectForDetails)}
+                          readOnly
+                          className="text-xs font-mono bg-white"
+                        />
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => navigator.clipboard.writeText(getRedirectParameter(selectedProjectForDetails))}
+                        >
+                          <Copy className="w-3 h-3" />
+                        </Button>
+                      </div>
+                      <p className="text-xs text-green-600 mt-2">This ensures responses flow back to your panel for tracking</p>
+                    </div>
+                  </div>
+
+                  {/* Panel Start Link */}
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-purple-600">3. Panel Start Link (Share with Vendors)</Label>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        value={generatePanelLink(selectedProjectForDetails)}
+                        readOnly
+                        className="text-sm bg-purple-50 font-mono"
+                      />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigator.clipboard.writeText(generatePanelLink(selectedProjectForDetails))}
+                      >
+                        <Copy className="w-3 h-3" />
+                      </Button>
+                    </div>
+                    <p className="text-xs text-purple-600">Vendors append their respondent ID after 'ID=' parameter</p>
+                  </div>
+
+                  {/* Flow Explanation */}
+                  <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                    <h5 className="text-sm font-semibold mb-2">How the Flow Works:</h5>
+                    <div className="space-y-2 text-xs text-gray-700">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                        <span>Vendor sends traffic to your Panel Start Link</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <span>Panel redirects to your client's modified survey link</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                        <span>Survey completes and redirects back to your panel</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                        <span>Panel logs response and shows custom redirect page</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                        <span>Client gets responses; vendors get dashboard updates</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
