@@ -22,6 +22,7 @@ export default function Sidebar() {
     { icon: FolderOpen, label: "Projects", href: "/projects" },
     { icon: Users, label: "Vendors", href: "/vendors" },
     { icon: ArrowRight, label: "Link Flow", href: "/linkflow" },
+    { icon: Zap, label: "Vendor Redirects", href: "/vendor-redirects" },
     { icon: RotateCcw, label: "Redirects", href: "/redirects" },
     { icon: Database, label: "Responses", href: "/responses" },
     { icon: Target, label: "Quotas", href: "/quotas" },
