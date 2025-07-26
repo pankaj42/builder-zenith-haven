@@ -179,7 +179,9 @@ export default function Vendors() {
 
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showAssignDialog, setShowAssignDialog] = useState(false);
+  const [showDetailsDialog, setShowDetailsDialog] = useState(false);
   const [selectedVendor, setSelectedVendor] = useState<string>("");
+  const [selectedVendorForDetails, setSelectedVendorForDetails] = useState<Vendor | null>(null);
   const [newVendor, setNewVendor] = useState<Partial<Vendor>>({
     name: "",
     email: "",
