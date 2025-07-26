@@ -179,13 +179,12 @@ export default function Projects() {
     setProjects(projects.filter(p => p.id !== projectId));
   };
 
-  const copyProjectLink = (projectId: string, vendorId: string = "VENDOR_ID") => {
-    const link = `https://yourpanel.com/start/${projectId}/${vendorId}/?ID=`;
-
+  // Reusable copy function that works in all contexts
+  const copyToClipboard = (text: string, description: string = "text") => {
     try {
       // Use fallback method that works in all contexts
       const textArea = document.createElement("textarea");
-      textArea.value = link;
+      textArea.value = text;
       textArea.style.position = "fixed";
       textArea.style.left = "-999999px";
       textArea.style.top = "-999999px";
@@ -197,16 +196,21 @@ export default function Projects() {
       document.body.removeChild(textArea);
 
       if (successful) {
-        alert(`✅ Vendor Start Link Copied!\n\n${link}\n\nShare this with your vendor and they append respondent IDs after "ID="`);
+        alert(`✅ ${description} Copied!\n\n${text}`);
       } else {
         // Show link in prompt for manual copy
-        prompt("Copy this vendor start link:", link);
+        prompt(`Copy this ${description.toLowerCase()}:`, text);
       }
     } catch (err) {
       console.error("Copy failed:", err);
       // Last resort - show in prompt
-      prompt("Copy this vendor start link:", link);
+      prompt(`Copy this ${description.toLowerCase()}:`, text);
     }
+  };
+
+  const copyProjectLink = (projectId: string, vendorId: string = "VENDOR_ID") => {
+    const link = `https://yourpanel.com/start/${projectId}/${vendorId}/?ID=`;
+    copyToClipboard(link, "Vendor Start Link");
   };
 
   const generatePanelLink = (project: Project) => {
