@@ -118,7 +118,9 @@ export default function Projects() {
   ]);
 
   const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [showDetailsDialog, setShowDetailsDialog] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
+  const [selectedProjectForDetails, setSelectedProjectForDetails] = useState<Project | null>(null);
   const [newProject, setNewProject] = useState<Partial<Project>>({
     name: "",
     clientName: "",
