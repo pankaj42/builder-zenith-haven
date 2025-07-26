@@ -181,7 +181,21 @@ export default function Projects() {
 
   const copyProjectLink = (projectId: string, vendorId: string = "VENDOR_ID") => {
     const link = `https://yourpanel.com/start/${projectId}/${vendorId}/?ID=`;
-    navigator.clipboard.writeText(link);
+    navigator.clipboard.writeText(link).then(() => {
+      // Show success message
+      console.log("Link copied:", link);
+      alert(`Vendor start link copied!\n\n${link}`);
+    }).catch(err => {
+      console.error("Failed to copy:", err);
+      // Fallback for older browsers
+      const textArea = document.createElement("textarea");
+      textArea.value = link;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+      alert(`Vendor start link copied!\n\n${link}`);
+    });
   };
 
   const generatePanelLink = (project: Project) => {
