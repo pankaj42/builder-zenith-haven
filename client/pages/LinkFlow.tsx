@@ -78,12 +78,20 @@ export default function LinkFlow() {
       icon: <CheckCircle className="w-5 h-5" />
     },
     {
-      id: "custom-redirect",
-      title: "Custom Redirect Page",
-      description: "Your panel shows custom thank you page and logs the response.",
-      url: `https://yourpanel.com/redirect/complete?pid=${selectedProject.id}&uid=${selectedProject.id}-001-${respondentId}`,
+      id: "panel-redirect",
+      title: "Panel Processing & Logging",
+      description: "Your panel logs the response, updates dashboards, then forwards to vendor.",
+      url: `https://yourpanel.com/collect/${selectedProject.id}?status=complete&uid=${selectedProject.id}-001-${respondentId}&vendor=${selectedVendor}`,
       color: "emerald",
       icon: <Zap className="w-5 h-5" />
+    },
+    {
+      id: "vendor-redirect",
+      title: "Vendor Dashboard Update",
+      description: "Vendor receives completion data on their dashboard with tracking parameters.",
+      url: `https://dynamic-survey-view.vercel.app/thankyou?pid=${selectedProject.id}&uid=${selectedProject.id}-001-${respondentId}&source=panel&vendor=${selectedVendor}`,
+      color: "purple",
+      icon: <Activity className="w-5 h-5" />
     }
   ];
 
