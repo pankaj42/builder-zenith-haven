@@ -679,6 +679,195 @@ export default function Vendors() {
           </Tabs>
         </main>
       </div>
+
+      {/* Vendor Details Dialog */}
+      <Dialog open={showDetailsDialog} onOpenChange={setShowDetailsDialog}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Users className="w-5 h-5" />
+              Vendor Details - {selectedVendorForDetails?.name}
+            </DialogTitle>
+          </DialogHeader>
+
+          {selectedVendorForDetails && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Basic Information */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold mb-3">Basic Information</h3>
+
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Vendor ID:</span>
+                    <span className="font-mono font-medium">{selectedVendorForDetails.id}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Contact Name:</span>
+                    <span className="font-medium">{selectedVendorForDetails.name}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Company:</span>
+                    <span className="font-medium">{selectedVendorForDetails.company}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Email:</span>
+                    <span className="font-medium">{selectedVendorForDetails.email}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Phone:</span>
+                    <span className="font-medium">{selectedVendorForDetails.phone}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Status:</span>
+                    <Badge className={getStatusColor(selectedVendorForDetails.status)}>
+                      {getStatusIcon(selectedVendorForDetails.status)}
+                      {selectedVendorForDetails.status}
+                    </Badge>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Created Date:</span>
+                    <span className="font-medium">{selectedVendorForDetails.createdDate}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Payment Method:</span>
+                    <span className="font-medium">{selectedVendorForDetails.paymentMethod}</span>
+                  </div>
+                </div>
+
+                {/* Performance Metrics */}
+                <div className="mt-6">
+                  <h4 className="text-md font-semibold mb-3">Performance Metrics</h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center p-3 bg-green-50 rounded-lg">
+                      <div className="text-2xl font-bold text-green-700">{selectedVendorForDetails.completionRate}%</div>
+                      <div className="text-sm text-green-600">Completion Rate</div>
+                    </div>
+                    <div className="text-center p-3 bg-orange-50 rounded-lg">
+                      <div className="text-2xl font-bold text-orange-700">{selectedVendorForDetails.terminateRate}%</div>
+                      <div className="text-sm text-orange-600">Terminate Rate</div>
+                    </div>
+                    <div className="text-center p-3 bg-red-50 rounded-lg">
+                      <div className="text-2xl font-bold text-red-700">{selectedVendorForDetails.fraudScore.toFixed(1)}</div>
+                      <div className="text-sm text-red-600">Fraud Score</div>
+                    </div>
+                    <div className="text-center p-3 bg-blue-50 rounded-lg">
+                      <div className="text-2xl font-bold text-blue-700">{selectedVendorForDetails.totalSent.toLocaleString()}</div>
+                      <div className="text-sm text-blue-600">Total Sent</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Redirect URLs and Projects */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold mb-3">Redirect URLs</h3>
+
+                <div className="space-y-3">
+                  <div>
+                    <Label className="text-sm font-medium text-green-700">Complete URL</Label>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Input
+                        value={selectedVendorForDetails.redirectUrls.complete}
+                        readOnly
+                        className="text-sm"
+                      />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigator.clipboard.writeText(selectedVendorForDetails.redirectUrls.complete)}
+                      >
+                        <Copy className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label className="text-sm font-medium text-orange-700">Terminate URL</Label>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Input
+                        value={selectedVendorForDetails.redirectUrls.terminate}
+                        readOnly
+                        className="text-sm"
+                      />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigator.clipboard.writeText(selectedVendorForDetails.redirectUrls.terminate)}
+                      >
+                        <Copy className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label className="text-sm font-medium text-blue-700">Quota Full URL</Label>
+                    <div className="flex items-center gap-2 mt-1">
+                      <Input
+                        value={selectedVendorForDetails.redirectUrls.quotaFull}
+                        readOnly
+                        className="text-sm"
+                      />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigator.clipboard.writeText(selectedVendorForDetails.redirectUrls.quotaFull)}
+                      >
+                        <Copy className="w-3 h-3" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Assigned Projects */}
+                <div className="mt-6">
+                  <h4 className="text-md font-semibold mb-3">Assigned Projects ({selectedVendorForDetails.assignedProjects.length})</h4>
+                  <div className="space-y-2">
+                    {selectedVendorForDetails.assignedProjects.length > 0 ? (
+                      selectedVendorForDetails.assignedProjects.map((projectId) => (
+                        <div key={projectId} className="flex items-center justify-between p-2 bg-muted rounded-lg">
+                          <span className="font-mono text-sm">{projectId}</span>
+                          <div className="flex gap-1">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => copyStartLink(projectId, selectedVendorForDetails.id)}
+                              className="gap-1"
+                            >
+                              <Copy className="w-3 h-3" />
+                              Copy Start Link
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => window.open(generateStartLink(projectId, selectedVendorForDetails.id), '_blank')}
+                              className="gap-1"
+                            >
+                              <ExternalLink className="w-3 h-3" />
+                              Test
+                            </Button>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-muted-foreground text-sm">No projects assigned</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Notes */}
+                {selectedVendorForDetails.notes && (
+                  <div className="mt-6">
+                    <h4 className="text-md font-semibold mb-3">Notes</h4>
+                    <div className="p-3 bg-muted rounded-lg">
+                      <p className="text-sm">{selectedVendorForDetails.notes}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
