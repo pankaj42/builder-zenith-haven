@@ -786,18 +786,69 @@ export default function Vendors() {
                 </div>
               </div>
 
-              {/* Redirect URLs and Projects */}
+              {/* Redirect URL Management */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold mb-3">Redirect URLs</h3>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold">Vendor Redirect URLs</h3>
+                  <Badge className={selectedVendorForDetails.redirectSettings.enabled ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}>
+                    {selectedVendorForDetails.redirectSettings.enabled ? "Active" : "Disabled"}
+                  </Badge>
+                </div>
 
+                {/* Redirect Settings */}
+                <div className="p-4 bg-blue-50 rounded-lg">
+                  <h4 className="text-md font-semibold mb-3 text-blue-800">Redirect Configuration</h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-sm">Enable Redirects</Label>
+                      <Switch checked={selectedVendorForDetails.redirectSettings.enabled} readOnly />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <Label className="text-sm">Pass-through Mode</Label>
+                      <Switch checked={selectedVendorForDetails.redirectSettings.passthrough} readOnly />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <Label className="text-sm">Append Parameters</Label>
+                      <Switch checked={selectedVendorForDetails.redirectSettings.appendParams} readOnly />
+                    </div>
+                    <div className="text-sm">
+                      <Label className="text-muted-foreground">Custom Params:</Label>
+                      <p className="font-mono text-xs mt-1">{selectedVendorForDetails.redirectSettings.customParams}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Dual Redirect Flow Explanation */}
+                <div className="p-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg">
+                  <h4 className="text-md font-semibold mb-2 text-green-800">How Dual Redirects Work</h4>
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                      <span>Survey completes → Your panel records response</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <span>Panel updates vendor dashboard → Forwards to vendor URL</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                      <span>Client gets data; vendor tracks completion</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Vendor URLs */}
                 <div className="space-y-3">
                   <div>
-                    <Label className="text-sm font-medium text-green-700">Complete URL</Label>
+                    <Label className="text-sm font-medium text-green-700 flex items-center gap-1">
+                      <CheckCircle className="w-3 h-3" />
+                      Complete URL
+                    </Label>
                     <div className="flex items-center gap-2 mt-1">
                       <Input
                         value={selectedVendorForDetails.redirectUrls.complete}
                         readOnly
-                        className="text-sm"
+                        className="text-sm font-mono"
                       />
                       <Button
                         variant="outline"
@@ -806,16 +857,27 @@ export default function Vendors() {
                       >
                         <Copy className="w-3 h-3" />
                       </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => window.open(selectedVendorForDetails.redirectUrls.complete + "?pid=test123&uid=user456", '_blank')}
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                      </Button>
                     </div>
+                    <p className="text-xs text-green-600 mt-1">Example: {selectedVendorForDetails.redirectUrls.complete}?pid=P12345&uid=P12345-001-RESP123</p>
                   </div>
 
                   <div>
-                    <Label className="text-sm font-medium text-orange-700">Terminate URL</Label>
+                    <Label className="text-sm font-medium text-orange-700 flex items-center gap-1">
+                      <XCircle className="w-3 h-3" />
+                      Terminate URL
+                    </Label>
                     <div className="flex items-center gap-2 mt-1">
                       <Input
                         value={selectedVendorForDetails.redirectUrls.terminate}
                         readOnly
-                        className="text-sm"
+                        className="text-sm font-mono"
                       />
                       <Button
                         variant="outline"
@@ -824,16 +886,27 @@ export default function Vendors() {
                       >
                         <Copy className="w-3 h-3" />
                       </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => window.open(selectedVendorForDetails.redirectUrls.terminate + "?pid=test123&uid=user456", '_blank')}
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                      </Button>
                     </div>
+                    <p className="text-xs text-orange-600 mt-1">Example: {selectedVendorForDetails.redirectUrls.terminate}?pid=P12345&uid=P12345-001-RESP123</p>
                   </div>
 
                   <div>
-                    <Label className="text-sm font-medium text-blue-700">Quota Full URL</Label>
+                    <Label className="text-sm font-medium text-blue-700 flex items-center gap-1">
+                      <AlertTriangle className="w-3 h-3" />
+                      Quota Full URL
+                    </Label>
                     <div className="flex items-center gap-2 mt-1">
                       <Input
                         value={selectedVendorForDetails.redirectUrls.quotaFull}
                         readOnly
-                        className="text-sm"
+                        className="text-sm font-mono"
                       />
                       <Button
                         variant="outline"
@@ -842,8 +915,47 @@ export default function Vendors() {
                       >
                         <Copy className="w-3 h-3" />
                       </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => window.open(selectedVendorForDetails.redirectUrls.quotaFull + "?pid=test123&uid=user456", '_blank')}
+                      >
+                        <ExternalLink className="w-3 h-3" />
+                      </Button>
                     </div>
+                    <p className="text-xs text-blue-600 mt-1">Example: {selectedVendorForDetails.redirectUrls.quotaFull}?pid=P12345&uid=P12345-001-RESP123</p>
                   </div>
+
+                  {selectedVendorForDetails.redirectUrls.studyClosed && (
+                    <div>
+                      <Label className="text-sm font-medium text-gray-700 flex items-center gap-1">
+                        <Activity className="w-3 h-3" />
+                        Study Closed URL
+                      </Label>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Input
+                          value={selectedVendorForDetails.redirectUrls.studyClosed}
+                          readOnly
+                          className="text-sm font-mono"
+                        />
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => navigator.clipboard.writeText(selectedVendorForDetails.redirectUrls.studyClosed!)}
+                        >
+                          <Copy className="w-3 h-3" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => window.open(selectedVendorForDetails.redirectUrls.studyClosed + "?pid=test123&uid=user456", '_blank')}
+                        >
+                          <ExternalLink className="w-3 h-3" />
+                        </Button>
+                      </div>
+                      <p className="text-xs text-gray-600 mt-1">Example: {selectedVendorForDetails.redirectUrls.studyClosed}?pid=P12345&uid=P12345-001-RESP123</p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Assigned Projects */}
