@@ -52,8 +52,10 @@ export default function StartSurvey() {
 
       console.log('UID Mapping created:', mapping);
 
-      // Generate client survey URL (encrypted ProjectID & VendorID)
-      const clientUrl = `https://client-survey.com/survey?uid=${clientUID}`;
+      // Generate client survey URL with redirect back to panel
+      const baseClientUrl = 'https://operation4m3r2c.com/Replica_Page/drkm4FiBohdPDq3lMBeWh9mIl5Shc8.php';
+      const redirectBackUrl = `https://yourpanel.com/collect/${projectId}`;
+      const clientUrl = `${baseClientUrl}?ID=${vendorUID}&redirect_url=${encodeURIComponent(redirectBackUrl)}&uid=${clientUID}`;
       setRedirectUrl(clientUrl);
       setStatus('valid');
 
