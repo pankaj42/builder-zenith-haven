@@ -20,7 +20,8 @@ import {
   Globe,
   Eye,
   Info,
-  Zap
+  Zap,
+  Activity
 } from "lucide-react";
 import Sidebar from "@/components/Sidebar";
 
