@@ -9,7 +9,8 @@ import {
   TrendingUp,
   Shield,
   UserCheck,
-  Activity
+  Activity,
+  RotateCcw
 } from "lucide-react";
 import Sidebar from "@/components/Sidebar";
 
