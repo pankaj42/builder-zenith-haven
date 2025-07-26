@@ -16,6 +16,7 @@ import Fraud from "./pages/Fraud";
 import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
 import { CompletePage, TerminatePage, QuotaFullPage, StudyClosedPage } from "./pages/RedirectPage";
+import StartSurvey from "./pages/StartSurvey";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +37,8 @@ const App = () => (
           <Route path="/fraud" element={<Fraud />} />
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/settings" element={<Settings />} />
+          {/* Vendor Start Links */}
+          <Route path="/start/:projectId/:vendorId" element={<StartSurvey />} />
           {/* Redirect Pages for Survey Respondents */}
           <Route path="/redirect/complete" element={<CompletePage />} />
           <Route path="/redirect/terminate" element={<TerminatePage />} />
