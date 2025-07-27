@@ -232,19 +232,16 @@ export default function Vendors() {
     return `V${num.toString().padStart(3, '0')}`;
   };
 
-  const createVendor = () => {
-    const vendor: Vendor = {
-      ...newVendor as Vendor,
-      id: generateVendorId(),
-      createdDate: new Date().toISOString().split('T')[0],
+  const createVendorAction = () => {
+    const vendorData = {
+      ...newVendor as Omit<Vendor, 'id' | 'createdDate' | 'assignedProjects'>,
       completionRate: 0,
       terminateRate: 0,
       fraudScore: 0,
       totalSent: 0,
-      totalCompletes: 0,
-      assignedProjects: []
+      totalCompletes: 0
     };
-    setVendors([...vendors, vendor]);
+    createVendor(vendorData);
     setShowCreateDialog(false);
     setNewVendor({
       name: "",
