@@ -50,7 +50,35 @@ interface ResponseRecord {
 }
 
 export default function Responses() {
-  // Generate more comprehensive sample data
+  const { state } = usePanelContext();
+
+  // Use dynamic responses from global state
+  const allResponses: ResponseRecord[] = state.responses.map(response => ({
+    id: response.id,
+    uid: response.uid,
+    pid: response.projectId,
+    status: response.status,
+    vendor: response.vendorId,
+    ip: response.ip,
+    timestamp: response.timestamp,
+    deviceInfo: {
+      type: Math.random() > 0.5 ? 'Desktop' : 'Mobile',
+      browser: ['Chrome', 'Firefox', 'Safari', 'Edge'][Math.floor(Math.random() * 4)],
+      os: ['Windows', 'macOS', 'iOS', 'Android'][Math.floor(Math.random() * 4)]
+    },
+    geoLocation: {
+      country: ['United States', 'Canada', 'United Kingdom'][Math.floor(Math.random() * 3)],
+      city: ['New York', 'Toronto', 'London'][Math.floor(Math.random() * 3)],
+      region: ['NY', 'ON', 'LN'][Math.floor(Math.random() * 3)]
+    },
+    userAgent: 'Mozilla/5.0 (compatible)',
+    startTime: response.timestamp,
+    endTime: response.timestamp,
+    duration: response.duration || Math.floor(Math.random() * 20) + 5,
+    fraudScore: Math.random() * 5
+  }));
+
+  // Generate additional sample data if needed
   const generateSampleData = () => {
     const statuses = ['complete', 'terminate', 'quota-full', 'in-progress'];
     const projects = ['P12345', 'P12346', 'P12347'];
