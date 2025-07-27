@@ -305,24 +305,7 @@ export default function Fraud() {
   const viewIpDetails = (ip: string) => {
     const ipData = ipMonitoring.find(i => i.ip === ip);
     if (ipData) {
-      alert(`IP Monitoring Details - ${ip}
-
-Location: ${ipData.city}, ${ipData.country}
-Risk Score: ${ipData.riskScore}/10
-Status: ${ipData.isBlocked ? 'BLOCKED' : 'Active'}
-
-Activity Summary:
-- Total Responses: ${ipData.responseCount}
-- Unique UIDs: ${ipData.uniqueUIDs}
-- Associated Vendors: ${ipData.vendors.join(', ')}
-- Projects: ${ipData.projects.join(', ')}
-
-Timeline:
-- First Seen: ${new Date(ipData.firstSeen).toLocaleString()}
-- Last Seen: ${new Date(ipData.lastSeen).toLocaleString()}
-
-Suspicious Activity:
-${ipData.suspiciousActivity.map(activity => `• ${activity}`).join('\n')}`);
+      setSelectedIp(ipData);
     }
   };
 
