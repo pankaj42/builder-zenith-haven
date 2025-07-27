@@ -195,12 +195,12 @@ export default function Analytics() {
   const [selectedPeriod, setSelectedPeriod] = useState("7days");
   const [selectedProject, setSelectedProject] = useState("all");
 
-  // Calculate summary metrics
-  const totalCompletes = vendorPerformance.reduce((sum, v) => sum + v.totalCompletes, 0);
-  const totalSent = vendorPerformance.reduce((sum, v) => sum + v.totalSent, 0);
-  const overallCompletionRate = (totalCompletes / totalSent) * 100;
-  const avgResponseTime = vendorPerformance.reduce((sum, v) => sum + v.avgResponseTime, 0) / vendorPerformance.length;
-  const totalEarnings = vendorPerformance.reduce((sum, v) => sum + v.earnings, 0);
+  // Calculate summary metrics from global state
+  const totalCompletes = state.stats.totalCompletes;
+  const totalSent = state.vendors.reduce((sum, v) => sum + v.totalSent, 0);
+  const overallCompletionRate = state.stats.overallCompletionRate;
+  const avgResponseTime = state.stats.avgResponseTime;
+  const totalEarnings = state.stats.totalEarnings;
 
   const topPerformingVendor = vendorPerformance.reduce((top, vendor) => 
     vendor.completionRate > top.completionRate ? vendor : top
