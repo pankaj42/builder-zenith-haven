@@ -72,6 +72,8 @@ interface TimeSeriesData {
 
 export default function Analytics() {
   const { state } = usePanelContext();
+  const [selectedVendor, setSelectedVendor] = useState<any>(null);
+  const [selectedProject, setSelectedProject] = useState<any>(null);
 
   // Generate dynamic vendor performance from global state
   const generateVendorPerformance = (): VendorPerformance[] => {
