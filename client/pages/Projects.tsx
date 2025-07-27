@@ -715,7 +715,7 @@ export default function Projects() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => copyToClipboard(selectedProjectForDetails.clientLink, "Client Survey URL")}
+                        onClick={(e) => copyToClipboard(selectedProjectForDetails.clientLink, e.currentTarget, "Client Link Copied!")}
                       >
                         <Copy className="w-3 h-3" />
                       </Button>
@@ -743,7 +743,7 @@ export default function Projects() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => copyToClipboard(getRedirectParameter(selectedProjectForDetails), "Redirect Parameter")}
+                          onClick={(e) => copyToClipboard(getRedirectParameter(selectedProjectForDetails), e.currentTarget, "Parameter Copied!")}
                         >
                           <Copy className="w-3 h-3" />
                         </Button>
@@ -764,7 +764,7 @@ export default function Projects() {
                       <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => copyToClipboard(generatePanelLink(selectedProjectForDetails), "Panel Start Link")}
+                      onClick={(e) => copyToClipboard(generatePanelLink(selectedProjectForDetails), e.currentTarget, "Panel Link Copied!")}
                     >
                       <Copy className="w-3 h-3" />
                     </Button>
