@@ -77,7 +77,7 @@ export default function Vendors() {
   const { state, createVendor, updateVendor, deleteVendor } = usePanelContext();
 
   const vendors = state.vendors;
-  const projects = state.projects.map(p => ({ id: p.id, name: p.name }));
+  const projects = state.projects.map(p => ({ id: p.id, name: p.name, incentive: p.incentive }));
 
   const [staticVendors] = useState<Vendor[]>([
     {
