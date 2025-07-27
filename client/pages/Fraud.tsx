@@ -330,16 +330,7 @@ This will:
 Continue with investigation?`);
 
       if (action) {
-        alert(`Investigation initiated for IP ${ip}
-
-✅ Responses flagged for review
-✅ Audit trail updated
-✅ Vendor notifications sent
-✅ Forensic report queued
-
-Investigation ID: INV-${Date.now()}
-Assigned to: Admin
-Priority: ${ipData.riskScore > 8 ? 'High' : ipData.riskScore > 6 ? 'Medium' : 'Low'}`);
+        showToast(`Investigation initiated for IP ${ip} - ID: INV-${Date.now()}`, 'success');
       }
     }
   };
