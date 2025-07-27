@@ -1006,6 +1006,261 @@ export default function Projects() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Vendor Assignment Dialog */}
+      <Dialog open={showVendorAssignDialog} onOpenChange={setShowVendorAssignDialog}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <UserPlus className="w-5 h-5" />
+              Assign Vendors - {selectedProjectForVendors?.name}
+            </DialogTitle>
+          </DialogHeader>
+
+          {selectedProjectForVendors && (
+            <div className="space-y-6">
+              {/* Project Info */}
+              <div className="p-4 bg-blue-50 rounded-lg">
+                <h4 className="font-semibold text-blue-800 mb-2">Project Information</h4>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-blue-700">Project ID:</span>
+                    <span className="font-mono ml-2">{selectedProjectForVendors.id}</span>
+                  </div>
+                  <div>
+                    <span className="text-blue-700">Client:</span>
+                    <span className="ml-2">{selectedProjectForVendors.clientName}</span>
+                  </div>
+                  <div>
+                    <span className="text-blue-700">Total Quota:</span>
+                    <span className="ml-2">{selectedProjectForVendors.totalQuota} completes</span>
+                  </div>
+                  <div>
+                    <span className="text-blue-700">Incentive:</span>
+                    <span className="ml-2">{selectedProjectForVendors.incentive}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Currently Assigned Vendors */}
+              <div>
+                <h4 className="font-semibold mb-3">Currently Assigned Vendors ({selectedProjectForVendors.vendors.length})</h4>
+                <div className="space-y-2">
+                  {selectedProjectForVendors.vendors.length > 0 ? (
+                    selectedProjectForVendors.vendors.map((vendorId) => {
+                      const vendor = availableVendors.find(v => v.id === vendorId);
+                      return (
+                        <div key={vendorId} className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
+                          <div className="flex items-center gap-3">
+                            <CheckCircle className="w-4 h-4 text-green-600" />
+                            <div>
+                              <p className="font-medium">{vendor?.name || vendorId}</p>
+                              <p className="text-sm text-gray-600">{vendor?.email}</p>
+                            </div>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => copyProjectLink(selectedProjectForVendors.id, vendorId)}
+                              className="gap-1"
+                            >
+                              <Copy className="w-3 h-3" />
+                              Copy Link
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => removeVendorFromProject(selectedProjectForVendors.id, vendorId)}
+                              className="text-red-600 hover:text-red-700"
+                            >
+                              Remove
+                            </Button>
+                          </div>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <p className="text-gray-500 text-center py-4">No vendors assigned yet</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Available Vendors */}
+              <div>
+                <h4 className="font-semibold mb-3">Available Vendors</h4>
+                <div className="space-y-2">
+                  {availableVendors
+                    .filter(vendor => !selectedProjectForVendors.vendors.includes(vendor.id))
+                    .map((vendor) => (
+                      <div key={vendor.id} className="flex items-center justify-between p-3 border rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <Users className="w-4 h-4 text-gray-600" />
+                          <div>
+                            <p className="font-medium">{vendor.name}</p>
+                            <p className="text-sm text-gray-600">{vendor.email}</p>
+                          </div>
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => assignVendorToProject(selectedProjectForVendors.id, vendor.id)}
+                          className="gap-1"
+                        >
+                          <Plus className="w-3 h-3" />
+                          Assign
+                        </Button>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Email Vendors Dialog */}
+      <Dialog open={showEmailDialog} onOpenChange={setShowEmailDialog}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Mail className="w-5 h-5" />
+              Email Vendors - {selectedProjectForVendors?.name}
+            </DialogTitle>
+          </DialogHeader>
+
+          {selectedProjectForVendors && (
+            <div className="space-y-6">
+              {/* Email Recipients */}
+              <div>
+                <h4 className="font-semibold mb-3">Select Recipients</h4>
+                <div className="space-y-2">
+                  {selectedProjectForVendors.vendors.map((vendorId) => {
+                    const vendor = availableVendors.find(v => v.id === vendorId);
+                    return (
+                      <div key={vendorId} className="flex items-center space-x-3 p-3 border rounded-lg">
+                        <Switch
+                          checked={emailSettings.selectedVendors.includes(vendorId)}
+                          onCheckedChange={(checked) => {
+                            if (checked) {
+                              setEmailSettings({
+                                ...emailSettings,
+                                selectedVendors: [...emailSettings.selectedVendors, vendorId]
+                              });
+                            } else {
+                              setEmailSettings({
+                                ...emailSettings,
+                                selectedVendors: emailSettings.selectedVendors.filter(v => v !== vendorId)
+                              });
+                            }
+                          }}
+                        />
+                        <div className="flex-1">
+                          <p className="font-medium">{vendor?.name || vendorId}</p>
+                          <p className="text-sm text-gray-600">{vendor?.email}</p>
+                        </div>
+                        <Badge variant="outline">{vendorId}</Badge>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Email Settings */}
+              <div className="space-y-4">
+                <div>
+                  <Label className="text-base font-medium">Email Settings</Label>
+                  <div className="grid grid-cols-2 gap-4 mt-3">
+                    <div className="flex items-center space-x-2">
+                      <Switch
+                        checked={emailSettings.includeStartLink}
+                        onCheckedChange={(checked) => setEmailSettings({...emailSettings, includeStartLink: checked})}
+                      />
+                      <Label>Include Start Links</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Switch
+                        checked={emailSettings.includeQuotas}
+                        onCheckedChange={(checked) => setEmailSettings({...emailSettings, includeQuotas: checked})}
+                      />
+                      <Label>Include Project Quotas</Label>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="email-subject">Subject</Label>
+                  <Input
+                    id="email-subject"
+                    value={emailSettings.subject}
+                    onChange={(e) => setEmailSettings({...emailSettings, subject: e.target.value})}
+                    placeholder="Email subject"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="email-message">Message</Label>
+                  <Textarea
+                    id="email-message"
+                    value={emailSettings.message}
+                    onChange={(e) => setEmailSettings({...emailSettings, message: e.target.value})}
+                    placeholder="Email message"
+                    rows={8}
+                  />
+                </div>
+              </div>
+
+              {/* Email Preview */}
+              <div className="p-4 bg-gray-50 rounded-lg">
+                <h4 className="font-semibold mb-2">Email Preview</h4>
+                <div className="text-sm space-y-2">
+                  <p><strong>To:</strong> {emailSettings.selectedVendors.length} selected vendor(s)</p>
+                  <p><strong>Subject:</strong> {emailSettings.subject}</p>
+                  <div className="mt-3 p-3 bg-white rounded border">
+                    <div className="whitespace-pre-wrap">{emailSettings.message}</div>
+                    {emailSettings.includeStartLink && (
+                      <div className="mt-4 p-2 bg-blue-50 rounded">
+                        <strong>Your Start Link:</strong>
+                        <br />
+                        <code className="text-xs">https://yourpanel.com/start/{selectedProjectForVendors.id}/[VENDOR_ID]/?ID=</code>
+                      </div>
+                    )}
+                    {emailSettings.includeQuotas && (
+                      <div className="mt-2 p-2 bg-green-50 rounded">
+                        <strong>Project Quotas:</strong>
+                        <br />
+                        <span className="text-xs">
+                          Age: {selectedProjectForVendors.quotas.age.min}-{selectedProjectForVendors.quotas.age.max} |
+                          Total: {selectedProjectForVendors.totalQuota} completes |
+                          Incentive: {selectedProjectForVendors.incentive}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Send Button */}
+              <div className="flex gap-2">
+                <Button
+                  onClick={sendVendorEmails}
+                  className="flex-1 gap-2"
+                  disabled={emailSettings.selectedVendors.length === 0}
+                >
+                  <Send className="w-4 h-4" />
+                  Send Emails ({emailSettings.selectedVendors.length})
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setShowEmailDialog(false)}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
