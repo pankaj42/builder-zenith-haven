@@ -228,9 +228,9 @@ export default function Projects() {
     }
   };
 
-  const copyProjectLink = (projectId: string, vendorId: string = "VENDOR_ID") => {
+  const copyProjectLink = (projectId: string, buttonElement: HTMLElement, vendorId: string = "VENDOR_ID") => {
     const link = `https://yourpanel.com/start/${projectId}/${vendorId}/?ID=`;
-    copyToClipboard(link, "Vendor Start Link");
+    copyToClipboard(link, buttonElement, "Start Link Copied!");
   };
 
   const generatePanelLink = (project: Project) => {
