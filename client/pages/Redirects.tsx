@@ -128,33 +128,41 @@ export default function Redirects() {
 
   const copyRedirectUrl = (type: string, buttonElement: HTMLElement) => {
     const url = `https://yourpanel.com/redirect/${type}?pid={PID}&uid={UID}&ip={IP}`;
-    try {
+
+    if (navigator.clipboard && window.isSecureContext) {
       navigator.clipboard.writeText(url).then(() => {
         showCopySuccess(buttonElement, `${type} URL Copied!`);
       }).catch((err) => {
-        console.error("Clipboard API failed:", err);
-        // Fallback to older method
-        const textArea = document.createElement("textarea");
-        textArea.value = url;
-        textArea.style.position = "fixed";
-        textArea.style.left = "-999999px";
-        textArea.style.top = "-999999px";
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-
-        const successful = document.execCommand('copy');
-        document.body.removeChild(textArea);
-
-        if (successful) {
-          showCopySuccess(buttonElement, `${type} URL Copied!`);
-        } else {
-          prompt(`Copy this ${type} redirect URL:`, url);
-        }
+        console.warn("Clipboard API failed, using fallback:", err.message);
+        fallbackCopy(url, buttonElement, `${type} URL Copied!`);
       });
+    } else {
+      fallbackCopy(url, buttonElement, `${type} URL Copied!`);
+    }
+  };
+
+  const fallbackCopy = (text: string, buttonElement: HTMLElement, message: string) => {
+    try {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";
+      textArea.style.left = "-999999px";
+      textArea.style.top = "-999999px";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textArea);
+
+      if (successful) {
+        showCopySuccess(buttonElement, message);
+      } else {
+        prompt("Copy this text:", text);
+      }
     } catch (err) {
-      console.error("Copy failed:", err);
-      prompt(`Copy this ${type} redirect URL:`, url);
+      console.error("Fallback copy failed:", err);
+      prompt("Copy this text:", text);
     }
   };
 
