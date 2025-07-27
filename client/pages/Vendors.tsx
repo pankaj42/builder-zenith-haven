@@ -74,7 +74,12 @@ interface ProjectAssignment {
 }
 
 export default function Vendors() {
-  const [vendors, setVendors] = useState<Vendor[]>([
+  const { state, createVendor, updateVendor, deleteVendor } = usePanelContext();
+
+  const vendors = state.vendors;
+  const projects = state.projects.map(p => ({ id: p.id, name: p.name }));
+
+  const [staticVendors] = useState<Vendor[]>([
     {
       id: "V001",
       name: "John Thompson",
