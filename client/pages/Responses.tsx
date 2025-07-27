@@ -52,31 +52,46 @@ interface ResponseRecord {
 export default function Responses() {
   const { state } = usePanelContext();
 
-  // Use dynamic responses from global state
-  const allResponses: ResponseRecord[] = state.responses.map(response => ({
-    id: response.id,
-    uid: response.uid,
-    pid: response.projectId,
-    status: response.status,
-    vendor: response.vendorId,
-    ip: response.ip,
-    timestamp: response.timestamp,
-    deviceInfo: {
-      type: Math.random() > 0.5 ? 'Desktop' : 'Mobile',
-      browser: ['Chrome', 'Firefox', 'Safari', 'Edge'][Math.floor(Math.random() * 4)],
-      os: ['Windows', 'macOS', 'iOS', 'Android'][Math.floor(Math.random() * 4)]
-    },
-    geoLocation: {
-      country: ['United States', 'Canada', 'United Kingdom'][Math.floor(Math.random() * 3)],
-      city: ['New York', 'Toronto', 'London'][Math.floor(Math.random() * 3)],
-      region: ['NY', 'ON', 'LN'][Math.floor(Math.random() * 3)]
-    },
-    userAgent: 'Mozilla/5.0 (compatible)',
-    startTime: response.timestamp,
-    endTime: response.timestamp,
-    duration: response.duration || Math.floor(Math.random() * 20) + 5,
-    fraudScore: Math.random() * 5
-  }));
+  // Use dynamic responses from global state with stable additional data
+  const [responseDataCache] = useState(new Map());
+
+  const allResponses: ResponseRecord[] = state.responses.map(response => {
+    // Use cached additional data to prevent random regeneration
+    let cachedData = responseDataCache.get(response.id);
+    if (!cachedData) {
+      cachedData = {
+        deviceInfo: {
+          type: Math.random() > 0.5 ? 'Desktop' : 'Mobile',
+          browser: ['Chrome', 'Firefox', 'Safari', 'Edge'][Math.floor(Math.random() * 4)],
+          os: ['Windows', 'macOS', 'iOS', 'Android'][Math.floor(Math.random() * 4)]
+        },
+        geoLocation: {
+          country: ['United States', 'Canada', 'United Kingdom'][Math.floor(Math.random() * 3)],
+          city: ['New York', 'Toronto', 'London'][Math.floor(Math.random() * 3)],
+          region: ['NY', 'ON', 'LN'][Math.floor(Math.random() * 3)]
+        },
+        fraudScore: Math.random() * 5
+      };
+      responseDataCache.set(response.id, cachedData);
+    }
+
+    return {
+      id: response.id,
+      pid: response.projectId,
+      vendorId: response.vendorId,
+      vendorUID: response.uid,
+      clientUID: response.uid,
+      status: response.status,
+      ip: response.ip,
+      timestamp: response.timestamp,
+      geoLocation: cachedData.geoLocation,
+      userAgent: 'Mozilla/5.0 (compatible)',
+      startTime: response.timestamp,
+      endTime: response.timestamp,
+      duration: response.duration || Math.floor(Math.random() * 20) + 5,
+      fraudScore: cachedData.fraudScore
+    };
+  });
 
   // Generate additional sample data if needed
   const generateSampleData = () => {
@@ -124,9 +139,10 @@ export default function Responses() {
     return data.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
   };
 
-  // Add sample data if we have limited responses
-  const combinedResponses = allResponses.length < 50 ? [...allResponses, ...generateSampleData()] : allResponses;
-  const [filteredResponses, setFilteredResponses] = useState<ResponseRecord[]>(combinedResponses);
+  // Add sample data if we have limited responses (only generate once)
+  const [sampleData] = useState(() => generateSampleData());
+  const combinedResponses = allResponses.length < 50 ? [...allResponses, ...sampleData] : allResponses;
+  const [filteredResponses, setFilteredResponses] = useState<ResponseRecord[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [projectFilter, setProjectFilter] = useState("all");
@@ -145,11 +161,15 @@ export default function Responses() {
 
   // Filter responses based on all criteria
   useEffect(() => {
+    if (!isRealTimeEnabled && filteredResponses.length > 0) {
+      return; // Don't update if real-time is paused and we already have data
+    }
+
     let filtered = combinedResponses;
 
     // Search filter
     if (searchTerm) {
-      filtered = filtered.filter(response => 
+      filtered = filtered.filter(response =>
         response.clientUID.toLowerCase().includes(searchTerm.toLowerCase()) ||
         response.vendorUID.toLowerCase().includes(searchTerm.toLowerCase()) ||
         response.pid.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -178,7 +198,7 @@ export default function Responses() {
     if (dateFilter !== "all") {
       const now = new Date();
       let startDate = new Date();
-      
+
       switch(dateFilter) {
         case "today":
           startDate.setHours(0, 0, 0, 0);
@@ -203,9 +223,9 @@ export default function Responses() {
           startDate.setDate(startDate.getDate() - 90);
           break;
       }
-      
+
       if (dateFilter !== "yesterday") {
-        filtered = filtered.filter(response => 
+        filtered = filtered.filter(response =>
           new Date(response.timestamp) >= startDate
         );
       }
@@ -213,14 +233,16 @@ export default function Responses() {
 
     // Year filter
     if (yearFilter !== "all") {
-      filtered = filtered.filter(response => 
+      filtered = filtered.filter(response =>
         new Date(response.timestamp).getFullYear().toString() === yearFilter
       );
     }
 
     setFilteredResponses(filtered);
-    setCurrentPage(1); // Reset to first page when filters change
-  }, [allResponses, searchTerm, statusFilter, projectFilter, vendorFilter, dateFilter, yearFilter]);
+    if (currentPage === 1 || filtered.length <= (currentPage - 1) * itemsPerPage) {
+      setCurrentPage(1); // Only reset to first page when necessary
+    }
+  }, [combinedResponses, searchTerm, statusFilter, projectFilter, vendorFilter, dateFilter, yearFilter, isRealTimeEnabled]);
 
   // Pagination
   const totalPages = Math.ceil(filteredResponses.length / itemsPerPage);
@@ -281,7 +303,7 @@ export default function Responses() {
     window.URL.revokeObjectURL(url);
   };
 
-  const uniqueYears = Array.from(new Set(allResponses.map(r => new Date(r.timestamp).getFullYear()))).sort((a, b) => b - a);
+  const uniqueYears = Array.from(new Set(combinedResponses.map(r => new Date(r.timestamp).getFullYear()))).sort((a, b) => b - a);
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -452,7 +474,7 @@ export default function Responses() {
               </Select>
 
               <div className="text-sm text-muted-foreground">
-                Showing {filteredResponses.length.toLocaleString()} of {allResponses.length.toLocaleString()} responses
+                Showing {filteredResponses.length.toLocaleString()} of {combinedResponses.length.toLocaleString()} responses
               </div>
             </div>
           </div>
