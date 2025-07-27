@@ -129,7 +129,28 @@ export default function VendorRedirectManager() {
 
   const copyRedirectUrl = (url: string, type: string) => {
     const fullUrl = url + "?pid={PID}&uid={UID}&source=panel";
-    navigator.clipboard.writeText(fullUrl);
+    try {
+      const textArea = document.createElement("textarea");
+      textArea.value = fullUrl;
+      textArea.style.position = "fixed";
+      textArea.style.left = "-999999px";
+      textArea.style.top = "-999999px";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textArea);
+
+      if (successful) {
+        alert(`✅ ${type} Redirect URL Copied!\n\n${fullUrl}`);
+      } else {
+        prompt(`Copy this ${type} redirect URL:`, fullUrl);
+      }
+    } catch (err) {
+      console.error("Copy failed:", err);
+      prompt(`Copy this ${type} redirect URL:`, fullUrl);
+    }
   };
 
   const generateDualRedirectExample = (config: VendorRedirectConfig) => {
@@ -478,7 +499,31 @@ ${config.settings.enabled ?
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => navigator.clipboard.writeText(generateDualRedirectExample(selectedConfig))}
+                          onClick={() => {
+                            const code = generateDualRedirectExample(selectedConfig);
+                            try {
+                              const textArea = document.createElement("textarea");
+                              textArea.value = code;
+                              textArea.style.position = "fixed";
+                              textArea.style.left = "-999999px";
+                              textArea.style.top = "-999999px";
+                              document.body.appendChild(textArea);
+                              textArea.focus();
+                              textArea.select();
+
+                              const successful = document.execCommand('copy');
+                              document.body.removeChild(textArea);
+
+                              if (successful) {
+                                alert(`✅ Implementation Code Copied!`);
+                              } else {
+                                prompt("Copy this implementation code:", code);
+                              }
+                            } catch (err) {
+                              console.error("Copy failed:", err);
+                              prompt("Copy this implementation code:", code);
+                            }
+                          }}
                           className="gap-1"
                         >
                           <Copy className="w-3 h-3" />
