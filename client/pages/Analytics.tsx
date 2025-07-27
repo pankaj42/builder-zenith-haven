@@ -69,6 +69,8 @@ interface TimeSeriesData {
 }
 
 export default function Analytics() {
+  const { state } = usePanelContext();
+
   const [vendorPerformance, setVendorPerformance] = useState<VendorPerformance[]>([
     {
       vendorId: "V001",
