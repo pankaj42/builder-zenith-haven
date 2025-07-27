@@ -79,9 +79,10 @@ interface IPMonitoring {
 
 export default function Fraud() {
   const { state } = usePanelContext();
-  const [showAlertDetails, setShowAlertDetails] = useState<string | null>(null);
-  const [showIpDetails, setShowIpDetails] = useState<string | null>(null);
-  const [showVendorDetails, setShowVendorDetails] = useState<string | null>(null);
+  const { showToast, ToastContainer } = useToast();
+  const [selectedAlert, setSelectedAlert] = useState<FraudAlert | null>(null);
+  const [selectedIp, setSelectedIp] = useState<IPMonitoring | null>(null);
+  const [selectedVendor, setSelectedVendor] = useState<VendorFraudScore | null>(null);
   const [showConfigureDialog, setShowConfigureDialog] = useState(false);
   const [showReportsDialog, setShowReportsDialog] = useState(false);
   const [fraudAlerts, setFraudAlerts] = useState<FraudAlert[]>([
