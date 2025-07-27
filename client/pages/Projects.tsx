@@ -483,7 +483,7 @@ export default function Projects() {
                     </div>
 
                     <div className="flex gap-2 pt-4">
-                      <Button onClick={createProject} className="flex-1">Create Project</Button>
+                      <Button onClick={createProjectAction} className="flex-1">Create Project</Button>
                       <Button variant="outline" onClick={() => setShowCreateDialog(false)}>Cancel</Button>
                     </div>
                   </div>
