@@ -108,25 +108,31 @@ export default function LinkFlow() {
     return colors[color as keyof typeof colors] || colors.blue;
   };
 
-  const copyToClipboard = (text: string) => {
+  const copyToClipboard = (text: string, buttonElement: HTMLElement, description: string = "Link Copied!") => {
     try {
-      const textArea = document.createElement("textarea");
-      textArea.value = text;
-      textArea.style.position = "fixed";
-      textArea.style.left = "-999999px";
-      textArea.style.top = "-999999px";
-      document.body.appendChild(textArea);
-      textArea.focus();
-      textArea.select();
+      navigator.clipboard.writeText(text).then(() => {
+        showCopySuccess(buttonElement, description);
+      }).catch((err) => {
+        console.error("Clipboard API failed:", err);
+        // Fallback to older method
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
 
-      const successful = document.execCommand('copy');
-      document.body.removeChild(textArea);
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textArea);
 
-      if (successful) {
-        alert(`✅ Link Copied!\n\n${text}`);
-      } else {
-        prompt("Copy this link:", text);
-      }
+        if (successful) {
+          showCopySuccess(buttonElement, description);
+        } else {
+          prompt("Copy this link:", text);
+        }
+      });
     } catch (err) {
       console.error("Copy failed:", err);
       prompt("Copy this link:", text);
