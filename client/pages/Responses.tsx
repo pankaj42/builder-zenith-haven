@@ -137,11 +137,11 @@ export default function Responses() {
   const [itemsPerPage, setItemsPerPage] = useState(50);
   const [isRealTimeEnabled, setIsRealTimeEnabled] = useState(true);
 
-  // Calculate totals
-  const totalCompletes = allResponses.filter(r => r.status === 'complete').length;
-  const totalTerminates = allResponses.filter(r => r.status === 'terminate').length;
-  const totalQuotaFull = allResponses.filter(r => r.status === 'quota-full').length;
-  const totalInProgress = allResponses.filter(r => r.status === 'in-progress').length;
+  // Calculate totals from combined responses
+  const totalCompletes = combinedResponses.filter(r => r.status === 'complete').length;
+  const totalTerminates = combinedResponses.filter(r => r.status === 'terminate').length;
+  const totalQuotaFull = combinedResponses.filter(r => r.status === 'quota-full').length;
+  const totalInProgress = combinedResponses.filter(r => r.status === 'in-progress').length;
 
   // Filter responses based on all criteria
   useEffect(() => {
