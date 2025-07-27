@@ -573,7 +573,7 @@ export default function Projects() {
                       View
                     </Button>
                     <Button variant="outline" size="sm" className="gap-1"
-                            onClick={() => copyProjectLink(project.id)}
+                            onClick={(e) => copyProjectLink(project.id, e.currentTarget)}
                             title="Copy Vendor Start Link">
                       <Copy className="w-3 h-3" />
                       Copy
