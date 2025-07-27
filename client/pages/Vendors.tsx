@@ -587,33 +587,40 @@ export default function Vendors() {
                           </div>
                           {vendor.assignedProjects.length > 0 && (
                             <div className="space-y-1">
-                              {vendor.assignedProjects.slice(0, 2).map((projectId) => {
+                              {vendor.assignedProjects.map((projectId) => {
                                 const project = projects.find(p => p.id === projectId);
+                                const projectData = state.projects.find(p => p.id === projectId);
+                                const vendorResponses = state.responses.filter(r => r.projectId === projectId && r.vendorId === vendor.id);
+                                const completes = vendorResponses.filter(r => r.status === 'complete').length;
+                                const incentiveAmount = project?.incentive ? parseFloat(project.incentive.replace('$', '')) : 0;
+                                const cpi = completes > 0 ? (incentiveAmount).toFixed(2) : '0.00';
+
                                 return (
-                                  <div key={projectId} className="flex items-center justify-between text-xs bg-gray-50 rounded p-2">
-                                    <div className="flex items-center gap-2">
-                                      <span className="font-mono text-blue-600">{projectId}</span>
-                                      <span className="text-gray-600 truncate max-w-[120px]">
-                                        {project?.name || "Unknown Project"}
-                                      </span>
+                                  <div key={projectId} className="text-xs bg-gray-50 rounded p-2 space-y-1">
+                                    <div className="flex items-center justify-between">
+                                      <div className="flex items-center gap-2">
+                                        <span className="font-mono text-blue-600">{projectId}</span>
+                                        <span className="text-gray-600 truncate max-w-[80px]">
+                                          {project?.name || "Unknown Project"}
+                                        </span>
+                                      </div>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-4 w-4 p-0"
+                                        onClick={() => copyStartLink(projectId, vendor.id)}
+                                        title="Copy start link"
+                                      >
+                                        <Copy className="w-3 h-3" />
+                                      </Button>
                                     </div>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      className="h-4 w-4 p-0"
-                                      onClick={() => copyStartLink(projectId, vendor.id)}
-                                      title="Copy start link"
-                                    >
-                                      <Copy className="w-3 h-3" />
-                                    </Button>
+                                    <div className="flex items-center justify-between text-xs">
+                                      <span className="text-green-600">{completes} completes</span>
+                                      <span className="text-blue-600 font-mono">CPI: ${cpi}</span>
+                                    </div>
                                   </div>
                                 );
                               })}
-                              {vendor.assignedProjects.length > 2 && (
-                                <div className="text-xs text-center text-gray-500">
-                                  +{vendor.assignedProjects.length - 2} more projects
-                                </div>
-                              )}
                             </div>
                           )}
                         </div>
