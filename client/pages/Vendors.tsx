@@ -263,8 +263,8 @@ export default function Vendors() {
     setVendors(vendors.map(v => v.id === vendorId ? { ...v, status } : v));
   };
 
-  const deleteVendor = (vendorId: string) => {
-    setVendors(vendors.filter(v => v.id !== vendorId));
+  const deleteVendorAction = (vendorId: string) => {
+    deleteVendor(vendorId);
     setAssignments(assignments.filter(a => a.vendorId !== vendorId));
   };
 
