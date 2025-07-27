@@ -1063,7 +1063,7 @@ export default function Projects() {
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => removeVendorFromProject(selectedProjectForVendors.id, vendorId)}
+                              onClick={() => removeVendorFromProjectAction(selectedProjectForVendors.id, vendorId)}
                               className="text-red-600 hover:text-red-700"
                             >
                               Remove
@@ -1096,7 +1096,7 @@ export default function Projects() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => assignVendorToProject(selectedProjectForVendors.id, vendor.id)}
+                          onClick={() => assignVendorToProjectAction(selectedProjectForVendors.id, vendor.id)}
                           className="gap-1"
                         >
                           <Plus className="w-3 h-3" />
