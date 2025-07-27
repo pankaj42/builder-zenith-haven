@@ -446,21 +446,43 @@ ${config.settings.enabled ?
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-2">
                       <Label>Default Delay (ms)</Label>
-                      <Input type="number" placeholder="2000" />
+                      <Input
+                        type="number"
+                        value={globalSettings.defaultDelay}
+                        onChange={(e) => setGlobalSettings(prev => ({ ...prev, defaultDelay: parseInt(e.target.value) || 2000 }))}
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label>Timeout (ms)</Label>
-                      <Input type="number" placeholder="30000" />
+                      <Input
+                        type="number"
+                        value={globalSettings.timeout}
+                        onChange={(e) => setGlobalSettings(prev => ({ ...prev, timeout: parseInt(e.target.value) || 30000 }))}
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label>Retry Attempts</Label>
-                      <Input type="number" placeholder="3" />
+                      <Input
+                        type="number"
+                        value={globalSettings.retryAttempts}
+                        onChange={(e) => setGlobalSettings(prev => ({ ...prev, retryAttempts: parseInt(e.target.value) || 3 }))}
+                      />
                     </div>
                   </div>
                   <div className="space-y-2">
                     <Label>Global Custom Parameters</Label>
-                    <Input placeholder="source=panel&timestamp={TIMESTAMP}" />
+                    <Input
+                      value={globalSettings.globalParams}
+                      onChange={(e) => setGlobalSettings(prev => ({ ...prev, globalParams: e.target.value }))}
+                      placeholder="source=panel&timestamp={TIMESTAMP}"
+                    />
                   </div>
+                  <Button
+                    onClick={() => showCopySuccess(document.body, "Global settings saved!")}
+                    className="w-full mt-4"
+                  >
+                    Save Global Settings
+                  </Button>
                 </CardContent>
               </Card>
 
