@@ -541,24 +541,50 @@ ${config.settings.enabled ?
                       <div className="grid grid-cols-2 gap-4">
                         <div className="flex items-center justify-between">
                           <Label>Enable Redirects</Label>
-                          <Switch checked={selectedConfig.settings.enabled} />
+                          <Switch
+                            checked={selectedConfig.settings.enabled}
+                            onCheckedChange={(checked) => updateVendorConfig(selectedConfig.vendorId, {
+                              settings: { ...selectedConfig.settings, enabled: checked }
+                            })}
+                          />
                         </div>
                         <div className="flex items-center justify-between">
                           <Label>Passthrough Mode</Label>
-                          <Switch checked={selectedConfig.settings.passthrough} />
+                          <Switch
+                            checked={selectedConfig.settings.passthrough}
+                            onCheckedChange={(checked) => updateVendorConfig(selectedConfig.vendorId, {
+                              settings: { ...selectedConfig.settings, passthrough: checked }
+                            })}
+                          />
                         </div>
                         <div className="flex items-center justify-between">
                           <Label>Append Parameters</Label>
-                          <Switch checked={selectedConfig.settings.appendParams} />
+                          <Switch
+                            checked={selectedConfig.settings.appendParams}
+                            onCheckedChange={(checked) => updateVendorConfig(selectedConfig.vendorId, {
+                              settings: { ...selectedConfig.settings, appendParams: checked }
+                            })}
+                          />
                         </div>
                         <div className="space-y-2">
                           <Label>Delay (ms)</Label>
-                          <Input type="number" value={selectedConfig.settings.delay} onChange={() => {}} />
+                          <Input
+                            type="number"
+                            value={selectedConfig.settings.delay}
+                            onChange={(e) => updateVendorConfig(selectedConfig.vendorId, {
+                              settings: { ...selectedConfig.settings, delay: parseInt(e.target.value) || 0 }
+                            })}
+                          />
                         </div>
                       </div>
                       <div className="space-y-2">
                         <Label>Custom Parameters</Label>
-                        <Input value={selectedConfig.settings.customParams} onChange={() => {}} />
+                        <Input
+                          value={selectedConfig.settings.customParams}
+                          onChange={(e) => updateVendorConfig(selectedConfig.vendorId, {
+                            settings: { ...selectedConfig.settings, customParams: e.target.value }
+                          })}
+                        />
                       </div>
                     </div>
 
