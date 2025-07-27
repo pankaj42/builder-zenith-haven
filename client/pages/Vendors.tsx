@@ -682,7 +682,7 @@ export default function Vendors() {
                             </AlertDialogHeader>
                             <AlertDialogFooter>
                               <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction onClick={() => deleteVendor(vendor.id)} className="bg-red-600 hover:bg-red-700">
+                              <AlertDialogAction onClick={() => deleteVendorAction(vendor.id)} className="bg-red-600 hover:bg-red-700">
                                 Delete
                               </AlertDialogAction>
                             </AlertDialogFooter>
