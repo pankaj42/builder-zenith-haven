@@ -23,13 +23,29 @@ interface DashboardStats {
   activeProjects: number;
   activeVendors: number;
   fraudAlerts: number;
+  completionRate: number;
+  avgResponseTime: number;
+  totalEarnings: number;
+  responsesLast24h: number;
+}
+
+interface RecentActivity {
+  id: string;
+  type: 'response' | 'vendor' | 'project' | 'alert';
+  message: string;
+  timestamp: string;
+  severity: 'info' | 'warning' | 'error' | 'success';
 }
 
 export default function Dashboard() {
   const { state, addResponse } = usePanelContext();
+  const [recentActivity, setRecentActivity] = useState<RecentActivity[]>([]);
+  const [isRealTimeEnabled, setIsRealTimeEnabled] = useState(true);
 
-  // Simulate real-time updates by adding random responses
+  // Enhanced real-time simulation with activity tracking
   useEffect(() => {
+    if (!isRealTimeEnabled) return;
+
     const interval = setInterval(() => {
       if (state.projects.length > 0 && state.vendors.length > 0) {
         const activeProjects = state.projects.filter(p => p.status === 'active');
@@ -50,21 +66,42 @@ export default function Dashboard() {
               ip: `192.168.1.${Math.floor(Math.random() * 255)}`,
               duration: Math.floor(Math.random() * 20) + 5
             });
+
+            // Add activity log
+            const newActivity: RecentActivity = {
+              id: Date.now().toString(),
+              type: 'response',
+              message: `New ${randomStatus} from ${randomVendor.name} on ${randomProject.name}`,
+              timestamp: new Date().toISOString(),
+              severity: randomStatus === 'complete' ? 'success' :
+                       randomStatus === 'terminate' ? 'warning' : 'info'
+            };
+
+            setRecentActivity(prev => [newActivity, ...prev.slice(0, 9)]);
           }
         }
       }
-    }, 10000); // Every 10 seconds
+    }, 8000); // Every 8 seconds
 
     return () => clearInterval(interval);
-  }, [state.projects, state.vendors, addResponse]);
+  }, [state.projects, state.vendors, addResponse, isRealTimeEnabled]);
 
-  const stats = {
+  const stats: DashboardStats = {
     totalCompletes: state.stats.totalCompletes,
     totalTerminates: state.stats.totalTerminates,
     totalQuotaFull: state.stats.totalQuotaFull,
     activeProjects: state.projects.filter(p => p.status === 'active').length,
     activeVendors: state.vendors.filter(v => v.status === 'active').length,
-    fraudAlerts: 3 // Keep static for now
+    fraudAlerts: state.vendors.filter(v => v.fraudScore > 3.5).length,
+    completionRate: state.stats.overallCompletionRate,
+    avgResponseTime: state.stats.avgResponseTime,
+    totalEarnings: state.stats.totalEarnings,
+    responsesLast24h: state.responses.filter(r => {
+      const responseTime = new Date(r.timestamp);
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      return responseTime > yesterday;
+    }).length
   };
 
   return (
@@ -81,9 +118,18 @@ export default function Dashboard() {
               <p className="text-muted-foreground">Real-time survey management and analytics</p>
             </div>
             <div className="flex items-center gap-3">
-              <Badge variant="outline" className="gap-1">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                Live
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsRealTimeEnabled(!isRealTimeEnabled)}
+                className="gap-2"
+              >
+                <Activity className={`w-4 h-4 ${isRealTimeEnabled ? 'text-green-600' : 'text-gray-400'}`} />
+                {isRealTimeEnabled ? 'Live Updates' : 'Paused'}
+              </Button>
+              <Badge variant="outline" className={`gap-1 ${isRealTimeEnabled ? 'animate-pulse' : ''}`}>
+                <div className={`w-2 h-2 rounded-full ${isRealTimeEnabled ? 'bg-green-500' : 'bg-gray-400'}`} />
+                {isRealTimeEnabled ? 'Live' : 'Paused'}
               </Badge>
               <Button variant="outline" size="sm">
                 <UserCheck className="w-4 h-4 mr-2" />
