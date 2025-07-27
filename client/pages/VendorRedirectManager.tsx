@@ -753,6 +753,149 @@ ${config.settings.enabled ?
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Add Vendor Dialog */}
+      <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Add New Vendor</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-6">
+            {/* Basic Info */}
+            <div className="space-y-4">
+              <h4 className="font-semibold">Basic Information</h4>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Vendor ID</Label>
+                  <Input
+                    value={newVendor.vendorId || ""}
+                    onChange={(e) => setNewVendor(prev => ({ ...prev, vendorId: e.target.value }))}
+                    placeholder="V001"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Vendor Name</Label>
+                  <Input
+                    value={newVendor.vendorName || ""}
+                    onChange={(e) => setNewVendor(prev => ({ ...prev, vendorName: e.target.value }))}
+                    placeholder="Vendor Company Name"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Redirect URLs */}
+            <div className="space-y-4">
+              <h4 className="font-semibold">Redirect URLs</h4>
+              <div className="grid grid-cols-1 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-green-700">Complete URL</Label>
+                  <Input
+                    value={newVendor.redirectUrls?.complete || ""}
+                    onChange={(e) => setNewVendor(prev => ({
+                      ...prev,
+                      redirectUrls: { ...prev.redirectUrls, complete: e.target.value } as any
+                    }))}
+                    placeholder="https://vendor.com/complete"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-orange-700">Terminate URL</Label>
+                  <Input
+                    value={newVendor.redirectUrls?.terminate || ""}
+                    onChange={(e) => setNewVendor(prev => ({
+                      ...prev,
+                      redirectUrls: { ...prev.redirectUrls, terminate: e.target.value } as any
+                    }))}
+                    placeholder="https://vendor.com/terminate"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-blue-700">Quota Full URL</Label>
+                  <Input
+                    value={newVendor.redirectUrls?.quotaFull || ""}
+                    onChange={(e) => setNewVendor(prev => ({
+                      ...prev,
+                      redirectUrls: { ...prev.redirectUrls, quotaFull: e.target.value } as any
+                    }))}
+                    placeholder="https://vendor.com/quotafull"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-gray-700">Study Closed URL</Label>
+                  <Input
+                    value={newVendor.redirectUrls?.studyClosed || ""}
+                    onChange={(e) => setNewVendor(prev => ({
+                      ...prev,
+                      redirectUrls: { ...prev.redirectUrls, studyClosed: e.target.value } as any
+                    }))}
+                    placeholder="https://vendor.com/closed"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Settings */}
+            <div className="space-y-4">
+              <h4 className="font-semibold">Settings</h4>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex items-center justify-between">
+                  <Label>Enable Redirects</Label>
+                  <Switch
+                    checked={newVendor.settings?.enabled || true}
+                    onCheckedChange={(checked) => setNewVendor(prev => ({
+                      ...prev,
+                      settings: { ...prev.settings, enabled: checked } as any
+                    }))}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <Label>Passthrough Mode</Label>
+                  <Switch
+                    checked={newVendor.settings?.passthrough || true}
+                    onCheckedChange={(checked) => setNewVendor(prev => ({
+                      ...prev,
+                      settings: { ...prev.settings, passthrough: checked } as any
+                    }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Delay (ms)</Label>
+                  <Input
+                    type="number"
+                    value={newVendor.settings?.delay || globalSettings.defaultDelay}
+                    onChange={(e) => setNewVendor(prev => ({
+                      ...prev,
+                      settings: { ...prev.settings, delay: parseInt(e.target.value) || globalSettings.defaultDelay } as any
+                    }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Custom Parameters</Label>
+                  <Input
+                    value={newVendor.settings?.customParams || ""}
+                    onChange={(e) => setNewVendor(prev => ({
+                      ...prev,
+                      settings: { ...prev.settings, customParams: e.target.value } as any
+                    }))}
+                    placeholder="source=panel&vendor=V001"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-2 pt-4">
+              <Button variant="outline" onClick={() => setShowAddDialog(false)} className="flex-1">
+                Cancel
+              </Button>
+              <Button onClick={addVendor} className="flex-1">
+                Add Vendor
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
