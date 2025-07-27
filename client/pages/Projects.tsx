@@ -25,7 +25,10 @@ import {
   CheckCircle,
   XCircle,
   AlertTriangle,
-  FolderOpen
+  FolderOpen,
+  Mail,
+  UserPlus,
+  Send
 } from "lucide-react";
 import Sidebar from "@/components/Sidebar";
 
