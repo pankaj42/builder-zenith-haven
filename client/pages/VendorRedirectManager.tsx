@@ -130,33 +130,41 @@ export default function VendorRedirectManager() {
 
   const copyRedirectUrl = (url: string, type: string, buttonElement: HTMLElement) => {
     const fullUrl = url + "?pid={PID}&uid={UID}&source=panel";
-    try {
+
+    if (navigator.clipboard && window.isSecureContext) {
       navigator.clipboard.writeText(fullUrl).then(() => {
         showCopySuccess(buttonElement, `${type} URL Copied!`);
       }).catch((err) => {
-        console.error("Clipboard API failed:", err);
-        // Fallback to older method
-        const textArea = document.createElement("textarea");
-        textArea.value = fullUrl;
-        textArea.style.position = "fixed";
-        textArea.style.left = "-999999px";
-        textArea.style.top = "-999999px";
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-
-        const successful = document.execCommand('copy');
-        document.body.removeChild(textArea);
-
-        if (successful) {
-          showCopySuccess(buttonElement, `${type} URL Copied!`);
-        } else {
-          prompt(`Copy this ${type} redirect URL:`, fullUrl);
-        }
+        console.warn("Clipboard API failed, using fallback:", err.message);
+        fallbackCopyMethod(fullUrl, buttonElement, `${type} URL Copied!`);
       });
+    } else {
+      fallbackCopyMethod(fullUrl, buttonElement, `${type} URL Copied!`);
+    }
+  };
+
+  const fallbackCopyMethod = (text: string, buttonElement: HTMLElement, message: string) => {
+    try {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";
+      textArea.style.left = "-999999px";
+      textArea.style.top = "-999999px";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textArea);
+
+      if (successful) {
+        showCopySuccess(buttonElement, message);
+      } else {
+        prompt("Copy this text:", text);
+      }
     } catch (err) {
-      console.error("Copy failed:", err);
-      prompt(`Copy this ${type} redirect URL:`, fullUrl);
+      console.error("Fallback copy failed:", err);
+      prompt("Copy this text:", text);
     }
   };
 
