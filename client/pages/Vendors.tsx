@@ -697,6 +697,64 @@ export default function Vendors() {
             </TabsContent>
 
             <TabsContent value="assignments" className="space-y-6">
+              {/* Assignment Tracking Summary */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <Card>
+                  <CardContent className="p-4 text-center">
+                    <div className="text-2xl font-bold text-blue-600">{assignments.length}</div>
+                    <div className="text-sm text-muted-foreground">Total Assignments</div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="p-4 text-center">
+                    <div className="text-2xl font-bold text-green-600">
+                      {assignments.filter(a => a.status === 'active').length}
+                    </div>
+                    <div className="text-sm text-muted-foreground">Active</div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="p-4 text-center">
+                    <div className="text-2xl font-bold text-orange-600">
+                      {assignments.filter(a => a.status === 'paused').length}
+                    </div>
+                    <div className="text-sm text-muted-foreground">Paused</div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="p-4 text-center">
+                    <div className="text-2xl font-bold text-purple-600">
+                      {new Set(assignments.map(a => a.projectId)).size}
+                    </div>
+                    <div className="text-sm text-muted-foreground">Unique Projects</div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Quick Search and Filter */}
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex gap-4 items-center">
+                    <div className="flex-1">
+                      <Input
+                        placeholder="Search by project name, vendor name, or ID..."
+                        className="w-full"
+                      />
+                    </div>
+                    <Select defaultValue="all">
+                      <SelectTrigger className="w-32">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Status</SelectItem>
+                        <SelectItem value="active">Active</SelectItem>
+                        <SelectItem value="paused">Paused</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </CardContent>
+              </Card>
+
               <div className="grid gap-4">
                 {assignments.map((assignment, index) => (
                   <Card key={`${assignment.projectId}-${assignment.vendorId}`}>
