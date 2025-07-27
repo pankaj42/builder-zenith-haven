@@ -468,7 +468,7 @@ const finalVendorLink = vendorStartLink + "RESPONDENT_ID";
                           variant="outline"
                           size="sm"
                           className="mt-2 gap-1"
-                          onClick={() => copyToClipboard(getImplementationCode())}
+                          onClick={(e) => copyToClipboard(getImplementationCode(), e.currentTarget, "Code Copied!")}
                         >
                           <Copy className="w-3 h-3" />
                           Copy Code
