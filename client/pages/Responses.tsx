@@ -145,7 +145,7 @@ export default function Responses() {
 
   // Filter responses based on all criteria
   useEffect(() => {
-    let filtered = allResponses;
+    let filtered = combinedResponses;
 
     // Search filter
     if (searchTerm) {
