@@ -396,13 +396,7 @@ Priority: ${ipData.riskScore > 8 ? 'High' : ipData.riskScore > 6 ? 'Medium' : 'L
     }
   };
 
-  const unblockIP = (ip: string) => {
-    setIpMonitoring(ips => ips.map(ipData => 
-      ipData.ip === ip 
-        ? { ...ipData, isBlocked: false, suspiciousActivity: ipData.suspiciousActivity.filter(s => s !== "Blocked by admin") }
-        : ipData
-    ));
-  };
+
 
   const getSeverityColor = (severity: string) => {
     switch(severity) {
