@@ -907,8 +907,8 @@ export default function Vendors() {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-semibold">Vendor Redirect URLs</h3>
-                  <Badge className={selectedVendorForDetails.redirectSettings.enabled ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}>
-                    {selectedVendorForDetails.redirectSettings.enabled ? "Active" : "Disabled"}
+                  <Badge className={selectedVendorForDetails.redirectSettings?.enabled ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}>
+                    {selectedVendorForDetails.redirectSettings?.enabled ? "Active" : "Disabled"}
                   </Badge>
                 </div>
 
@@ -918,19 +918,19 @@ export default function Vendors() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="flex items-center justify-between">
                       <Label className="text-sm">Enable Redirects</Label>
-                      <Switch checked={selectedVendorForDetails.redirectSettings.enabled} readOnly />
+                      <Switch checked={selectedVendorForDetails.redirectSettings?.enabled || false} readOnly />
                     </div>
                     <div className="flex items-center justify-between">
                       <Label className="text-sm">Pass-through Mode</Label>
-                      <Switch checked={selectedVendorForDetails.redirectSettings.passthrough} readOnly />
+                      <Switch checked={selectedVendorForDetails.redirectSettings?.passthrough || false} readOnly />
                     </div>
                     <div className="flex items-center justify-between">
                       <Label className="text-sm">Append Parameters</Label>
-                      <Switch checked={selectedVendorForDetails.redirectSettings.appendParams} readOnly />
+                      <Switch checked={selectedVendorForDetails.redirectSettings?.appendParams || false} readOnly />
                     </div>
                     <div className="text-sm">
                       <Label className="text-muted-foreground">Custom Params:</Label>
-                      <p className="font-mono text-xs mt-1">{selectedVendorForDetails.redirectSettings.customParams}</p>
+                      <p className="font-mono text-xs mt-1">{selectedVendorForDetails.redirectSettings?.customParams || 'None'}</p>
                     </div>
                   </div>
                 </div>
