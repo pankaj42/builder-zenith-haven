@@ -769,6 +769,18 @@ export default function Vendors() {
                           <p className="text-sm text-muted-foreground">
                             Vendor: {vendors.find(v => v.id === assignment.vendorId)?.name} ({assignment.vendorId})
                           </p>
+                          {(() => {
+                            const project = state.projects.find(p => p.id === assignment.projectId);
+                            const incentiveAmount = project?.incentive ? parseFloat(project.incentive.replace('$', '')) : 0;
+                            const cpi = assignment.completes > 0 ? incentiveAmount.toFixed(2) : '0.00';
+                            const totalEarnings = (assignment.completes * incentiveAmount).toFixed(2);
+                            const completionRate = assignment.sent > 0 ? ((assignment.completes / assignment.sent) * 100).toFixed(1) : '0.0';
+                            return (
+                              <p className="text-xs text-blue-600 font-mono">
+                                CPI: ${cpi} | Total Earned: ${totalEarnings} | CR: {completionRate}%
+                              </p>
+                            );
+                          })()}
                         </div>
                         <Badge className={assignment.status === 'active' ? getStatusColor('active') : getStatusColor('paused')}>
                           {assignment.status}
