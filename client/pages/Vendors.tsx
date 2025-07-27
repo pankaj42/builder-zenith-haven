@@ -207,7 +207,7 @@ export default function Vendors() {
   };
 
   // Reusable copy function that works in all contexts
-  const copyToClipboard = (text: string, description: string = "text") => {
+  const copyToClipboard = (text: string, buttonElement: HTMLElement, description: string = "Copied!") => {
     try {
       const textArea = document.createElement("textarea");
       textArea.value = text;
@@ -222,13 +222,13 @@ export default function Vendors() {
       document.body.removeChild(textArea);
 
       if (successful) {
-        alert(`✅ ${description} Copied!\n\n${text}`);
+        showCopySuccess(buttonElement, description);
       } else {
-        prompt(`Copy this ${description.toLowerCase()}:`, text);
+        prompt(`Copy this text:`, text);
       }
     } catch (err) {
       console.error("Copy failed:", err);
-      prompt(`Copy this ${description.toLowerCase()}:`, text);
+      prompt(`Copy this text:`, text);
     }
   };
 
