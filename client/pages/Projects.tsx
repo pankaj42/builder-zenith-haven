@@ -123,8 +123,26 @@ export default function Projects() {
 
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
+  const [showVendorAssignDialog, setShowVendorAssignDialog] = useState(false);
+  const [showEmailDialog, setShowEmailDialog] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [selectedProjectForDetails, setSelectedProjectForDetails] = useState<Project | null>(null);
+  const [selectedProjectForVendors, setSelectedProjectForVendors] = useState<Project | null>(null);
+
+  // Available vendors list
+  const [availableVendors] = useState([
+    { id: "V001", name: "Quality Traffic Solutions", email: "john@qualitytraffic.com" },
+    { id: "V002", name: "Survey Source Network", email: "sarah@surveysource.net" },
+    { id: "V003", name: "Panel Partners LLC", email: "mike@panelpartners.com" },
+  ]);
+
+  const [emailSettings, setEmailSettings] = useState({
+    subject: "",
+    message: "",
+    includeQuotas: true,
+    includeStartLink: true,
+    selectedVendors: [] as string[]
+  });
   const [newProject, setNewProject] = useState<Partial<Project>>({
     name: "",
     clientName: "",
