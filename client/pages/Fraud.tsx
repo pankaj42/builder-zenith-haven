@@ -312,30 +312,7 @@ export default function Fraud() {
   const viewVendorDetails = (vendorId: string) => {
     const vendor = vendorScores.find(v => v.vendorId === vendorId);
     if (vendor) {
-      alert(`Vendor Fraud Analysis - ${vendor.vendorName}
-
-Overall Fraud Score: ${vendor.overallScore}/5
-Risk Level: ${vendor.riskLevel.toUpperCase()}
-
-Fraud Indicators:
-• Duplicate IP Rate: ${vendor.duplicateIPRate}%
-• Duplicate UID Rate: ${vendor.duplicateUIDRate}%
-• Fast Completion Rate: ${vendor.fastCompletionRate}%
-• High Terminate Rate: ${vendor.highTerminateRate}%
-
-Activity Summary:
-• Total Responses: ${vendor.totalResponses}
-• Flagged Responses: ${vendor.flaggedResponses}
-• Suspicious Patterns: ${vendor.suspiciousPatterns}
-
-Last Activity: ${new Date(vendor.lastActivity).toLocaleString()}
-
-Recommendation: ${
-  vendor.riskLevel === 'critical' ? 'Immediate action required - consider suspension' :
-  vendor.riskLevel === 'high' ? 'Enhanced monitoring and investigation needed' :
-  vendor.riskLevel === 'medium' ? 'Continue monitoring with caution' :
-  'Continue standard monitoring'
-}`);
+      setSelectedVendor(vendor);
     }
   };
 
