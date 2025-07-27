@@ -171,41 +171,39 @@ export default function Vendors() {
 
   // Projects now come from global state via: const projects = state.projects.map(p => ({ id: p.id, name: p.name }));
 
-  const [assignments, setAssignments] = useState<ProjectAssignment[]>([
-    {
-      projectId: "P12345",
-      projectName: "Consumer Behavior Study 2024",
-      vendorId: "V001",
-      startLink: "https://yourpanel.com/start/P12345/V001/?ID=",
-      status: "active",
-      sent: 1200,
-      completes: 942,
-      terminates: 218,
-      quotaFull: 40
-    },
-    {
-      projectId: "P12346",
-      projectName: "Brand Awareness Survey",
-      vendorId: "V001",
-      startLink: "https://yourpanel.com/start/P12346/V001/?ID=",
-      status: "active",
-      sent: 800,
-      completes: 628,
-      terminates: 152,
-      quotaFull: 20
-    },
-    {
-      projectId: "P12345",
-      projectName: "Consumer Behavior Study 2024",
-      vendorId: "V002",
-      startLink: "https://yourpanel.com/start/P12345/V002/?ID=",
-      status: "active",
-      sent: 950,
-      completes: 779,
-      terminates: 145,
-      quotaFull: 26
-    }
-  ]);
+  // Generate dynamic assignments from global state
+  const generateAssignments = (): ProjectAssignment[] => {
+    const assignments: ProjectAssignment[] = [];
+
+    state.vendors.forEach(vendor => {
+      vendor.assignedProjects.forEach(projectId => {
+        const project = state.projects.find(p => p.id === projectId);
+        if (project) {
+          const vendorResponses = state.responses.filter(r => r.projectId === projectId && r.vendorId === vendor.id);
+          const completes = vendorResponses.filter(r => r.status === 'complete').length;
+          const terminates = vendorResponses.filter(r => r.status === 'terminate').length;
+          const quotaFull = vendorResponses.filter(r => r.status === 'quota-full').length;
+          const sent = vendorResponses.length + Math.floor(Math.random() * 200); // Add some mock sent count
+
+          assignments.push({
+            projectId: project.id,
+            projectName: project.name,
+            vendorId: vendor.id,
+            startLink: generateStartLink(project.id, vendor.id),
+            status: project.status === 'active' ? 'active' : 'paused',
+            sent,
+            completes,
+            terminates,
+            quotaFull
+          });
+        }
+      });
+    });
+
+    return assignments;
+  };
+
+  const dynamicAssignments = generateAssignments(); // Always use dynamic data
 
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showAssignDialog, setShowAssignDialog] = useState(false);
