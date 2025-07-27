@@ -705,14 +705,14 @@ export default function Vendors() {
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                 <Card>
                   <CardContent className="p-4 text-center">
-                    <div className="text-2xl font-bold text-blue-600">{assignments.length}</div>
+                    <div className="text-2xl font-bold text-blue-600">{dynamicAssignments.length}</div>
                     <div className="text-sm text-muted-foreground">Total Assignments</div>
                   </CardContent>
                 </Card>
                 <Card>
                   <CardContent className="p-4 text-center">
                     <div className="text-2xl font-bold text-green-600">
-                      {assignments.filter(a => a.status === 'active').length}
+                      {dynamicAssignments.filter(a => a.status === 'active').length}
                     </div>
                     <div className="text-sm text-muted-foreground">Active</div>
                   </CardContent>
@@ -720,7 +720,7 @@ export default function Vendors() {
                 <Card>
                   <CardContent className="p-4 text-center">
                     <div className="text-2xl font-bold text-orange-600">
-                      {assignments.filter(a => a.status === 'paused').length}
+                      {dynamicAssignments.filter(a => a.status === 'paused').length}
                     </div>
                     <div className="text-sm text-muted-foreground">Paused</div>
                   </CardContent>
@@ -728,7 +728,7 @@ export default function Vendors() {
                 <Card>
                   <CardContent className="p-4 text-center">
                     <div className="text-2xl font-bold text-purple-600">
-                      {new Set(assignments.map(a => a.projectId)).size}
+                      {new Set(dynamicAssignments.map(a => a.projectId)).size}
                     </div>
                     <div className="text-sm text-muted-foreground">Unique Projects</div>
                   </CardContent>
