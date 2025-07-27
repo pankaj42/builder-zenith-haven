@@ -71,126 +71,162 @@ interface TimeSeriesData {
 export default function Analytics() {
   const { state } = usePanelContext();
 
-  const [vendorPerformance, setVendorPerformance] = useState<VendorPerformance[]>([
-    {
-      vendorId: "V001",
-      vendorName: "Quality Traffic Solutions",
-      completionRate: 78.5,
-      terminateRate: 18.2,
-      avgResponseTime: 12.3,
-      totalSent: 2450,
-      totalCompletes: 1923,
-      totalTerminates: 445,
-      totalQuotaFull: 82,
-      fraudScore: 2.1,
-      rating: 4.2,
-      trend: 'up',
-      recentProjects: ["P12345", "P12346"],
-      earnings: 4807.50,
-      lastActive: "2024-01-25T10:30:00Z"
-    },
-    {
-      vendorId: "V002",
-      vendorName: "Survey Source Network",
-      completionRate: 82.1,
-      terminateRate: 15.3,
-      avgResponseTime: 14.7,
-      totalSent: 1890,
-      totalCompletes: 1551,
-      totalTerminates: 289,
-      totalQuotaFull: 50,
-      fraudScore: 1.5,
-      rating: 4.6,
-      trend: 'up',
-      recentProjects: ["P12345", "P12347"],
-      earnings: 3877.50,
-      lastActive: "2024-01-25T10:25:00Z"
-    },
-    {
-      vendorId: "V003",
-      vendorName: "Panel Partners LLC",
-      completionRate: 65.4,
-      terminateRate: 28.7,
-      avgResponseTime: 8.9,
-      totalSent: 1245,
-      totalCompletes: 814,
-      totalTerminates: 357,
-      totalQuotaFull: 74,
-      fraudScore: 4.2,
-      rating: 2.8,
-      trend: 'down',
-      recentProjects: ["P12347"],
-      earnings: 2035.00,
-      lastActive: "2024-01-25T09:45:00Z"
-    }
-  ]);
+  // Generate dynamic vendor performance from global state
+  const generateVendorPerformance = (): VendorPerformance[] => {
+    return state.vendors.map(vendor => {
+      const vendorResponses = state.responses.filter(r => r.vendorId === vendor.id);
+      const completes = vendorResponses.filter(r => r.status === 'complete').length;
+      const terminates = vendorResponses.filter(r => r.status === 'terminate').length;
+      const quotaFull = vendorResponses.filter(r => r.status === 'quota-full').length;
+      const totalResponses = vendorResponses.length;
 
-  const [projectAnalytics, setProjectAnalytics] = useState<ProjectAnalytics[]>([
-    {
-      projectId: "P12345",
-      projectName: "Consumer Behavior Study 2024",
-      status: "active",
-      totalResponses: 847,
-      completionRate: 78.2,
-      avgCompletionTime: 13.5,
-      topVendors: [
-        { vendorId: "V001", vendorName: "Quality Traffic Solutions", completes: 492 },
-        { vendorId: "V002", vendorName: "Survey Source Network", completes: 355 }
-      ],
-      demographics: {
-        gender: { male: 420, female: 427 },
-        ageGroups: { '18-24': 127, '25-34': 203, '35-44': 189, '45-54': 211, '55+': 117 },
-        countries: [
-          { country: "United States", count: 512 },
-          { country: "Canada", count: 201 },
-          { country: "United Kingdom", count: 134 }
-        ]
-      },
-      dailyStats: [
-        { date: "2024-01-20", completes: 45, terminates: 12 },
-        { date: "2024-01-21", completes: 52, terminates: 15 },
-        { date: "2024-01-22", completes: 67, terminates: 18 },
-        { date: "2024-01-23", completes: 58, terminates: 14 },
-        { date: "2024-01-24", completes: 71, terminates: 19 },
-        { date: "2024-01-25", completes: 62, terminates: 16 }
-      ]
-    },
-    {
-      projectId: "P12346",
-      projectName: "Brand Awareness Survey",
-      status: "active",
-      totalResponses: 234,
-      completionRate: 82.6,
-      avgCompletionTime: 8.7,
-      topVendors: [
-        { vendorId: "V001", vendorName: "Quality Traffic Solutions", completes: 234 }
-      ],
-      demographics: {
-        gender: { male: 112, female: 122 },
-        ageGroups: { '18-24': 31, '25-34': 67, '35-44': 58, '45-54': 52, '55+': 26 },
-        countries: [
-          { country: "United States", count: 234 }
-        ]
-      },
-      dailyStats: [
-        { date: "2024-01-20", completes: 28, terminates: 6 },
-        { date: "2024-01-21", completes: 35, terminates: 8 },
-        { date: "2024-01-22", completes: 42, terminates: 9 },
-        { date: "2024-01-23", completes: 38, terminates: 7 },
-        { date: "2024-01-24", completes: 47, terminates: 11 },
-        { date: "2024-01-25", completes: 44, terminates: 10 }
-      ]
-    }
-  ]);
+      const completionRate = totalResponses > 0 ? (completes / totalResponses) * 100 : 0;
+      const terminateRate = totalResponses > 0 ? (terminates / totalResponses) * 100 : 0;
 
-  const [timeSeriesData, setTimeSeriesData] = useState<TimeSeriesData[]>([
-    { date: "2024-01-20", completes: 73, terminates: 18, quotaFull: 5, fraudAlerts: 2 },
-    { date: "2024-01-21", completes: 87, terminates: 23, quotaFull: 7, fraudAlerts: 1 },
-    { date: "2024-01-22", completes: 109, terminates: 27, quotaFull: 9, fraudAlerts: 3 },
-    { date: "2024-01-23", completes: 96, terminates: 21, quotaFull: 6, fraudAlerts: 2 },
-    { date: "2024-01-24", completes: 118, terminates: 30, quotaFull: 11, fraudAlerts: 4 },
-    { date: "2024-01-25", completes: 106, terminates: 26, quotaFull: 8, fraudAlerts: 1 }
-  ]);
+      // Calculate earnings from assigned projects
+      const earnings = vendor.assignedProjects.reduce((total, projectId) => {
+        const project = state.projects.find(p => p.id === projectId);
+        const projectCompletes = vendorResponses.filter(r => r.projectId === projectId && r.status === 'complete').length;
+        const incentive = project?.incentive ? parseFloat(project.incentive.replace('$', '')) : 0;
+        return total + (projectCompletes * incentive);
+      }, 0);
+
+      // Calculate rating based on performance
+      const fraudPenalty = Math.max(0, (vendor.fraudScore - 2) * 0.5);
+      const rating = Math.max(1, Math.min(5, completionRate / 20 - fraudPenalty));
+
+      // Determine trend based on recent performance
+      const recentResponses = vendorResponses.slice(-10);
+      const recentCompletionRate = recentResponses.length > 0 ?
+        (recentResponses.filter(r => r.status === 'complete').length / recentResponses.length) * 100 : 0;
+      const trend = recentCompletionRate > completionRate ? 'up' :
+                   recentCompletionRate < completionRate ? 'down' : 'stable';
+
+      return {
+        vendorId: vendor.id,
+        vendorName: vendor.name,
+        completionRate: Math.round(completionRate * 10) / 10,
+        terminateRate: Math.round(terminateRate * 10) / 10,
+        avgResponseTime: 8 + Math.random() * 10, // Mock response time
+        totalSent: vendor.totalSent,
+        totalCompletes: completes,
+        totalTerminates: terminates,
+        totalQuotaFull: quotaFull,
+        fraudScore: vendor.fraudScore,
+        rating: Math.round(rating * 10) / 10,
+        trend: trend as 'up' | 'down' | 'stable',
+        recentProjects: vendor.assignedProjects,
+        earnings: Math.round(earnings * 100) / 100,
+        lastActive: new Date().toISOString()
+      };
+    });
+  };
+
+  const [vendorPerformance, setVendorPerformance] = useState<VendorPerformance[]>([]);
+
+  // Generate dynamic project analytics from global state
+  const generateProjectAnalytics = (): ProjectAnalytics[] => {
+    return state.projects.map(project => {
+      const projectResponses = state.responses.filter(r => r.projectId === project.id);
+      const completes = projectResponses.filter(r => r.status === 'complete').length;
+      const terminates = projectResponses.filter(r => r.status === 'terminate').length;
+      const totalResponses = projectResponses.length;
+
+      const completionRate = totalResponses > 0 ? (completes / totalResponses) * 100 : 0;
+
+      // Calculate top vendors for this project
+      const vendorStats = project.vendors.map(vendorId => {
+        const vendor = state.vendors.find(v => v.id === vendorId);
+        const vendorCompletes = projectResponses.filter(r => r.vendorId === vendorId && r.status === 'complete').length;
+        return {
+          vendorId,
+          vendorName: vendor?.name || 'Unknown',
+          completes: vendorCompletes
+        };
+      }).sort((a, b) => b.completes - a.completes);
+
+      // Generate mock demographics based on project data
+      const mockDemographics = {
+        gender: {
+          male: Math.floor(completes * 0.48),
+          female: Math.floor(completes * 0.52)
+        },
+        ageGroups: {
+          '18-24': Math.floor(completes * 0.15),
+          '25-34': Math.floor(completes * 0.25),
+          '35-44': Math.floor(completes * 0.22),
+          '45-54': Math.floor(completes * 0.23),
+          '55+': Math.floor(completes * 0.15)
+        },
+        countries: [
+          { country: "United States", count: Math.floor(completes * 0.6) },
+          { country: "Canada", count: Math.floor(completes * 0.25) },
+          { country: "United Kingdom", count: Math.floor(completes * 0.15) }
+        ]
+      };
+
+      // Generate daily stats for last 6 days
+      const dailyStats = Array.from({ length: 6 }, (_, i) => {
+        const date = new Date();
+        date.setDate(date.getDate() - (5 - i));
+        const dayCompletes = Math.floor(completes / 6) + Math.floor(Math.random() * 10);
+        const dayTerminates = Math.floor(terminates / 6) + Math.floor(Math.random() * 5);
+        return {
+          date: date.toISOString().split('T')[0],
+          completes: dayCompletes,
+          terminates: dayTerminates
+        };
+      });
+
+      return {
+        projectId: project.id,
+        projectName: project.name,
+        status: project.status,
+        totalResponses,
+        completionRate: Math.round(completionRate * 10) / 10,
+        avgCompletionTime: project.estimatedDuration + Math.random() * 5,
+        topVendors: vendorStats,
+        demographics: mockDemographics,
+        dailyStats
+      };
+    });
+  };
+
+  const [projectAnalytics, setProjectAnalytics] = useState<ProjectAnalytics[]>([]);
+
+  // Generate dynamic time series data from global state
+  const generateTimeSeriesData = (): TimeSeriesData[] => {
+    const data: TimeSeriesData[] = [];
+
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toISOString().split('T')[0];
+
+      const dayResponses = state.responses.filter(r =>
+        r.timestamp.startsWith(dateStr)
+      );
+
+      const completes = dayResponses.filter(r => r.status === 'complete').length;
+      const terminates = dayResponses.filter(r => r.status === 'terminate').length;
+      const quotaFull = dayResponses.filter(r => r.status === 'quota-full').length;
+
+      // Calculate fraud alerts based on fraud scores
+      const fraudAlerts = state.vendors.filter(v => v.fraudScore > 3.5).length;
+
+      data.push({
+        date: dateStr,
+        completes: completes + Math.floor(Math.random() * 20), // Add some mock data for demo
+        terminates: terminates + Math.floor(Math.random() * 10),
+        quotaFull: quotaFull + Math.floor(Math.random() * 5),
+        fraudAlerts: Math.max(0, fraudAlerts + Math.floor(Math.random() * 3) - 1)
+      });
+    }
+
+    return data;
+  };
+
+  const [timeSeriesData, setTimeSeriesData] = useState<TimeSeriesData[]>([]);
 
   const [selectedPeriod, setSelectedPeriod] = useState("7days");
   const [selectedProject, setSelectedProject] = useState("all");
@@ -202,9 +238,10 @@ export default function Analytics() {
   const avgResponseTime = state.stats.avgResponseTime;
   const totalEarnings = state.stats.totalEarnings;
 
-  const topPerformingVendor = vendorPerformance.reduce((top, vendor) => 
-    vendor.completionRate > top.completionRate ? vendor : top
-  );
+  const topPerformingVendor = vendorPerformance.length > 0 ?
+    vendorPerformance.reduce((top, vendor) =>
+      vendor.completionRate > top.completionRate ? vendor : top
+    ) : null;
 
   const getPerformanceColor = (rate: number, type: 'completion' | 'terminate' | 'fraud') => {
     switch (type) {
@@ -244,9 +281,25 @@ export default function Analytics() {
     ));
   };
 
+  // Update analytics data when global state changes
+  useEffect(() => {
+    setVendorPerformance(generateVendorPerformance());
+    setProjectAnalytics(generateProjectAnalytics());
+    setTimeSeriesData(generateTimeSeriesData());
+  }, [state.vendors, state.projects, state.responses]);
+
   const exportReport = (type: 'vendor' | 'project' | 'overview') => {
-    // Simulate report export
-    alert(`Exporting ${type} analytics report...`);
+    const data = type === 'vendor' ? vendorPerformance :
+                type === 'project' ? projectAnalytics :
+                { vendors: vendorPerformance, projects: projectAnalytics, timeSeries: timeSeriesData };
+
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", `${type}_analytics_${new Date().toISOString().split('T')[0]}.json`);
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
   };
 
   return (
@@ -347,27 +400,33 @@ export default function Analytics() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-xl font-bold">{topPerformingVendor.vendorName}</h3>
-                      <p className="text-muted-foreground">{topPerformingVendor.vendorId}</p>
-                      <div className="flex items-center gap-1 mt-2">
-                        {getRatingStars(topPerformingVendor.rating)}
-                        <span className="ml-2 text-sm text-muted-foreground">
-                          {topPerformingVendor.rating.toFixed(1)}/5.0
-                        </span>
+                  {topPerformingVendor ? (
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-xl font-bold">{topPerformingVendor.vendorName}</h3>
+                        <p className="text-muted-foreground">{topPerformingVendor.vendorId}</p>
+                        <div className="flex items-center gap-1 mt-2">
+                          {getRatingStars(topPerformingVendor.rating)}
+                          <span className="ml-2 text-sm text-muted-foreground">
+                            {topPerformingVendor.rating.toFixed(1)}/5.0
+                          </span>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-3xl font-bold text-green-600">
+                          {topPerformingVendor.completionRate}%
+                        </div>
+                        <div className="text-sm text-muted-foreground">Completion Rate</div>
+                        <div className="text-sm font-medium mt-1">
+                          ${topPerformingVendor.earnings.toLocaleString()} earned
+                        </div>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <div className="text-3xl font-bold text-green-600">
-                        {topPerformingVendor.completionRate}%
-                      </div>
-                      <div className="text-sm text-muted-foreground">Completion Rate</div>
-                      <div className="text-sm font-medium mt-1">
-                        ${topPerformingVendor.earnings.toLocaleString()} earned
-                      </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <p className="text-muted-foreground">No vendor data available</p>
                     </div>
-                  </div>
+                  )}
                 </CardContent>
               </Card>
 
