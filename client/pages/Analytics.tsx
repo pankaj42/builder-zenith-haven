@@ -233,7 +233,6 @@ export default function Analytics() {
   const [timeSeriesData, setTimeSeriesData] = useState<TimeSeriesData[]>([]);
 
   const [selectedPeriod, setSelectedPeriod] = useState("7days");
-  const [selectedProject, setSelectedProject] = useState("all");
 
   // Calculate summary metrics from global state
   const totalCompletes = state.stats.totalCompletes;
