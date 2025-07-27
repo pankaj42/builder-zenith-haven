@@ -760,7 +760,7 @@ export default function Vendors() {
               </Card>
 
               <div className="grid gap-4">
-                {assignments.map((assignment, index) => (
+                {dynamicAssignments.map((assignment, index) => (
                   <Card key={`${assignment.projectId}-${assignment.vendorId}`}>
                     <CardContent className="p-6">
                       <div className="flex items-center justify-between mb-4">
