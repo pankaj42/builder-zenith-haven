@@ -188,13 +188,13 @@ export default function Settings() {
     } catch (error) {
       console.error('Failed to save settings:', error);
       setIsLoading(false);
-      alert('Failed to save settings. Please try again.');
+      showCopySuccess(document.body, 'Failed to save settings');
     }
   };
 
   const changePassword = async () => {
     if (passwordChange.newPassword !== passwordChange.confirmPassword) {
-      alert("New passwords don't match");
+      showCopySuccess(document.body, "Passwords don't match");
       return;
     }
     
@@ -242,11 +242,11 @@ export default function Settings() {
       downloadAnchorNode.remove();
 
       setIsLoading(false);
-      alert("Backup completed successfully! File downloaded.");
+      showCopySuccess(document.body, "Backup completed successfully!");
     } catch (error) {
       console.error('Backup failed:', error);
       setIsLoading(false);
-      alert("Backup failed. Please try again.");
+      showCopySuccess(document.body, "Backup failed");
     }
   };
 
@@ -312,9 +312,9 @@ export default function Settings() {
                           if (settings.system) setSystemSettings(settings.system);
                           if (settings.security) setSecuritySettings(settings.security);
                           if (settings.notifications) setNotificationSettings(settings.notifications);
-                          alert('Settings imported successfully!');
+                          showCopySuccess(document.body, 'Settings imported successfully!');
                         } catch (error) {
-                          alert('Invalid settings file');
+                          showCopySuccess(document.body, 'Invalid settings file');
                         }
                       };
                       reader.readAsText(file);
@@ -925,7 +925,7 @@ export default function Settings() {
                         className="w-full gap-2"
                         onClick={() => {
                           if (confirm('Are you sure you want to restart services? This may cause temporary disruption.')) {
-                            alert('Services restart initiated. This would normally restart the application.');
+                            showCopySuccess(document.body, 'Services restart initiated');
                           }
                         }}
                       >
@@ -938,7 +938,7 @@ export default function Settings() {
                         onClick={() => {
                           const maintenanceTime = prompt('Enter maintenance window start time (HH:MM):');
                           if (maintenanceTime) {
-                            alert(`Maintenance scheduled for ${maintenanceTime}. Notifications will be sent to users.`);
+                            showCopySuccess(document.body, `Maintenance scheduled for ${maintenanceTime}`);
                           }
                         }}
                       >
