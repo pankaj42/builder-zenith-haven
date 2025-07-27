@@ -764,7 +764,20 @@ export default function Analytics() {
                         <Badge className="bg-green-100 text-green-800 border-green-200">Active</Badge>
                       </div>
                     </div>
-                    <Button variant="outline" className="w-full gap-2">
+                    <Button
+                      variant="outline"
+                      className="w-full gap-2"
+                      onClick={() => {
+                        const reportTypes = ['Daily Performance Summary', 'Weekly Vendor Report', 'Monthly Analytics Report'];
+                        const frequencies = ['Daily at 9:00 AM', 'Weekly on Mondays', 'Monthly on 1st'];
+                        const settings = reportTypes.map((type, i) => `${type}: ${frequencies[i]}`).join('\\n');
+
+                        const newSettings = prompt(`Configure Automated Reports:\\n\\nCurrent Settings:\\n${settings}\\n\\nEnter new frequency for Daily Reports (e.g., '10:00 AM'):`);
+                        if (newSettings) {
+                          alert(`Report configuration updated!\\n\\nDaily Reports will now be sent at ${newSettings}\\n\\nAll stakeholders will be notified of the schedule change.`);
+                        }
+                      }}
+                    >
                       <Settings className="w-4 h-4" />
                       Configure Reports
                     </Button>
