@@ -605,7 +605,12 @@ Priority: ${ipData.riskScore > 8 ? 'High' : ipData.riskScore > 6 ? 'Medium' : 'L
                               Mark Resolved
                             </Button>
                           )}
-                          <Button variant="outline" size="sm" className="gap-1">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="gap-1"
+                            onClick={() => viewAlertDetails(alert.id)}
+                          >
                             <Eye className="w-3 h-3" />
                             Details
                           </Button>
