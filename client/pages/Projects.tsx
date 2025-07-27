@@ -138,12 +138,12 @@ export default function Projects() {
   const [selectedProjectForDetails, setSelectedProjectForDetails] = useState<Project | null>(null);
   const [selectedProjectForVendors, setSelectedProjectForVendors] = useState<Project | null>(null);
 
-  // Available vendors list
-  const [availableVendors] = useState([
-    { id: "V001", name: "Quality Traffic Solutions", email: "john@qualitytraffic.com" },
-    { id: "V002", name: "Survey Source Network", email: "sarah@surveysource.net" },
-    { id: "V003", name: "Panel Partners LLC", email: "mike@panelpartners.com" },
-  ]);
+  // Available vendors from global state
+  const availableVendors = state.vendors.map(v => ({
+    id: v.id,
+    name: v.name,
+    email: v.email
+  }));
 
   const [emailSettings, setEmailSettings] = useState({
     subject: "",
