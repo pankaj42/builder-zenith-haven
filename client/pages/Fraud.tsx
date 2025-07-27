@@ -298,22 +298,7 @@ export default function Fraud() {
   const viewAlertDetails = (alertId: string) => {
     const alertData = fraudAlerts.find(a => a.id === alertId);
     if (alertData) {
-      alert(`Fraud Alert Details - ${alertData.id}
-
-Type: ${alertData.type.replace('-', ' ')}
-Severity: ${alertData.severity}
-Status: ${alertData.status}
-
-Vendor: ${alertData.vendorName} (${alertData.vendorId})
-Project: ${alertData.projectId}
-
-Details: ${alertData.details}
-
-Affected Responses: ${alertData.affectedResponses.join(', ')}
-Timestamp: ${new Date(alertData.timestamp).toLocaleString()}
-
-${alertData.investigatedBy ? `Investigated by: ${alertData.investigatedBy}` : ''}
-${alertData.resolution ? `Resolution: ${alertData.resolution}` : ''}`);
+      setSelectedAlert(alertData);
     }
   };
 
