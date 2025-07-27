@@ -171,6 +171,10 @@ export default function Vendors() {
 
   // Projects now come from global state via: const projects = state.projects.map(p => ({ id: p.id, name: p.name }));
 
+  const generateStartLink = (projectId: string, vendorId: string) => {
+    return `https://yourpanel.com/start/${projectId}/${vendorId}/?ID=`;
+  };
+
   // Generate dynamic assignments from global state
   const generateAssignments = (): ProjectAssignment[] => {
     const assignments: ProjectAssignment[] = [];
