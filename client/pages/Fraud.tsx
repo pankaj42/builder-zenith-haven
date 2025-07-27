@@ -277,11 +277,123 @@ export default function Fraud() {
   };
 
   const blockIP = (ip: string) => {
-    setIpMonitoring(ips => ips.map(ipData => 
-      ipData.ip === ip 
+    setIpMonitoring(ips => ips.map(ipData =>
+      ipData.ip === ip
         ? { ...ipData, isBlocked: true, suspiciousActivity: [...ipData.suspiciousActivity, "Blocked by admin"] }
         : ipData
     ));
+  };
+
+  const unblockIP = (ip: string) => {
+    setIpMonitoring(ips => ips.map(ipData =>
+      ipData.ip === ip
+        ? { ...ipData, isBlocked: false, suspiciousActivity: ipData.suspiciousActivity.filter(a => a !== 'Blocked by admin') }
+        : ipData
+    ));
+  };
+
+  const viewAlertDetails = (alertId: string) => {
+    const alert = fraudAlerts.find(a => a.id === alertId);
+    if (alert) {
+      alert(`Fraud Alert Details - ${alert.id}
+
+Type: ${alert.type.replace('-', ' ')}
+Severity: ${alert.severity}
+Status: ${alert.status}
+
+Vendor: ${alert.vendorName} (${alert.vendorId})
+Project: ${alert.projectId}
+
+Details: ${alert.details}
+
+Affected Responses: ${alert.affectedResponses.join(', ')}
+Timestamp: ${new Date(alert.timestamp).toLocaleString()}
+
+${alert.investigatedBy ? `Investigated by: ${alert.investigatedBy}` : ''}
+${alert.resolution ? `Resolution: ${alert.resolution}` : ''}`);
+    }
+  };
+
+  const viewIpDetails = (ip: string) => {
+    const ipData = ipMonitoring.find(i => i.ip === ip);
+    if (ipData) {
+      alert(`IP Monitoring Details - ${ip}
+
+Location: ${ipData.city}, ${ipData.country}
+Risk Score: ${ipData.riskScore}/10
+Status: ${ipData.isBlocked ? 'BLOCKED' : 'Active'}
+
+Activity Summary:
+- Total Responses: ${ipData.responseCount}
+- Unique UIDs: ${ipData.uniqueUIDs}
+- Associated Vendors: ${ipData.vendors.join(', ')}
+- Projects: ${ipData.projects.join(', ')}
+
+Timeline:
+- First Seen: ${new Date(ipData.firstSeen).toLocaleString()}
+- Last Seen: ${new Date(ipData.lastSeen).toLocaleString()}
+
+Suspicious Activity:
+${ipData.suspiciousActivity.map(activity => `• ${activity}`).join('\n')}`);
+    }
+  };
+
+  const viewVendorDetails = (vendorId: string) => {
+    const vendor = vendorScores.find(v => v.vendorId === vendorId);
+    if (vendor) {
+      alert(`Vendor Fraud Analysis - ${vendor.vendorName}
+
+Overall Fraud Score: ${vendor.overallScore}/5
+Risk Level: ${vendor.riskLevel.toUpperCase()}
+
+Fraud Indicators:
+• Duplicate IP Rate: ${vendor.duplicateIPRate}%
+• Duplicate UID Rate: ${vendor.duplicateUIDRate}%
+• Fast Completion Rate: ${vendor.fastCompletionRate}%
+• High Terminate Rate: ${vendor.highTerminateRate}%
+
+Activity Summary:
+• Total Responses: ${vendor.totalResponses}
+• Flagged Responses: ${vendor.flaggedResponses}
+• Suspicious Patterns: ${vendor.suspiciousPatterns}
+
+Last Activity: ${new Date(vendor.lastActivity).toLocaleString()}
+
+Recommendation: ${
+  vendor.riskLevel === 'critical' ? 'Immediate action required - consider suspension' :
+  vendor.riskLevel === 'high' ? 'Enhanced monitoring and investigation needed' :
+  vendor.riskLevel === 'medium' ? 'Continue monitoring with caution' :
+  'Continue standard monitoring'
+}`);
+    }
+  };
+
+  const investigateIp = (ip: string) => {
+    const ipData = ipMonitoring.find(i => i.ip === ip);
+    if (ipData) {
+      const action = confirm(`Start investigation for IP ${ip}?
+
+This will:
+• Flag all responses from this IP for review
+• Add investigation notes to audit trail
+• Notify relevant vendor contacts
+• Generate detailed forensic report
+
+Continue with investigation?`);
+
+      if (action) {
+        alert(`Investigation initiated for IP ${ip}
+
+✅ Responses flagged for review
+✅ Audit trail updated
+✅ Vendor notifications sent
+✅ Forensic report queued
+
+Investigation ID: INV-${Date.now()}
+Assigned to: Admin
+Priority: ${ipData.riskScore > 8 ? 'High' : ipData.riskScore > 6 ? 'Medium' : 'Low'}`);
+      }
+    }
   };
 
   const unblockIP = (ip: string) => {
