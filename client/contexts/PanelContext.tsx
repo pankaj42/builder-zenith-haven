@@ -242,8 +242,37 @@ export function PanelProvider({ children }: { children: ReactNode }) {
       return sum + (p.completes * incentiveAmount);
     }, 0);
 
+    // Update vendor performance metrics dynamically
+    const updatedVendors = state.vendors.map(vendor => {
+      const vendorResponses = state.responses.filter(r => r.vendorId === vendor.id);
+      const completes = vendorResponses.filter(r => r.status === 'complete').length;
+      const terminates = vendorResponses.filter(r => r.status === 'terminate').length;
+      const totalVendorResponses = vendorResponses.length;
+
+      const completionRate = totalVendorResponses > 0 ? (completes / totalVendorResponses) * 100 : vendor.completionRate;
+      const terminateRate = totalVendorResponses > 0 ? (terminates / totalVendorResponses) * 100 : vendor.terminateRate;
+
+      // Update fraud score based on recent performance
+      let updatedFraudScore = vendor.fraudScore;
+      if (terminateRate > 40) {
+        updatedFraudScore = Math.min(5, vendor.fraudScore + 0.1);
+      } else if (terminateRate < 15 && completionRate > 80) {
+        updatedFraudScore = Math.max(0.5, vendor.fraudScore - 0.05);
+      }
+
+      return {
+        ...vendor,
+        completionRate: Math.round(completionRate * 10) / 10,
+        terminateRate: Math.round(terminateRate * 10) / 10,
+        fraudScore: Math.round(updatedFraudScore * 10) / 10,
+        totalSent: Math.max(vendor.totalSent, totalVendorResponses),
+        totalCompletes: completes
+      };
+    });
+
     setState(prev => ({
       ...prev,
+      vendors: updatedVendors,
       stats: {
         ...prev.stats,
         totalCompletes,
