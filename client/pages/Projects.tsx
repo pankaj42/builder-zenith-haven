@@ -33,6 +33,7 @@ import {
 import Sidebar from "@/components/Sidebar";
 import { usePanelContext } from "@/contexts/PanelContext";
 import { showCopySuccess } from "@/components/ui/toast-notification";
+import { showCopySuccess } from "@/components/ui/toast-notification";
 
 interface Project {
   id: string;
