@@ -707,6 +707,18 @@ Priority: ${ipData.riskScore > 8 ? 'High' : ipData.riskScore > 6 ? 'Medium' : 'L
                           <Progress value={vendor.highTerminateRate} className="h-2" />
                         </div>
                       </div>
+
+                      <div className="pt-4 border-t border-border/50">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="gap-1 w-full"
+                          onClick={() => viewVendorDetails(vendor.vendorId)}
+                        >
+                          <Eye className="w-3 h-3" />
+                          View Details
+                        </Button>
+                      </div>
                     </CardContent>
                   </Card>
                 ))}
