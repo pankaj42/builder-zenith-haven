@@ -14,6 +14,7 @@ import {
   FolderOpen
 } from "lucide-react";
 import Sidebar from "@/components/Sidebar";
+import { usePanelContext } from "@/contexts/PanelContext";
 
 interface DashboardStats {
   totalCompletes: number;
