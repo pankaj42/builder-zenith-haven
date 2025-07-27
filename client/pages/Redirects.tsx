@@ -245,7 +245,7 @@ export default function Redirects() {
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => copyRedirectUrl(config.type)}
+                              onClick={(e) => copyRedirectUrl(config.type, e.currentTarget)}
                               className="gap-1"
                             >
                               <Copy className="w-3 h-3" />
