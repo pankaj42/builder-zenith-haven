@@ -588,7 +588,24 @@ ${config.settings.enabled ?
                       </div>
                     </div>
 
-                    <Button className="w-full">Save Configuration</Button>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="destructive"
+                        onClick={() => deleteVendor(selectedConfig.vendorId)}
+                        className="flex-1"
+                      >
+                        Delete Vendor
+                      </Button>
+                      <Button
+                        variant="outline"
+                        onClick={() => updateVendorConfig(selectedConfig.vendorId, {
+                          status: selectedConfig.status === 'active' ? 'inactive' : 'active'
+                        })}
+                        className="flex-1"
+                      >
+                        {selectedConfig.status === 'active' ? 'Deactivate' : 'Activate'}
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               )}
