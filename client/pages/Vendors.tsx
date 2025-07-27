@@ -169,11 +169,7 @@ export default function Vendors() {
     }
   ]);
 
-  const [projects] = useState([
-    { id: "P12345", name: "Consumer Behavior Study 2024" },
-    { id: "P12346", name: "Brand Awareness Survey" },
-    { id: "P12347", name: "Product Feedback Collection" }
-  ]);
+  // Projects now come from global state via: const projects = state.projects.map(p => ({ id: p.id, name: p.name }));
 
   const [assignments, setAssignments] = useState<ProjectAssignment[]>([
     {
