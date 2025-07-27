@@ -864,7 +864,7 @@ export default function Projects() {
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => copyProjectLink(selectedProjectForDetails.id, vendorId)}
+                              onClick={(e) => copyProjectLink(selectedProjectForDetails.id, e.currentTarget, vendorId)}
                               className="gap-1"
                             >
                               <Copy className="w-3 h-3" />
@@ -970,7 +970,7 @@ export default function Projects() {
                     <Button
                       variant="outline"
                       className="w-full justify-start gap-2"
-                      onClick={() => copyProjectLink(selectedProjectForDetails.id)}
+                      onClick={(e) => copyProjectLink(selectedProjectForDetails.id, e.currentTarget)}
                     >
                       <Copy className="w-4 h-4" />
                       Copy Vendor Start Link Template
@@ -1053,7 +1053,7 @@ export default function Projects() {
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => copyProjectLink(selectedProjectForVendors.id, vendorId)}
+                              onClick={(e) => copyProjectLink(selectedProjectForVendors.id, e.currentTarget, vendorId)}
                               className="gap-1"
                             >
                               <Copy className="w-3 h-3" />
