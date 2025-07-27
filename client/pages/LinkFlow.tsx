@@ -240,7 +240,7 @@ const finalVendorLink = vendorStartLink + "RESPONDENT_ID";
                               <Button
                                 variant="outline"
                                 size="sm"
-                                onClick={() => copyToClipboard(step.url)}
+                                onClick={(e) => copyToClipboard(step.url, e.currentTarget, "Link Copied!")}
                                 className="gap-1"
                               >
                                 <Copy className="w-3 h-3" />
