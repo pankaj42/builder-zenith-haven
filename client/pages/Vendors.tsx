@@ -273,9 +273,35 @@ export default function Vendors() {
     return `https://yourpanel.com/start/${projectId}/${vendorId}/?ID=`;
   };
 
+  // Reusable copy function that works in all contexts
+  const copyToClipboard = (text: string, description: string = "text") => {
+    try {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";
+      textArea.style.left = "-999999px";
+      textArea.style.top = "-999999px";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textArea);
+
+      if (successful) {
+        alert(`✅ ${description} Copied!\n\n${text}`);
+      } else {
+        prompt(`Copy this ${description.toLowerCase()}:`, text);
+      }
+    } catch (err) {
+      console.error("Copy failed:", err);
+      prompt(`Copy this ${description.toLowerCase()}:`, text);
+    }
+  };
+
   const copyStartLink = (projectId: string, vendorId: string) => {
     const link = generateStartLink(projectId, vendorId);
-    navigator.clipboard.writeText(link);
+    copyToClipboard(link, "Vendor Start Link");
   };
 
   const showVendorDetails = (vendor: Vendor) => {
@@ -853,7 +879,7 @@ export default function Vendors() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => navigator.clipboard.writeText(selectedVendorForDetails.redirectUrls.complete)}
+                        onClick={() => copyToClipboard(selectedVendorForDetails.redirectUrls.complete, "Complete Redirect URL")}
                       >
                         <Copy className="w-3 h-3" />
                       </Button>
@@ -882,7 +908,7 @@ export default function Vendors() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => navigator.clipboard.writeText(selectedVendorForDetails.redirectUrls.terminate)}
+                        onClick={() => copyToClipboard(selectedVendorForDetails.redirectUrls.terminate, "Terminate Redirect URL")}
                       >
                         <Copy className="w-3 h-3" />
                       </Button>
@@ -911,7 +937,7 @@ export default function Vendors() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => navigator.clipboard.writeText(selectedVendorForDetails.redirectUrls.quotaFull)}
+                        onClick={() => copyToClipboard(selectedVendorForDetails.redirectUrls.quotaFull, "Quota Full Redirect URL")}
                       >
                         <Copy className="w-3 h-3" />
                       </Button>
@@ -941,7 +967,7 @@ export default function Vendors() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => navigator.clipboard.writeText(selectedVendorForDetails.redirectUrls.studyClosed!)}
+                          onClick={() => copyToClipboard(selectedVendorForDetails.redirectUrls.studyClosed!, "Study Closed Redirect URL")}
                         >
                           <Copy className="w-3 h-3" />
                         </Button>
