@@ -232,9 +232,9 @@ export default function Vendors() {
     }
   };
 
-  const copyStartLink = (projectId: string, vendorId: string) => {
+  const copyStartLink = (projectId: string, vendorId: string, buttonElement: HTMLElement) => {
     const link = generateStartLink(projectId, vendorId);
-    copyToClipboard(link, "Vendor Start Link");
+    copyToClipboard(link, buttonElement, "Start Link Copied!");
   };
 
   const showVendorDetails = (vendor: Vendor) => {
