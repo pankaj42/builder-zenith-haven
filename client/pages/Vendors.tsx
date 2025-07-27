@@ -30,6 +30,7 @@ import {
 } from "lucide-react";
 import Sidebar from "@/components/Sidebar";
 import { usePanelContext } from "@/contexts/PanelContext";
+import { showCopySuccess } from "@/components/ui/toast-notification";
 
 interface Vendor {
   id: string;
