@@ -522,7 +522,7 @@ ${config.settings.enabled ?
                               document.body.removeChild(textArea);
 
                               if (successful) {
-                                alert(`✅ Implementation Code Copied!`);
+                                showCopySuccess(document.body, `Implementation Code Copied!`);
                               } else {
                                 prompt("Copy this implementation code:", code);
                               }
