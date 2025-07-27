@@ -289,7 +289,7 @@ ${config.settings.enabled ?
                 <div className="w-2 h-2 bg-green-500 rounded-full" />
                 {vendorConfigs.filter(c => c.status === 'active').length} Active
               </Badge>
-              <Button variant="outline" className="gap-2">
+              <Button variant="outline" className="gap-2" onClick={() => setShowAddDialog(true)}>
                 <Plus className="w-4 h-4" />
                 Add Vendor
               </Button>
