@@ -172,17 +172,8 @@ export default function Projects() {
     return "P" + Math.floor(Math.random() * 90000 + 10000);
   };
 
-  const createProject = () => {
-    const project: Project = {
-      ...newProject as Project,
-      id: generateProjectId(),
-      createdDate: new Date().toISOString().split('T')[0],
-      completes: 0,
-      terminates: 0,
-      quotaFull: 0,
-      vendors: []
-    };
-    setProjects([...projects, project]);
+  const createProjectAction = () => {
+    createProject(newProject as Omit<Project, 'id' | 'createdDate' | 'completes' | 'terminates' | 'quotaFull' | 'vendors'>);
     setShowCreateDialog(false);
     setNewProject({
       name: "",
