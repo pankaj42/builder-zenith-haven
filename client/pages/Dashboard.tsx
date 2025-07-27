@@ -26,28 +26,46 @@ interface DashboardStats {
 }
 
 export default function Dashboard() {
-  const [stats, setStats] = useState<DashboardStats>({
-    totalCompletes: 1247,
-    totalTerminates: 532,
-    totalQuotaFull: 89,
-    activeProjects: 12,
-    activeVendors: 8,
-    fraudAlerts: 3
-  });
+  const { state, addResponse } = usePanelContext();
 
-  // Simulate real-time updates
+  // Simulate real-time updates by adding random responses
   useEffect(() => {
     const interval = setInterval(() => {
-      setStats(prev => ({
-        ...prev,
-        totalCompletes: prev.totalCompletes + Math.floor(Math.random() * 3),
-        totalTerminates: prev.totalTerminates + Math.floor(Math.random() * 2),
-        totalQuotaFull: prev.totalQuotaFull + Math.floor(Math.random() * 1),
-      }));
-    }, 30000);
+      if (state.projects.length > 0 && state.vendors.length > 0) {
+        const activeProjects = state.projects.filter(p => p.status === 'active');
+        if (activeProjects.length > 0) {
+          const randomProject = activeProjects[Math.floor(Math.random() * activeProjects.length)];
+          const projectVendors = state.vendors.filter(v => v.assignedProjects.includes(randomProject.id));
+
+          if (projectVendors.length > 0) {
+            const randomVendor = projectVendors[Math.floor(Math.random() * projectVendors.length)];
+            const randomStatus = Math.random() < 0.7 ? 'complete' :
+                                Math.random() < 0.8 ? 'terminate' : 'quota-full';
+
+            addResponse({
+              projectId: randomProject.id,
+              vendorId: randomVendor.id,
+              uid: `${randomProject.id}-${Date.now()}-${Math.random().toString(36).substr(2, 3)}`,
+              status: randomStatus as any,
+              ip: `192.168.1.${Math.floor(Math.random() * 255)}`,
+              duration: Math.floor(Math.random() * 20) + 5
+            });
+          }
+        }
+      }
+    }, 10000); // Every 10 seconds
 
     return () => clearInterval(interval);
-  }, []);
+  }, [state.projects, state.vendors, addResponse]);
+
+  const stats = {
+    totalCompletes: state.stats.totalCompletes,
+    totalTerminates: state.stats.totalTerminates,
+    totalQuotaFull: state.stats.totalQuotaFull,
+    activeProjects: state.projects.filter(p => p.status === 'active').length,
+    activeVendors: state.vendors.filter(v => v.status === 'active').length,
+    fraudAlerts: 3 // Keep static for now
+  };
 
   return (
     <div className="flex min-h-screen bg-background">
