@@ -29,6 +29,7 @@ import {
   Activity
 } from "lucide-react";
 import Sidebar from "@/components/Sidebar";
+import { usePanelContext } from "@/contexts/PanelContext";
 
 interface Vendor {
   id: string;
