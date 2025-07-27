@@ -293,24 +293,24 @@ export default function Fraud() {
   };
 
   const viewAlertDetails = (alertId: string) => {
-    const alert = fraudAlerts.find(a => a.id === alertId);
-    if (alert) {
-      alert(`Fraud Alert Details - ${alert.id}
+    const alertData = fraudAlerts.find(a => a.id === alertId);
+    if (alertData) {
+      alert(`Fraud Alert Details - ${alertData.id}
 
-Type: ${alert.type.replace('-', ' ')}
-Severity: ${alert.severity}
-Status: ${alert.status}
+Type: ${alertData.type.replace('-', ' ')}
+Severity: ${alertData.severity}
+Status: ${alertData.status}
 
-Vendor: ${alert.vendorName} (${alert.vendorId})
-Project: ${alert.projectId}
+Vendor: ${alertData.vendorName} (${alertData.vendorId})
+Project: ${alertData.projectId}
 
-Details: ${alert.details}
+Details: ${alertData.details}
 
-Affected Responses: ${alert.affectedResponses.join(', ')}
-Timestamp: ${new Date(alert.timestamp).toLocaleString()}
+Affected Responses: ${alertData.affectedResponses.join(', ')}
+Timestamp: ${new Date(alertData.timestamp).toLocaleString()}
 
-${alert.investigatedBy ? `Investigated by: ${alert.investigatedBy}` : ''}
-${alert.resolution ? `Resolution: ${alert.resolution}` : ''}`);
+${alertData.investigatedBy ? `Investigated by: ${alertData.investigatedBy}` : ''}
+${alertData.resolution ? `Resolution: ${alertData.resolution}` : ''}`);
     }
   };
 
