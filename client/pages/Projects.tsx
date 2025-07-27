@@ -297,7 +297,9 @@ export default function Projects() {
       }
     });
 
-    alert(`✅ Emails sent successfully to ${vendorsToEmail.length} vendor(s)!\n\nVendors will receive:\n- Unique start links\n- Project quotas\n- Assignment details\n\nCheck console for email details.`);
+    // Show success notification
+    const emailButton = document.querySelector('[data-email-button]') as HTMLElement || document.body;
+    showCopySuccess(emailButton, `Emails sent to ${vendorsToEmail.length} vendor(s)!`);
     setShowEmailDialog(false);
   };
 
