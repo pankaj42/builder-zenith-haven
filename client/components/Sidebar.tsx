@@ -32,8 +32,8 @@ export default function Sidebar() {
   ];
 
   return (
-    <div className="w-64 bg-sidebar border-r border-sidebar-border">
-      <div className="p-6">
+    <div className="w-64 bg-sidebar border-r border-sidebar-border h-screen sticky top-0 flex flex-col">
+      <div className="p-6 flex-shrink-0">
         <Link to="/" className="flex items-center gap-3 mb-8">
           <div className="w-8 h-8 bg-sidebar-primary rounded-lg flex items-center justify-center">
             <Globe className="w-5 h-5 text-sidebar-primary-foreground" />
@@ -43,7 +43,10 @@ export default function Sidebar() {
             <p className="text-xs text-sidebar-foreground/60">Admin Dashboard</p>
           </div>
         </Link>
-        <nav className="space-y-2">
+      </div>
+
+      <nav className="flex-1 overflow-y-auto px-6 pb-6">
+        <div className="space-y-2">
           {sidebarItems.map((item) => {
             const isActive = location.pathname === item.href;
             return (
@@ -61,8 +64,8 @@ export default function Sidebar() {
               </Link>
             );
           })}
-        </nav>
-      </div>
+        </div>
+      </nav>
     </div>
   );
 }
