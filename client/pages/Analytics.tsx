@@ -27,7 +27,6 @@ import Sidebar from "@/components/Sidebar";
 import { usePanelContext } from "@/contexts/PanelContext";
 import { DetailsModal } from "@/components/ui/details-modal";
 import { showCopySuccess } from "@/components/ui/toast-notification";
-import { showCopySuccess } from "@/components/ui/toast-notification";
 
 interface VendorPerformance {
   vendorId: string;
