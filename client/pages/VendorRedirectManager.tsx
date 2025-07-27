@@ -498,19 +498,39 @@ ${config.settings.enabled ?
                       <div className="grid grid-cols-1 gap-4">
                         <div className="space-y-2">
                           <Label className="text-green-700">Complete URL</Label>
-                          <Input value={selectedConfig.redirectUrls.complete} onChange={() => {}} />
+                          <Input
+                            value={selectedConfig.redirectUrls.complete}
+                            onChange={(e) => updateVendorConfig(selectedConfig.vendorId, {
+                              redirectUrls: { ...selectedConfig.redirectUrls, complete: e.target.value }
+                            })}
+                          />
                         </div>
                         <div className="space-y-2">
                           <Label className="text-orange-700">Terminate URL</Label>
-                          <Input value={selectedConfig.redirectUrls.terminate} onChange={() => {}} />
+                          <Input
+                            value={selectedConfig.redirectUrls.terminate}
+                            onChange={(e) => updateVendorConfig(selectedConfig.vendorId, {
+                              redirectUrls: { ...selectedConfig.redirectUrls, terminate: e.target.value }
+                            })}
+                          />
                         </div>
                         <div className="space-y-2">
                           <Label className="text-blue-700">Quota Full URL</Label>
-                          <Input value={selectedConfig.redirectUrls.quotaFull} onChange={() => {}} />
+                          <Input
+                            value={selectedConfig.redirectUrls.quotaFull}
+                            onChange={(e) => updateVendorConfig(selectedConfig.vendorId, {
+                              redirectUrls: { ...selectedConfig.redirectUrls, quotaFull: e.target.value }
+                            })}
+                          />
                         </div>
                         <div className="space-y-2">
                           <Label className="text-gray-700">Study Closed URL</Label>
-                          <Input value={selectedConfig.redirectUrls.studyClosed} onChange={() => {}} />
+                          <Input
+                            value={selectedConfig.redirectUrls.studyClosed}
+                            onChange={(e) => updateVendorConfig(selectedConfig.vendorId, {
+                              redirectUrls: { ...selectedConfig.redirectUrls, studyClosed: e.target.value }
+                            })}
+                          />
                         </div>
                       </div>
                     </div>
