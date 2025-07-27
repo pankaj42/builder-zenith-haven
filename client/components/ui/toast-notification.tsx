@@ -134,11 +134,26 @@ export const useToast = () => {
 
 // Utility function to show copy success near an element
 export const showCopySuccess = (element: HTMLElement, message: string = 'Copied!') => {
+  // Safety check to ensure element is valid
+  if (!element || typeof element.getBoundingClientRect !== 'function') {
+    console.warn('Invalid element passed to showCopySuccess, using default position');
+    // Use default position in top-right corner
+    const position = { x: window.innerWidth - 150, y: 20 };
+    createToast(position, message);
+    return;
+  }
+
   const rect = element.getBoundingClientRect();
   const position = {
     x: rect.right + 10,
     y: rect.top + rect.height / 2
   };
+
+  createToast(position, message);
+};
+
+// Helper function to create toast
+const createToast = (position: { x: number; y: number }, message: string) => {
 
   // Create temporary toast
   const toastId = Date.now().toString();
