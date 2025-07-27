@@ -76,6 +76,7 @@ interface IPMonitoring {
 }
 
 export default function Fraud() {
+  const { state } = usePanelContext();
   const [fraudAlerts, setFraudAlerts] = useState<FraudAlert[]>([
     {
       id: "FA001",
