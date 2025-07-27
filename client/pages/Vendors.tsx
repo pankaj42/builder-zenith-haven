@@ -263,7 +263,6 @@ export default function Vendors() {
 
   const deleteVendorAction = (vendorId: string) => {
     deleteVendor(vendorId);
-    setAssignments(assignments.filter(a => a.vendorId !== vendorId));
   };
 
   const generateStartLink = (projectId: string, vendorId: string) => {
