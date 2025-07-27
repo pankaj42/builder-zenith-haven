@@ -512,7 +512,7 @@ export default function Vendors() {
                         />
                       </div>
                       <div className="flex gap-2 pt-4">
-                        <Button onClick={createVendor} className="flex-1">Add Vendor</Button>
+                        <Button onClick={createVendorAction} className="flex-1">Add Vendor</Button>
                         <Button variant="outline" onClick={() => setShowCreateDialog(false)}>Cancel</Button>
                       </div>
                     </div>
