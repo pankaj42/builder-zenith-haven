@@ -841,6 +841,40 @@ Continue with investigation?`);
           </Tabs>
         </main>
       </div>
+
+      {/* Modal Dialogs */}
+      {selectedAlert && (
+        <DetailsModal
+          isOpen={!!selectedAlert}
+          onClose={() => setSelectedAlert(null)}
+          title={`Fraud Alert - ${selectedAlert.id}`}
+          data={selectedAlert}
+          type="alert"
+        />
+      )}
+
+      {selectedIp && (
+        <DetailsModal
+          isOpen={!!selectedIp}
+          onClose={() => setSelectedIp(null)}
+          title={`IP Monitoring - ${selectedIp.ip}`}
+          data={selectedIp}
+          type="ip"
+        />
+      )}
+
+      {selectedVendor && (
+        <DetailsModal
+          isOpen={!!selectedVendor}
+          onClose={() => setSelectedVendor(null)}
+          title={`Vendor Analysis - ${selectedVendor.vendorName}`}
+          data={selectedVendor}
+          type="vendor"
+        />
+      )}
+
+      {/* Toast Container */}
+      <ToastContainer />
     </div>
   );
 }
