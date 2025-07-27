@@ -789,7 +789,7 @@ export default function Analytics() {
 
                         const newSettings = prompt(`Configure Automated Reports:\\n\\nCurrent Settings:\\n${settings}\\n\\nEnter new frequency for Daily Reports (e.g., '10:00 AM'):`);
                         if (newSettings) {
-                          alert(`Report configuration updated!\\n\\nDaily Reports will now be sent at ${newSettings}\\n\\nAll stakeholders will be notified of the schedule change.`);
+                          showCopySuccess(document.body, `Report configuration updated for ${newSettings}`);
                         }
                       }}
                     >
