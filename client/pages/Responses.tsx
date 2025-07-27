@@ -124,8 +124,9 @@ export default function Responses() {
     return data.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
   };
 
-  const [allResponses] = useState<ResponseRecord[]>(generateSampleData());
-  const [filteredResponses, setFilteredResponses] = useState<ResponseRecord[]>(allResponses);
+  // Add sample data if we have limited responses
+  const combinedResponses = allResponses.length < 50 ? [...allResponses, ...generateSampleData()] : allResponses;
+  const [filteredResponses, setFilteredResponses] = useState<ResponseRecord[]>(combinedResponses);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [projectFilter, setProjectFilter] = useState("all");
