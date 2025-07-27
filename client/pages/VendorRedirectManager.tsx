@@ -195,20 +195,75 @@ export default function VendorRedirectManager() {
     }
   };
 
+  // Update vendor configuration
+  const updateVendorConfig = (vendorId: string, updates: Partial<VendorRedirectConfig>) => {
+    setVendorConfigs(prev => prev.map(config =>
+      config.vendorId === vendorId ? { ...config, ...updates } : config
+    ));
+    showCopySuccess(document.body, "Configuration updated successfully!");
+  };
+
+  // Add new vendor
+  const addVendor = () => {
+    if (!newVendor.vendorId || !newVendor.vendorName) {
+      showCopySuccess(document.body, "Please fill vendor ID and name");
+      return;
+    }
+
+    const vendor: VendorRedirectConfig = {
+      vendorId: newVendor.vendorId,
+      vendorName: newVendor.vendorName,
+      redirectUrls: newVendor.redirectUrls || {
+        complete: "",
+        terminate: "",
+        quotaFull: "",
+        studyClosed: ""
+      },
+      settings: newVendor.settings || {
+        enabled: true,
+        passthrough: true,
+        appendParams: true,
+        customParams: `source=panel&vendor=${newVendor.vendorId}`,
+        delay: globalSettings.defaultDelay
+      },
+      status: newVendor.status || 'active'
+    };
+
+    setVendorConfigs(prev => [...prev, vendor]);
+    setNewVendor({
+      vendorId: "",
+      vendorName: "",
+      redirectUrls: { complete: "", terminate: "", quotaFull: "", studyClosed: "" },
+      settings: { enabled: true, passthrough: true, appendParams: true, customParams: "", delay: 2000 },
+      status: 'active'
+    });
+    setShowAddDialog(false);
+    showCopySuccess(document.body, "Vendor added successfully!");
+  };
+
+  // Delete vendor
+  const deleteVendor = (vendorId: string) => {
+    setVendorConfigs(prev => prev.filter(config => config.vendorId !== vendorId));
+    if (selectedConfig?.vendorId === vendorId) {
+      setSelectedConfig(null);
+    }
+    showCopySuccess(document.body, "Vendor deleted successfully!");
+  };
+
   const generateDualRedirectExample = (config: VendorRedirectConfig) => {
     return `// Dual Redirect Flow for ${config.vendorName}
 // 1. Survey completes → Panel receives data
 POST https://yourpanel.com/collect/P12345
 {
   "status": "complete",
-  "uid": "P12345-001-RESP123", 
+  "uid": "P12345-001-RESP123",
   "vendor": "${config.vendorId}",
   "responseData": {...}
 }
 
 // 2. Panel processes and logs response
 // 3. Panel forwards to vendor (${config.settings.delay}ms delay)
-${config.settings.enabled ? 
+${config.settings.enabled ?
 `GET ${config.redirectUrls.complete}?pid=P12345&uid=P12345-001-RESP123&${config.settings.customParams}` :
 '// Vendor redirects disabled for this vendor'
 }
