@@ -108,7 +108,28 @@ export default function LinkFlow() {
   };
 
   const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
+    try {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";
+      textArea.style.left = "-999999px";
+      textArea.style.top = "-999999px";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textArea);
+
+      if (successful) {
+        alert(`✅ Link Copied!\n\n${text}`);
+      } else {
+        prompt("Copy this link:", text);
+      }
+    } catch (err) {
+      console.error("Copy failed:", err);
+      prompt("Copy this link:", text);
+    }
   };
 
   const getImplementationCode = () => {
