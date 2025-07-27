@@ -508,31 +508,7 @@ export default function Analytics() {
                               variant="outline"
                               size="sm"
                               className="gap-1"
-                              onClick={() => {
-                                alert(`Vendor Performance Details - ${vendor.vendorName}
-
-Overall Performance:
-• Completion Rate: ${vendor.completionRate}%
-• Terminate Rate: ${vendor.terminateRate}%
-• Average Response Time: ${vendor.avgResponseTime} minutes
-• Performance Rating: ${vendor.rating}/5.0 ⭐
-
-Traffic Statistics:
-• Total Sent: ${vendor.totalSent.toLocaleString()}
-• Total Completes: ${vendor.totalCompletes.toLocaleString()}
-• Total Terminates: ${vendor.totalTerminates.toLocaleString()}
-• Quota Full: ${vendor.totalQuotaFull.toLocaleString()}
-
-Quality Metrics:
-• Fraud Score: ${vendor.fraudScore}/5.0 ${vendor.fraudScore <= 2 ? '✅ Good' : vendor.fraudScore <= 3.5 ? '⚠️ Caution' : '❌ High Risk'}
-• Trend: ${vendor.trend === 'up' ? '📈 Improving' : vendor.trend === 'down' ? '📉 Declining' : '➡️ Stable'}
-
-Financial Summary:
-• Total Earnings: $${vendor.earnings.toLocaleString()}
-• Active Projects: ${vendor.recentProjects.length}
-
-Last Activity: ${new Date(vendor.lastActive).toLocaleString()}`);
-                              }}
+                              onClick={() => setSelectedVendor(vendor)}
                             >
                               <Eye className="w-3 h-3" />
                               Details
