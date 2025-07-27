@@ -260,7 +260,7 @@ export default function Vendors() {
   };
 
   const updateVendorStatus = (vendorId: string, status: Vendor['status']) => {
-    setVendors(vendors.map(v => v.id === vendorId ? { ...v, status } : v));
+    updateVendor(vendorId, { status });
   };
 
   const deleteVendorAction = (vendorId: string) => {
