@@ -202,7 +202,7 @@ export default function Projects() {
   };
 
   // Reusable copy function that works in all contexts
-  const copyToClipboard = (text: string, description: string = "text") => {
+  const copyToClipboard = (text: string, buttonElement: HTMLElement, description: string = "Copied!") => {
     try {
       // Use fallback method that works in all contexts
       const textArea = document.createElement("textarea");
@@ -218,15 +218,13 @@ export default function Projects() {
       document.body.removeChild(textArea);
 
       if (successful) {
-        alert(`✅ ${description} Copied!\n\n${text}`);
+        showCopySuccess(buttonElement, description);
       } else {
-        // Show link in prompt for manual copy
-        prompt(`Copy this ${description.toLowerCase()}:`, text);
+        prompt(`Copy this text:`, text);
       }
     } catch (err) {
       console.error("Copy failed:", err);
-      // Last resort - show in prompt
-      prompt(`Copy this ${description.toLowerCase()}:`, text);
+      prompt(`Copy this text:`, text);
     }
   };
 
