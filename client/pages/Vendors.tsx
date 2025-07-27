@@ -583,9 +583,42 @@ export default function Vendors() {
                             {vendor.fraudScore.toFixed(1)}
                           </span>
                         </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Projects:</span>
-                          <span>{vendor.assignedProjects.length} assigned</span>
+                        <div className="space-y-2">
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Projects:</span>
+                            <span className="font-semibold">{vendor.assignedProjects.length} assigned</span>
+                          </div>
+                          {vendor.assignedProjects.length > 0 && (
+                            <div className="space-y-1">
+                              {vendor.assignedProjects.slice(0, 2).map((projectId) => {
+                                const project = projects.find(p => p.id === projectId);
+                                return (
+                                  <div key={projectId} className="flex items-center justify-between text-xs bg-gray-50 rounded p-2">
+                                    <div className="flex items-center gap-2">
+                                      <span className="font-mono text-blue-600">{projectId}</span>
+                                      <span className="text-gray-600 truncate max-w-[120px]">
+                                        {project?.name || "Unknown Project"}
+                                      </span>
+                                    </div>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="h-4 w-4 p-0"
+                                      onClick={() => copyStartLink(projectId, vendor.id)}
+                                      title="Copy start link"
+                                    >
+                                      <Copy className="w-3 h-3" />
+                                    </Button>
+                                  </div>
+                                );
+                              })}
+                              {vendor.assignedProjects.length > 2 && (
+                                <div className="text-xs text-center text-gray-500">
+                                  +{vendor.assignedProjects.length - 2} more projects
+                                </div>
+                              )}
+                            </div>
+                          )}
                         </div>
                       </div>
 
