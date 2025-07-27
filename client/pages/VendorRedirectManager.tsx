@@ -23,6 +23,7 @@ import {
   Target
 } from "lucide-react";
 import Sidebar from "@/components/Sidebar";
+import { showCopySuccess } from "@/components/ui/toast-notification";
 
 interface VendorRedirectConfig {
   vendorId: string;
