@@ -628,7 +628,33 @@ export default function Analytics() {
                           Project completion: {((project.totalResponses / 1000) * 100).toFixed(1)}% of target
                         </div>
                         <div className="flex gap-1">
-                          <Button variant="outline" size="sm" className="gap-1">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="gap-1"
+                            onClick={() => {
+                              alert(`Project Analytics Details - ${project.projectName}
+
+Total Responses: ${project.totalResponses}
+Completion Rate: ${project.completionRate}%
+Average Completion Time: ${project.avgCompletionTime} minutes
+
+Top Performing Vendors:
+${project.topVendors.map(v => `• ${v.vendorName}: ${v.completes} completes`).join('\\n')}
+
+Demographics Summary:
+• Male: ${project.demographics.gender.male} (${Math.round(project.demographics.gender.male / (project.demographics.gender.male + project.demographics.gender.female) * 100)}%)
+• Female: ${project.demographics.gender.female} (${Math.round(project.demographics.gender.female / (project.demographics.gender.male + project.demographics.gender.female) * 100)}%)
+
+Top Countries:
+${project.demographics.countries.map(c => `• ${c.country}: ${c.count} responses`).join('\\n')}
+
+Recent Performance Trend:
+${project.dailyStats.slice(-3).map(stat => `• ${new Date(stat.date).toLocaleDateString()}: ${stat.completes}C/${stat.terminates}T`).join('\\n')}
+
+Project Completion: ${((project.totalResponses / 1000) * 100).toFixed(1)}% of target`);
+                            }}
+                          >
                             <Eye className="w-3 h-3" />
                             View Details
                           </Button>
