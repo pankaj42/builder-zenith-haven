@@ -19,6 +19,7 @@ import {
   Save
 } from "lucide-react";
 import Sidebar from "@/components/Sidebar";
+import { showCopySuccess } from "@/components/ui/toast-notification";
 
 interface RedirectConfig {
   id: string;
