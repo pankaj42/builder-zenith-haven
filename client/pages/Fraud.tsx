@@ -469,7 +469,11 @@ Priority: ${ipData.riskScore > 8 ? 'High' : ipData.riskScore > 6 ? 'Medium' : 'L
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
                 Live Monitoring
               </Badge>
-              <Button variant="outline" className="gap-2">
+              <Button
+                variant="outline"
+                className="gap-2"
+                onClick={() => setShowConfigureDialog(true)}
+              >
                 <Settings className="w-4 h-4" />
                 Configure
               </Button>
