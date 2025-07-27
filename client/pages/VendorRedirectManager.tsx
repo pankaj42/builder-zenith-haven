@@ -128,26 +128,32 @@ export default function VendorRedirectManager() {
     window.open(url + testParams, '_blank');
   };
 
-  const copyRedirectUrl = (url: string, type: string) => {
+  const copyRedirectUrl = (url: string, type: string, buttonElement: HTMLElement) => {
     const fullUrl = url + "?pid={PID}&uid={UID}&source=panel";
     try {
-      const textArea = document.createElement("textarea");
-      textArea.value = fullUrl;
-      textArea.style.position = "fixed";
-      textArea.style.left = "-999999px";
-      textArea.style.top = "-999999px";
-      document.body.appendChild(textArea);
-      textArea.focus();
-      textArea.select();
+      navigator.clipboard.writeText(fullUrl).then(() => {
+        showCopySuccess(buttonElement, `${type} URL Copied!`);
+      }).catch((err) => {
+        console.error("Clipboard API failed:", err);
+        // Fallback to older method
+        const textArea = document.createElement("textarea");
+        textArea.value = fullUrl;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
 
-      const successful = document.execCommand('copy');
-      document.body.removeChild(textArea);
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textArea);
 
-      if (successful) {
-        alert(`✅ ${type} Redirect URL Copied!\n\n${fullUrl}`);
-      } else {
-        prompt(`Copy this ${type} redirect URL:`, fullUrl);
-      }
+        if (successful) {
+          showCopySuccess(buttonElement, `${type} URL Copied!`);
+        } else {
+          prompt(`Copy this ${type} redirect URL:`, fullUrl);
+        }
+      });
     } catch (err) {
       console.error("Copy failed:", err);
       prompt(`Copy this ${type} redirect URL:`, fullUrl);
