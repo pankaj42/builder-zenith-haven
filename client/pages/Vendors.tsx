@@ -552,7 +552,7 @@ export default function Vendors() {
                                         variant="ghost"
                                         size="sm"
                                         className="h-4 w-4 p-0"
-                                        onClick={() => copyStartLink(projectId, vendor.id)}
+                                        onClick={(e) => copyStartLink(projectId, vendor.id, e.currentTarget)}
                                         title="Copy start link"
                                       >
                                         <Copy className="w-3 h-3" />
@@ -761,7 +761,7 @@ export default function Vendors() {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => copyStartLink(assignment.projectId, assignment.vendorId)}
+                            onClick={(e) => copyStartLink(assignment.projectId, assignment.vendorId, e.currentTarget)}
                             className="gap-1"
                           >
                             <Copy className="w-3 h-3" />
@@ -1047,7 +1047,7 @@ export default function Vendors() {
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => copyStartLink(projectId, selectedVendorForDetails.id)}
+                              onClick={(e) => copyStartLink(projectId, selectedVendorForDetails.id, e.currentTarget)}
                               className="gap-1"
                             >
                               <Copy className="w-3 h-3" />
