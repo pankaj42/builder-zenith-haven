@@ -266,20 +266,12 @@ export default function Projects() {
     setShowEmailDialog(true);
   };
 
-  const assignVendorToProject = (projectId: string, vendorId: string) => {
-    setProjects(projects.map(p =>
-      p.id === projectId
-        ? { ...p, vendors: [...p.vendors, vendorId] }
-        : p
-    ));
+  const assignVendorToProjectAction = (projectId: string, vendorId: string) => {
+    assignVendorToProject(projectId, vendorId);
   };
 
-  const removeVendorFromProject = (projectId: string, vendorId: string) => {
-    setProjects(projects.map(p =>
-      p.id === projectId
-        ? { ...p, vendors: p.vendors.filter(v => v !== vendorId) }
-        : p
-    ));
+  const removeVendorFromProjectAction = (projectId: string, vendorId: string) => {
+    removeVendorFromProject(projectId, vendorId);
   };
 
   const sendVendorEmails = () => {
