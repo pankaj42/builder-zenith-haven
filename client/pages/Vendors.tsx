@@ -79,95 +79,31 @@ export default function Vendors() {
   const vendors = state.vendors;
   const projects = state.projects.map(p => ({ id: p.id, name: p.name, incentive: p.incentive }));
 
-  const [staticVendors] = useState<Vendor[]>([
-    {
-      id: "V001",
-      name: "John Thompson",
-      email: "john@qualitytraffic.com",
-      phone: "+1-555-0123",
-      company: "Quality Traffic Solutions",
-      status: "active",
-      createdDate: "2024-01-10",
-      completionRate: 78.5,
-      terminateRate: 18.2,
-      fraudScore: 2.1,
-      totalSent: 2450,
-      totalCompletes: 1923,
-      redirectUrls: {
-        complete: "https://dynamic-survey-view.vercel.app/thankyou",
-        terminate: "https://dynamic-survey-view.vercel.app/terminate",
-        quotaFull: "https://dynamic-survey-view.vercel.app/quotafull",
-        studyClosed: "https://dynamic-survey-view.vercel.app/closed"
-      },
-      redirectSettings: {
-        enabled: true,
-        passthrough: true,
-        appendParams: true,
-        customParams: "source=panel&vendor=V001"
-      },
-      assignedProjects: ["P12345", "P12346"],
-      paymentMethod: "PayPal",
-      notes: "High-quality traffic provider with excellent completion rates."
-    },
-    {
-      id: "V002",
-      name: "Sarah Mitchell",
-      email: "sarah@surveysource.net",
-      phone: "+1-555-0124",
-      company: "Survey Source Network",
-      status: "active",
-      createdDate: "2024-01-12",
-      completionRate: 82.1,
-      terminateRate: 15.3,
-      fraudScore: 1.8,
-      totalSent: 1890,
-      totalCompletes: 1551,
-      redirectUrls: {
-        complete: "https://surveysource.net/redirect/complete",
-        terminate: "https://surveysource.net/redirect/terminate",
-        quotaFull: "https://surveysource.net/redirect/quota",
-        studyClosed: "https://surveysource.net/redirect/closed"
-      },
-      redirectSettings: {
-        enabled: true,
-        passthrough: true,
-        appendParams: true,
-        customParams: "utm_source=panel&vendor_id=V002"
-      },
-      assignedProjects: ["P12345", "P12347"],
-      paymentMethod: "Bank Transfer",
-      notes: "Reliable vendor with consistent quality and quick response times."
-    },
-    {
-      id: "V003",
-      name: "Mike Rodriguez",
-      email: "mike@panelpartners.com",
-      phone: "+1-555-0125",
-      company: "Panel Partners LLC",
-      status: "suspended",
-      createdDate: "2024-01-08",
-      completionRate: 65.4,
-      terminateRate: 28.7,
-      fraudScore: 4.2,
-      totalSent: 1245,
-      totalCompletes: 814,
-      redirectUrls: {
-        complete: "https://panelpartners.com/done",
-        terminate: "https://panelpartners.com/exit",
-        quotaFull: "https://panelpartners.com/full",
-        studyClosed: "https://panelpartners.com/closed"
-      },
-      redirectSettings: {
-        enabled: false,
-        passthrough: false,
-        appendParams: true,
-        customParams: "panel_source=survey&v=V003"
-      },
-      assignedProjects: [],
-      paymentMethod: "PayPal",
-      notes: "Suspended due to high fraud score and poor completion rates."
-    }
-  ]);
+  // Calculate dynamic vendor performance metrics
+  const calculateVendorMetrics = (vendor: any) => {
+    const vendorResponses = state.responses.filter(r => r.vendorId === vendor.id);
+    const completes = vendorResponses.filter(r => r.status === 'complete').length;
+    const terminates = vendorResponses.filter(r => r.status === 'terminate').length;
+    const totalResponses = vendorResponses.length;
+
+    const completionRate = totalResponses > 0 ? (completes / totalResponses) * 100 : vendor.completionRate || 0;
+    const terminateRate = totalResponses > 0 ? (terminates / totalResponses) * 100 : vendor.terminateRate || 0;
+
+    return {
+      ...vendor,
+      completionRate: Math.round(completionRate * 10) / 10,
+      terminateRate: Math.round(terminateRate * 10) / 10,
+      totalCompletes: completes || vendor.totalCompletes || 0,
+      totalSent: Math.max(vendor.totalSent || 0, totalResponses)
+    };
+  };
+
+  // Get dynamic vendor data with updated metrics
+  const getDynamicVendors = () => {
+    return vendors.map(vendor => calculateVendorMetrics(vendor));
+  };
+
+  const dynamicVendors = getDynamicVendors();
 
   // Projects now come from global state via: const projects = state.projects.map(p => ({ id: p.id, name: p.name }));
 
@@ -530,7 +466,7 @@ export default function Vendors() {
 
             <TabsContent value="vendors" className="space-y-6">
               <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                {vendors.map((vendor) => (
+                {dynamicVendors.map((vendor) => (
                   <Card key={vendor.id} className="overflow-hidden">
                     <CardHeader className="pb-3">
                       <div className="flex items-start justify-between">
@@ -556,10 +492,18 @@ export default function Vendors() {
                         <div className="bg-green-50 rounded-lg p-3">
                           <div className="text-lg font-bold text-green-700">{vendor.completionRate}%</div>
                           <div className="text-xs text-green-600">Completion Rate</div>
+                          <div className="text-xs text-green-500 mt-1">
+                            {vendor.completionRate >= 80 ? '↗ Excellent' :
+                             vendor.completionRate >= 70 ? '→ Good' : '↘ Needs Improvement'}
+                          </div>
                         </div>
                         <div className="bg-orange-50 rounded-lg p-3">
                           <div className="text-lg font-bold text-orange-700">{vendor.terminateRate}%</div>
                           <div className="text-xs text-orange-600">Terminate Rate</div>
+                          <div className="text-xs text-orange-500 mt-1">
+                            {vendor.terminateRate <= 20 ? '↗ Excellent' :
+                             vendor.terminateRate <= 30 ? '→ Acceptable' : '↘ High'}
+                          </div>
                         </div>
                       </div>
 
