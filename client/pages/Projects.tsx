@@ -56,7 +56,15 @@ interface Project {
 }
 
 export default function Projects() {
-  const [projects, setProjects] = useState<Project[]>([
+  const { state, createProject, updateProject, deleteProject, assignVendorToProject, removeVendorFromProject } = usePanelContext();
+
+  const projects = state.projects;
+  const setProjects = (newProjects: Project[] | ((prev: Project[]) => Project[])) => {
+    // This will be handled by the context actions, but we keep the interface for compatibility
+    console.log('Projects update triggered');
+  };
+
+  const [staticProjects] = useState<Project[]>([
     {
       id: "P12345",
       name: "Consumer Behavior Study 2024",
