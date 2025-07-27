@@ -24,6 +24,7 @@ import {
   Activity
 } from "lucide-react";
 import Sidebar from "@/components/Sidebar";
+import { showCopySuccess } from "@/components/ui/toast-notification";
 
 interface LinkFlowStep {
   id: string;
