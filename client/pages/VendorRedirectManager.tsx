@@ -65,7 +65,7 @@ export default function VendorRedirectManager() {
       status: 'active'
     },
     {
-      vendorId: "V002", 
+      vendorId: "V002",
       vendorName: "Survey Source Network",
       redirectUrls: {
         complete: "https://surveysource.dashboard.com/complete",
@@ -87,7 +87,7 @@ export default function VendorRedirectManager() {
       vendorName: "Panel Partners LLC",
       redirectUrls: {
         complete: "https://panelpartners.tracking.com/success",
-        terminate: "https://panelpartners.tracking.com/failed", 
+        terminate: "https://panelpartners.tracking.com/failed",
         quotaFull: "https://panelpartners.tracking.com/full",
         studyClosed: "https://panelpartners.tracking.com/closed"
       },
@@ -104,6 +104,33 @@ export default function VendorRedirectManager() {
 
   const [selectedConfig, setSelectedConfig] = useState<VendorRedirectConfig | null>(null);
   const [showTestDialog, setShowTestDialog] = useState(false);
+  const [showAddDialog, setShowAddDialog] = useState(false);
+  const [globalSettings, setGlobalSettings] = useState({
+    defaultDelay: 2000,
+    timeout: 30000,
+    retryAttempts: 3,
+    globalParams: "source=panel&timestamp={TIMESTAMP}"
+  });
+
+  // New vendor form state
+  const [newVendor, setNewVendor] = useState<Partial<VendorRedirectConfig>>({
+    vendorId: "",
+    vendorName: "",
+    redirectUrls: {
+      complete: "",
+      terminate: "",
+      quotaFull: "",
+      studyClosed: ""
+    },
+    settings: {
+      enabled: true,
+      passthrough: true,
+      appendParams: true,
+      customParams: "",
+      delay: 2000
+    },
+    status: 'active'
+  });
 
   const getStatusColor = (status: string) => {
     switch(status) {
