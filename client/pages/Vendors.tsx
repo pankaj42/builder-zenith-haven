@@ -269,10 +269,6 @@ export default function Vendors() {
     deleteVendor(vendorId);
   };
 
-  const generateStartLink = (projectId: string, vendorId: string) => {
-    return `https://yourpanel.com/start/${projectId}/${vendorId}/?ID=`;
-  };
-
   // Reusable copy function that works in all contexts
   const copyToClipboard = (text: string, description: string = "text") => {
     try {
