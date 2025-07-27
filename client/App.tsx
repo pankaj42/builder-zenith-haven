@@ -18,6 +18,7 @@ import Fraud from "./pages/Fraud";
 import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
 import Login from "./pages/Login";
+import { PanelProvider } from "./contexts/PanelContext";
 import { CompletePage, TerminatePage, QuotaFullPage, StudyClosedPage } from "./pages/RedirectPage";
 import StartSurvey from "./pages/StartSurvey";
 import NotFound from "./pages/NotFound";
