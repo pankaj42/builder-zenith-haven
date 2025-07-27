@@ -155,7 +155,6 @@ export const showCopySuccess = (element: HTMLElement, message: string = 'Copied!
 // Helper function to create toast
 const createToast = (position: { x: number; y: number }, message: string) => {
 
-  // Create temporary toast
   const toastId = Date.now().toString();
   const toastElement = document.createElement('div');
   toastElement.style.cssText = `
@@ -175,21 +174,23 @@ const createToast = (position: { x: number; y: number }, message: string) => {
     transition: all 0.3s ease;
   `;
   toastElement.textContent = message;
-  
+
   document.body.appendChild(toastElement);
-  
+
   // Animate in
   setTimeout(() => {
     toastElement.style.transform = 'translateY(0)';
     toastElement.style.opacity = '1';
   }, 10);
-  
+
   // Remove after delay
   setTimeout(() => {
     toastElement.style.transform = 'translateY(-5px)';
     toastElement.style.opacity = '0';
     setTimeout(() => {
-      document.body.removeChild(toastElement);
+      if (document.body.contains(toastElement)) {
+        document.body.removeChild(toastElement);
+      }
     }, 300);
   }, 2000);
 };
