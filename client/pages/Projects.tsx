@@ -193,11 +193,11 @@ export default function Projects() {
   };
 
   const updateProjectStatus = (projectId: string, status: Project['status']) => {
-    setProjects(projects.map(p => p.id === projectId ? { ...p, status } : p));
+    updateProject(projectId, { status });
   };
 
-  const deleteProject = (projectId: string) => {
-    setProjects(projects.filter(p => p.id !== projectId));
+  const deleteProjectAction = (projectId: string) => {
+    deleteProject(projectId);
   };
 
   // Reusable copy function that works in all contexts
