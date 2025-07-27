@@ -109,33 +109,45 @@ export default function LinkFlow() {
   };
 
   const copyToClipboard = (text: string, buttonElement: HTMLElement, description: string = "Link Copied!") => {
-    try {
+    // Check if clipboard API is available and allowed
+    if (navigator.clipboard && window.isSecureContext) {
       navigator.clipboard.writeText(text).then(() => {
         showCopySuccess(buttonElement, description);
       }).catch((err) => {
-        console.error("Clipboard API failed:", err);
-        // Fallback to older method
-        const textArea = document.createElement("textarea");
-        textArea.value = text;
-        textArea.style.position = "fixed";
-        textArea.style.left = "-999999px";
-        textArea.style.top = "-999999px";
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-
-        const successful = document.execCommand('copy');
-        document.body.removeChild(textArea);
-
-        if (successful) {
-          showCopySuccess(buttonElement, description);
-        } else {
-          prompt("Copy this link:", text);
-        }
+        console.warn("Clipboard API failed, using fallback:", err.message);
+        fallbackCopyMethod(text, buttonElement, description);
       });
+    } else {
+      // Use fallback method directly
+      fallbackCopyMethod(text, buttonElement, description);
+    }
+  };
+
+  const fallbackCopyMethod = (text: string, buttonElement: HTMLElement, description: string) => {
+    try {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";
+      textArea.style.left = "-999999px";
+      textArea.style.top = "-999999px";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textArea);
+
+      if (successful) {
+        showCopySuccess(buttonElement, description);
+      } else {
+        // Show a fallback dialog with the text to copy
+        const fallbackMessage = `Copy this text:\n\n${text}`;
+        alert(fallbackMessage);
+      }
     } catch (err) {
-      console.error("Copy failed:", err);
-      prompt("Copy this link:", text);
+      console.error("Fallback copy method failed:", err);
+      // Last resort - show the text in a prompt
+      prompt("Copy this text:", text);
     }
   };
 
