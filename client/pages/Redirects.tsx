@@ -127,7 +127,28 @@ export default function Redirects() {
 
   const copyRedirectUrl = (type: string) => {
     const url = `https://yourpanel.com/redirect/${type}?pid={PID}&uid={UID}&ip={IP}`;
-    navigator.clipboard.writeText(url);
+    try {
+      const textArea = document.createElement("textarea");
+      textArea.value = url;
+      textArea.style.position = "fixed";
+      textArea.style.left = "-999999px";
+      textArea.style.top = "-999999px";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textArea);
+
+      if (successful) {
+        alert(`✅ ${type} Redirect URL Copied!\n\n${url}`);
+      } else {
+        prompt(`Copy this ${type} redirect URL:`, url);
+      }
+    } catch (err) {
+      console.error("Copy failed:", err);
+      prompt(`Copy this ${type} redirect URL:`, url);
+    }
   };
 
   return (
