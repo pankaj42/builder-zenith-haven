@@ -1050,7 +1050,7 @@ export default function Projects() {
                     selectedProjectForVendors.vendors.map((vendorId) => {
                       const vendor = availableVendors.find(v => v.id === vendorId);
                       return (
-                        <div key={vendorId} className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
+                        <div key={`assigned-${vendorId}`} className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
                           <div className="flex items-center gap-3">
                             <CheckCircle className="w-4 h-4 text-green-600" />
                             <div>
@@ -1093,7 +1093,7 @@ export default function Projects() {
                   {availableVendors
                     .filter(vendor => !selectedProjectForVendors.vendors.includes(vendor.id))
                     .map((vendor) => (
-                      <div key={vendor.id} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div key={`available-${vendor.id}`} className="flex items-center justify-between p-3 border rounded-lg">
                         <div className="flex items-center gap-3">
                           <Users className="w-4 h-4 text-gray-600" />
                           <div>
@@ -1138,7 +1138,7 @@ export default function Projects() {
                   {selectedProjectForVendors.vendors.map((vendorId) => {
                     const vendor = availableVendors.find(v => v.id === vendorId);
                     return (
-                      <div key={vendorId} className="flex items-center space-x-3 p-3 border rounded-lg">
+                      <div key={`email-${vendorId}`} className="flex items-center space-x-3 p-3 border rounded-lg">
                         <Switch
                           checked={emailSettings.selectedVendors.includes(vendorId)}
                           onCheckedChange={(checked) => {
