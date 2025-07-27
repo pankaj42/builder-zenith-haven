@@ -376,7 +376,7 @@ Recommendation: ${
 This will:
 • Flag all responses from this IP for review
 • Add investigation notes to audit trail
-• Notify relevant vendor contacts
+��� Notify relevant vendor contacts
 • Generate detailed forensic report
 
 Continue with investigation?`);
@@ -770,8 +770,21 @@ Priority: ${ipData.riskScore > 8 ? 'High' : ipData.riskScore > 6 ? 'Medium' : 'L
                                   Block
                                 </Button>
                               )}
-                              <Button variant="outline" size="sm" className="gap-1">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="gap-1"
+                                onClick={() => viewIpDetails(ip.ip)}
+                              >
                                 <Eye className="w-3 h-3" />
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="gap-1"
+                                onClick={() => investigateIp(ip.ip)}
+                              >
+                                Investigate
                               </Button>
                             </div>
                           </TableCell>
