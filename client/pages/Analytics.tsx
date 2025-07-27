@@ -801,6 +801,24 @@ export default function Analytics() {
           </Tabs>
         </main>
       </div>
+
+      {/* Vendor Details Modal */}
+      <DetailsModal
+        data={selectedVendor}
+        type="vendor"
+        isOpen={!!selectedVendor}
+        onClose={() => setSelectedVendor(null)}
+        title={`Vendor Details - ${selectedVendor?.vendorName || ''}`}
+      />
+
+      {/* Project Details Modal */}
+      <DetailsModal
+        data={selectedProject}
+        type="project"
+        isOpen={!!selectedProject}
+        onClose={() => setSelectedProject(null)}
+        title={`Project Details - ${selectedProject?.projectName || ''}`}
+      />
     </div>
   );
 }
