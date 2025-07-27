@@ -244,7 +244,7 @@ export default function Fraud() {
       // Randomly generate new fraud alerts
       if (Math.random() < 0.1) { // 10% chance every 30 seconds
         const newAlert: FraudAlert = {
-          id: `FA${Date.now().toString().slice(-3)}`,
+          id: `FA${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
           type: ["duplicate-uid", "duplicate-ip", "fast-completion", "high-terminate"][Math.floor(Math.random() * 4)] as any,
           severity: ["low", "medium", "high"][Math.floor(Math.random() * 3)] as any,
           vendorId: ["V001", "V002", "V003"][Math.floor(Math.random() * 3)],
