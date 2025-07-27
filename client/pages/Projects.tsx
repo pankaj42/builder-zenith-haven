@@ -571,11 +571,11 @@ export default function Projects() {
                   </div>
 
                   {/* Actions */}
-                  <div className="flex gap-2 pt-2">
+                  <div className="grid grid-cols-2 gap-1 pt-2">
                     <Button
                       variant="outline"
                       size="sm"
-                      className="flex-1 gap-1"
+                      className="gap-1"
                       onClick={() => showProjectDetails(project)}
                     >
                       <Eye className="w-3 h-3" />
@@ -585,13 +585,19 @@ export default function Projects() {
                             onClick={() => copyProjectLink(project.id)}
                             title="Copy Vendor Start Link">
                       <Copy className="w-3 h-3" />
-                      Copy Link
+                      Copy
                     </Button>
                     <Button variant="outline" size="sm" className="gap-1"
-                            onClick={() => window.open(project.clientLink, '_blank')}
-                            title="Open Client Survey">
-                      <ExternalLink className="w-3 h-3" />
-                      Test
+                            onClick={() => showVendorAssignment(project)}
+                            title="Assign Vendors">
+                      <UserPlus className="w-3 h-3" />
+                      Assign
+                    </Button>
+                    <Button variant="outline" size="sm" className="gap-1"
+                            onClick={() => showEmailVendors(project)}
+                            title="Email Vendors">
+                      <Mail className="w-3 h-3" />
+                      Email
                     </Button>
                   </div>
 
