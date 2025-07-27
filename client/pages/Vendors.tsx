@@ -49,7 +49,7 @@ interface Vendor {
     quotaFull: string;
     studyClosed?: string;
   };
-  redirectSettings: {
+  redirectSettings?: {
     enabled: boolean;
     passthrough: boolean;
     appendParams: boolean;
