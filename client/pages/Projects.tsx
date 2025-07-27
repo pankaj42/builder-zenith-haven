@@ -249,6 +249,66 @@ export default function Projects() {
     setShowDetailsDialog(true);
   };
 
+  const showVendorAssignment = (project: Project) => {
+    setSelectedProjectForVendors(project);
+    setShowVendorAssignDialog(true);
+  };
+
+  const showEmailVendors = (project: Project) => {
+    setSelectedProjectForVendors(project);
+    setEmailSettings({
+      subject: `New Project Assignment: ${project.name}`,
+      message: `Hello,\n\nYou have been assigned to work on our new project "${project.name}" for client ${project.clientName}.\n\nProject Details:\n- Expected Duration: ${project.estimatedDuration} minutes\n- Incentive: ${project.incentive}\n- Total Quota: ${project.totalQuota} completes\n\nYour unique start link and quota details are included below.\n\nBest regards,\nSurveyPanel Team`,
+      includeQuotas: true,
+      includeStartLink: true,
+      selectedVendors: project.vendors
+    });
+    setShowEmailDialog(true);
+  };
+
+  const assignVendorToProject = (projectId: string, vendorId: string) => {
+    setProjects(projects.map(p =>
+      p.id === projectId
+        ? { ...p, vendors: [...p.vendors, vendorId] }
+        : p
+    ));
+  };
+
+  const removeVendorFromProject = (projectId: string, vendorId: string) => {
+    setProjects(projects.map(p =>
+      p.id === projectId
+        ? { ...p, vendors: p.vendors.filter(v => v !== vendorId) }
+        : p
+    ));
+  };
+
+  const sendVendorEmails = () => {
+    if (!selectedProjectForVendors) return;
+
+    const project = selectedProjectForVendors;
+    const vendorsToEmail = emailSettings.selectedVendors;
+
+    // Simulate email sending
+    vendorsToEmail.forEach(vendorId => {
+      const vendor = availableVendors.find(v => v.id === vendorId);
+      if (vendor) {
+        const startLink = `https://yourpanel.com/start/${project.id}/${vendorId}/?ID=`;
+
+        console.log(`📧 Email sent to ${vendor.name} (${vendor.email})`);
+        console.log(`Subject: ${emailSettings.subject}`);
+        console.log(`Start Link: ${startLink}`);
+        console.log(`Message: ${emailSettings.message}`);
+
+        if (emailSettings.includeQuotas) {
+          console.log(`Quotas: Age ${project.quotas.age.min}-${project.quotas.age.max}, Total: ${project.totalQuota}`);
+        }
+      }
+    });
+
+    alert(`✅ Emails sent successfully to ${vendorsToEmail.length} vendor(s)!\n\nVendors will receive:\n- Unique start links\n- Project quotas\n- Assignment details\n\nCheck console for email details.`);
+    setShowEmailDialog(false);
+  };
+
   const getStatusColor = (status: string) => {
     switch(status) {
       case 'active': return 'bg-green-100 text-green-800 border-green-200';
