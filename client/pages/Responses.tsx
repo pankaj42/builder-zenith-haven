@@ -497,6 +497,7 @@ export default function Responses() {
                 <Table>
                   <TableHeader>
                     <TableRow>
+                      <TableHead className="w-16">S.No.</TableHead>
                       <TableHead>PID</TableHead>
                       <TableHead>Vendor UID</TableHead>
                       <TableHead>Client UID</TableHead>
@@ -510,8 +511,11 @@ export default function Responses() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {paginatedResponses.map((response) => (
+                    {paginatedResponses.map((response, index) => (
                       <TableRow key={response.id} className="hover:bg-muted/50">
+                        <TableCell className="font-mono text-sm text-muted-foreground">
+                          {startIndex + index + 1}
+                        </TableCell>
                         <TableCell className="font-mono text-sm">{response.pid}</TableCell>
                         <TableCell className="font-mono text-sm">{response.vendorUID}</TableCell>
                         <TableCell className="font-mono text-sm font-medium">{response.clientUID}</TableCell>
