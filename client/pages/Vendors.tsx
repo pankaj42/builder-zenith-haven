@@ -353,7 +353,7 @@ export default function Vendors() {
                     Add Vendor
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+                <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
                   <DialogHeader>
                     <DialogTitle>Add New Vendor</DialogTitle>
                   </DialogHeader>
@@ -511,7 +511,7 @@ export default function Vendors() {
                           <div className="text-xs text-green-600">Completion Rate</div>
                           <div className="text-xs text-green-500 mt-1">
                             {vendor.completionRate >= 80 ? '↗ Excellent' :
-                             vendor.completionRate >= 70 ? '→ Good' : '↘ Needs Improvement'}
+                             vendor.completionRate >= 70 ? '→ Good' : '�� Needs Improvement'}
                           </div>
                         </div>
                         <div className="bg-orange-50 rounded-lg p-3">
@@ -808,7 +808,7 @@ export default function Vendors() {
 
       {/* Vendor Details Dialog */}
       <Dialog open={showDetailsDialog} onOpenChange={setShowDetailsDialog}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Users className="w-5 h-5" />
@@ -1109,7 +1109,7 @@ export default function Vendors() {
 
       {/* Edit Vendor Dialog */}
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Edit Vendor - {editingVendor?.name}</DialogTitle>
           </DialogHeader>
