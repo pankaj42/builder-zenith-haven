@@ -106,29 +106,33 @@ export const DetailsModal: React.FC<DetailsModalProps> = ({
         <div>
           <label className="text-sm font-medium text-gray-700">Vendor</label>
           <div className="flex items-center gap-2 mt-1">
-            <span className="text-sm">{data.vendorName} ({data.vendorId})</span>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={(e) => copyToClipboard(data.vendorId, e.currentTarget)}
-              className="h-6 w-6 p-0"
-            >
-              <Copy className="w-3 h-3" />
-            </Button>
+            <span className="text-sm">{data?.vendorName || 'Unknown'} ({data?.vendorId || 'N/A'})</span>
+            {data?.vendorId && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={(e) => copyToClipboard(data.vendorId, e.currentTarget)}
+                className="h-6 w-6 p-0"
+              >
+                <Copy className="w-3 h-3" />
+              </Button>
+            )}
           </div>
         </div>
         <div>
           <label className="text-sm font-medium text-gray-700">Project</label>
           <div className="flex items-center gap-2 mt-1">
-            <span className="text-sm">{data.projectId}</span>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={(e) => copyToClipboard(data.projectId, e.currentTarget)}
-              className="h-6 w-6 p-0"
-            >
-              <Copy className="w-3 h-3" />
-            </Button>
+            <span className="text-sm">{data?.projectId || 'N/A'}</span>
+            {data?.projectId && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={(e) => copyToClipboard(data.projectId, e.currentTarget)}
+                className="h-6 w-6 p-0"
+              >
+                <Copy className="w-3 h-3" />
+              </Button>
+            )}
           </div>
         </div>
       </div>
