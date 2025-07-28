@@ -299,6 +299,11 @@ export const DetailsModal: React.FC<DetailsModalProps> = ({
   );
 
   const renderContent = () => {
+    // Return early if data is null or undefined
+    if (!data) {
+      return <div className="text-center py-8 text-muted-foreground">No data available</div>;
+    }
+
     switch (type) {
       case 'alert':
         return renderAlertDetails();
