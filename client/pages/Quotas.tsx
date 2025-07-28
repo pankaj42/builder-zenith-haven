@@ -358,9 +358,11 @@ export default function Quotas() {
                         <SelectValue placeholder="Select project" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="P12345">Consumer Behavior Study 2024</SelectItem>
-                        <SelectItem value="P12346">Brand Awareness Survey</SelectItem>
-                        <SelectItem value="P12347">Product Feedback Collection</SelectItem>
+                        {state.projects.map(project => (
+                          <SelectItem key={project.id} value={project.id}>
+                            {project.name}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
