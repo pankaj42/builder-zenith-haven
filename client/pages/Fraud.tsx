@@ -30,7 +30,7 @@ import {
 import Sidebar from "@/components/Sidebar";
 import { usePanelContext } from "@/contexts/PanelContext";
 import { DetailsModal } from "@/components/ui/details-modal";
-import { useToast } from "@/components/ui/toast-notification";
+import { showCopySuccess } from "@/components/ui/toast-notification";
 
 interface FraudAlert {
   id: string;
@@ -79,586 +79,531 @@ interface IPMonitoring {
 
 export default function Fraud() {
   const { state } = usePanelContext();
-  const { showToast, ToastContainer } = useToast();
   const [selectedAlert, setSelectedAlert] = useState<FraudAlert | null>(null);
   const [selectedIp, setSelectedIp] = useState<IPMonitoring | null>(null);
   const [selectedVendor, setSelectedVendor] = useState<VendorFraudScore | null>(null);
   const [showConfigureDialog, setShowConfigureDialog] = useState(false);
   const [showReportsDialog, setShowReportsDialog] = useState(false);
-  const [fraudAlerts, setFraudAlerts] = useState<FraudAlert[]>([
-    {
-      id: "FA001",
-      type: "duplicate-uid",
-      severity: "high",
-      vendorId: "V003",
-      vendorName: "Panel Partners LLC",
-      projectId: "P12345",
-      details: "Same UID 'VU12349' used 5 times from different IP addresses",
-      affectedResponses: ["R001", "R002", "R003", "R004", "R005"],
-      timestamp: "2024-01-25T10:30:00Z",
-      status: "open"
-    },
-    {
-      id: "FA002",
-      type: "fast-completion",
-      severity: "medium",
-      vendorId: "V002",
-      vendorName: "Survey Source Network",
-      projectId: "P12346",
-      details: "15-minute survey completed in 45 seconds",
-      affectedResponses: ["R006"],
-      timestamp: "2024-01-25T09:45:00Z",
-      status: "investigating",
-      investigatedBy: "Admin"
-    },
-    {
-      id: "FA003",
-      type: "duplicate-ip",
-      severity: "critical",
-      vendorId: "V001",
-      vendorName: "Quality Traffic Solutions",
-      projectId: "P12345",
-      details: "IP 192.168.1.100 completed survey 12 times with different UIDs",
-      affectedResponses: ["R007", "R008", "R009", "R010", "R011", "R012"],
-      timestamp: "2024-01-25T08:15:00Z",
-      status: "open"
-    },
-    {
-      id: "FA004",
-      type: "high-terminate",
-      severity: "medium",
-      vendorId: "V003",
-      vendorName: "Panel Partners LLC",
-      projectId: "P12347",
-      details: "Terminate rate of 65% over last 100 responses (threshold: 30%)",
-      affectedResponses: ["R013", "R014", "R015"],
-      timestamp: "2024-01-25T07:20:00Z",
-      status: "resolved",
-      resolution: "Vendor confirmed screener changes, monitoring continues"
-    }
-  ]);
+  const [fraudAlerts, setFraudAlerts] = useState<FraudAlert[]>([]);
+  const [vendorFraudScores, setVendorFraudScores] = useState<VendorFraudScore[]>([]);
+  const [ipMonitoring, setIpMonitoring] = useState<IPMonitoring[]>([]);
 
-  const [vendorScores, setVendorScores] = useState<VendorFraudScore[]>([
-    {
-      vendorId: "V001",
-      vendorName: "Quality Traffic Solutions",
-      overallScore: 2.8,
-      duplicateIPRate: 8.5,
-      duplicateUIDRate: 1.2,
-      fastCompletionRate: 3.1,
-      highTerminateRate: 18.2,
-      suspiciousPatterns: 3,
-      totalResponses: 2450,
-      flaggedResponses: 68,
-      riskLevel: "medium",
-      lastActivity: "2024-01-25T10:28:45Z"
-    },
-    {
-      vendorId: "V002",
-      vendorName: "Survey Source Network",
-      overallScore: 1.5,
-      duplicateIPRate: 2.1,
-      duplicateUIDRate: 0.8,
-      fastCompletionRate: 1.9,
-      highTerminateRate: 15.3,
-      suspiciousPatterns: 1,
-      totalResponses: 1890,
-      flaggedResponses: 28,
-      riskLevel: "low",
-      lastActivity: "2024-01-25T10:25:30Z"
-    },
-    {
-      vendorId: "V003",
-      vendorName: "Panel Partners LLC",
-      overallScore: 4.8,
-      duplicateIPRate: 15.2,
-      duplicateUIDRate: 8.7,
-      fastCompletionRate: 12.3,
-      highTerminateRate: 28.7,
-      suspiciousPatterns: 12,
-      totalResponses: 1245,
-      flaggedResponses: 156,
-      riskLevel: "critical",
-      lastActivity: "2024-01-25T09:45:15Z"
-    }
-  ]);
+  // Generate dynamic fraud alerts based on actual response data
+  useEffect(() => {
+    const generateFraudAlerts = (): FraudAlert[] => {
+      const alerts: FraudAlert[] = [];
+      const ipCounts: { [key: string]: string[] } = {};
+      const uidCounts: { [key: string]: string[] } = {};
+      
+      // Analyze responses for fraud patterns
+      state.responses.forEach(response => {
+        // Track IP duplicates
+        if (response.ipAddress) {
+          if (!ipCounts[response.ipAddress]) {
+            ipCounts[response.ipAddress] = [];
+          }
+          ipCounts[response.ipAddress].push(response.id);
+        }
 
-  const [ipMonitoring, setIpMonitoring] = useState<IPMonitoring[]>([
-    {
-      ip: "192.168.1.100",
-      country: "United States",
-      city: "New York",
-      responseCount: 12,
-      uniqueUIDs: 12,
-      vendors: ["V001"],
-      projects: ["P12345"],
-      firstSeen: "2024-01-25T08:00:00Z",
-      lastSeen: "2024-01-25T10:30:00Z",
-      riskScore: 9.2,
-      isBlocked: false,
-      suspiciousActivity: ["Multiple unique UIDs", "High frequency"]
-    },
-    {
-      ip: "203.0.113.50",
-      country: "Australia",
-      city: "Sydney",
-      responseCount: 8,
-      uniqueUIDs: 3,
-      vendors: ["V002", "V003"],
-      projects: ["P12346", "P12347"],
-      firstSeen: "2024-01-24T15:30:00Z",
-      lastSeen: "2024-01-25T09:45:00Z",
-      riskScore: 6.7,
-      isBlocked: false,
-      suspiciousActivity: ["Cross-vendor activity", "Repeated UIDs"]
-    },
-    {
-      ip: "10.0.0.150",
-      country: "Canada",
-      city: "Toronto",
-      responseCount: 15,
-      uniqueUIDs: 1,
-      vendors: ["V001", "V002", "V003"],
-      projects: ["P12345", "P12346", "P12347"],
-      firstSeen: "2024-01-23T12:00:00Z",
-      lastSeen: "2024-01-25T10:15:00Z",
-      riskScore: 8.9,
-      isBlocked: true,
-      suspiciousActivity: ["Same UID across vendors", "Multi-project participation", "Blocked by admin"]
-    }
-  ]);
+        // Track UID duplicates
+        if (response.vendorUID) {
+          if (!uidCounts[response.vendorUID]) {
+            uidCounts[response.vendorUID] = [];
+          }
+          uidCounts[response.vendorUID].push(response.id);
+        }
+      });
 
-  const [fraudSettings, setFraudSettings] = useState({
+      // Generate duplicate IP alerts
+      Object.entries(ipCounts).forEach(([ip, responseIds]) => {
+        if (responseIds.length > 3) {
+          const relatedResponses = state.responses.filter(r => r.ipAddress === ip);
+          const vendor = state.vendors.find(v => v.id === relatedResponses[0]?.vendorId);
+          
+          alerts.push({
+            id: `DIP_${ip.replace(/\./g, '_')}_${Date.now()}`,
+            type: 'duplicate-ip',
+            severity: responseIds.length > 10 ? 'critical' : responseIds.length > 6 ? 'high' : 'medium',
+            vendorId: relatedResponses[0]?.vendorId || 'unknown',
+            vendorName: vendor?.name || 'Unknown Vendor',
+            projectId: relatedResponses[0]?.projectId || 'unknown',
+            details: `IP ${ip} used ${responseIds.length} times across multiple responses`,
+            affectedResponses: responseIds,
+            timestamp: new Date().toISOString(),
+            status: 'open'
+          });
+        }
+      });
+
+      // Generate duplicate UID alerts
+      Object.entries(uidCounts).forEach(([uid, responseIds]) => {
+        if (responseIds.length > 1) {
+          const relatedResponses = state.responses.filter(r => r.vendorUID === uid);
+          const vendor = state.vendors.find(v => v.id === relatedResponses[0]?.vendorId);
+          
+          alerts.push({
+            id: `DUID_${uid}_${Date.now()}`,
+            type: 'duplicate-uid',
+            severity: responseIds.length > 5 ? 'critical' : responseIds.length > 3 ? 'high' : 'medium',
+            vendorId: relatedResponses[0]?.vendorId || 'unknown',
+            vendorName: vendor?.name || 'Unknown Vendor',
+            projectId: relatedResponses[0]?.projectId || 'unknown',
+            details: `Vendor UID '${uid}' used ${responseIds.length} times`,
+            affectedResponses: responseIds,
+            timestamp: new Date().toISOString(),
+            status: 'open'
+          });
+        }
+      });
+
+      // Check vendor fraud scores and generate alerts for high risk vendors
+      state.vendors.forEach(vendor => {
+        if (vendor.fraudScore >= 4) {
+          alerts.push({
+            id: `HFS_${vendor.id}_${Date.now()}`,
+            type: 'suspicious-pattern',
+            severity: vendor.fraudScore >= 4.5 ? 'critical' : 'high',
+            vendorId: vendor.id,
+            vendorName: vendor.name,
+            projectId: 'multiple',
+            details: `Vendor has high fraud score of ${vendor.fraudScore}/5`,
+            affectedResponses: state.responses.filter(r => r.vendorId === vendor.id).map(r => r.id),
+            timestamp: new Date().toISOString(),
+            status: 'open'
+          });
+        }
+      });
+
+      return alerts.slice(0, 10); // Limit to 10 most recent alerts
+    };
+
+    setFraudAlerts(generateFraudAlerts());
+  }, [state.responses, state.vendors]);
+
+  // Generate dynamic vendor fraud scores based on actual data
+  useEffect(() => {
+    const generateVendorFraudScores = (): VendorFraudScore[] => {
+      return state.vendors.map(vendor => {
+        const vendorResponses = state.responses.filter(r => r.vendorId === vendor.id);
+        const totalResponses = vendorResponses.length;
+        
+        // Calculate fraud metrics
+        const ipCounts: { [key: string]: number } = {};
+        const uidCounts: { [key: string]: number } = {};
+        let fastCompletions = 0;
+        
+        vendorResponses.forEach(response => {
+          if (response.ipAddress) {
+            ipCounts[response.ipAddress] = (ipCounts[response.ipAddress] || 0) + 1;
+          }
+          if (response.vendorUID) {
+            uidCounts[response.vendorUID] = (uidCounts[response.vendorUID] || 0) + 1;
+          }
+          if (response.completionTime && response.completionTime < 300) { // Less than 5 minutes
+            fastCompletions++;
+          }
+        });
+
+        const duplicateIPs = Object.values(ipCounts).filter(count => count > 1).length;
+        const duplicateUIDs = Object.values(uidCounts).filter(count => count > 1).length;
+        
+        const duplicateIPRate = totalResponses > 0 ? (duplicateIPs / totalResponses) * 100 : 0;
+        const duplicateUIDRate = totalResponses > 0 ? (duplicateUIDs / totalResponses) * 100 : 0;
+        const fastCompletionRate = totalResponses > 0 ? (fastCompletions / totalResponses) * 100 : 0;
+        const highTerminateRate = vendor.terminateRate;
+        
+        const suspiciousPatterns = duplicateIPs + duplicateUIDs + (fastCompletions > totalResponses * 0.3 ? 1 : 0);
+        const flaggedResponses = duplicateIPs + duplicateUIDs + fastCompletions;
+        
+        const overallScore = Math.min(5, vendor.fraudScore);
+        const riskLevel: 'low' | 'medium' | 'high' | 'critical' = 
+          overallScore >= 4 ? 'critical' :
+          overallScore >= 3 ? 'high' :
+          overallScore >= 2 ? 'medium' : 'low';
+
+        return {
+          vendorId: vendor.id,
+          vendorName: vendor.name,
+          overallScore,
+          duplicateIPRate,
+          duplicateUIDRate,
+          fastCompletionRate,
+          highTerminateRate,
+          suspiciousPatterns,
+          totalResponses,
+          flaggedResponses,
+          riskLevel,
+          lastActivity: new Date().toISOString()
+        };
+      });
+    };
+
+    setVendorFraudScores(generateVendorFraudScores());
+  }, [state.vendors, state.responses]);
+
+  // Generate dynamic IP monitoring data
+  useEffect(() => {
+    const generateIPMonitoring = (): IPMonitoring[] => {
+      const ipData: { [key: string]: IPMonitoring } = {};
+      
+      state.responses.forEach(response => {
+        if (response.ipAddress) {
+          const ip = response.ipAddress;
+          if (!ipData[ip]) {
+            ipData[ip] = {
+              ip,
+              country: response.country || 'Unknown',
+              city: response.city || 'Unknown',
+              responseCount: 0,
+              uniqueUIDs: new Set<string>().size,
+              vendors: [],
+              projects: [],
+              firstSeen: response.timestamp,
+              lastSeen: response.timestamp,
+              riskScore: 0,
+              isBlocked: false,
+              suspiciousActivity: []
+            };
+          }
+          
+          ipData[ip].responseCount++;
+          if (response.vendorUID) {
+            const uidSet = new Set(state.responses.filter(r => r.ipAddress === ip).map(r => r.vendorUID).filter(Boolean));
+            ipData[ip].uniqueUIDs = uidSet.size;
+          }
+          
+          if (response.vendorId && !ipData[ip].vendors.includes(response.vendorId)) {
+            ipData[ip].vendors.push(response.vendorId);
+          }
+          
+          if (response.projectId && !ipData[ip].projects.includes(response.projectId)) {
+            ipData[ip].projects.push(response.projectId);
+          }
+          
+          if (new Date(response.timestamp) > new Date(ipData[ip].lastSeen)) {
+            ipData[ip].lastSeen = response.timestamp;
+          }
+          if (new Date(response.timestamp) < new Date(ipData[ip].firstSeen)) {
+            ipData[ip].firstSeen = response.timestamp;
+          }
+        }
+      });
+
+      // Calculate risk scores and suspicious activities
+      Object.values(ipData).forEach(ipInfo => {
+        let riskScore = 0;
+        const suspiciousActivity: string[] = [];
+        
+        if (ipInfo.responseCount > 10) {
+          riskScore += 3;
+          suspiciousActivity.push(`High response count: ${ipInfo.responseCount}`);
+        }
+        
+        if (ipInfo.uniqueUIDs === 1 && ipInfo.responseCount > 5) {
+          riskScore += 4;
+          suspiciousActivity.push('Single UID with multiple responses');
+        }
+        
+        if (ipInfo.vendors.length > 3) {
+          riskScore += 2;
+          suspiciousActivity.push(`Multiple vendors: ${ipInfo.vendors.length}`);
+        }
+        
+        ipInfo.riskScore = Math.min(10, riskScore);
+        ipInfo.suspiciousActivity = suspiciousActivity;
+        ipInfo.isBlocked = riskScore >= 8;
+      });
+
+      return Object.values(ipData)
+        .sort((a, b) => b.riskScore - a.riskScore)
+        .slice(0, 20); // Top 20 IPs by risk
+    };
+
+    setIpMonitoring(generateIPMonitoring());
+  }, [state.responses]);
+
+  const [fraudThresholds, setFraudThresholds] = useState({
     duplicateIPThreshold: 5,
-    duplicateUIDEnabled: true,
-    fastCompletionThreshold: 0.3, // 30% of expected time
-    highTerminateThreshold: 30,
-    geoLocationCheck: true,
-    autoBlockEnabled: false,
-    alertEmailEnabled: true
+    duplicateUIDThreshold: 3,
+    fastCompletionThreshold: 300, // seconds
+    highTerminateThreshold: 50, // percentage
+    fraudScoreThreshold: 4.0,
+    autoSuspendEnabled: true,
+    realTimeMonitoring: true,
+    emailAlertsEnabled: true,
   });
 
-  // Simulate real-time fraud monitoring
+  const [fraudDetectionStats, setFraudDetectionStats] = useState({
+    totalAlerts: 0,
+    highSeverityAlerts: 0,
+    vendorsUnderReview: 0,
+    responsesBlocked: 0,
+    suspiciousIPs: 0,
+    flaggedUniqueUIDs: 0,
+    averageDetectionTime: '2.3 minutes'
+  });
+
+  // Update fraud detection stats based on dynamic data
   useEffect(() => {
-    const interval = setInterval(() => {
-      // Randomly generate new fraud alerts
-      if (Math.random() < 0.1) { // 10% chance every 30 seconds
-        const newAlert: FraudAlert = {
-          id: `FA${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-          type: ["duplicate-uid", "duplicate-ip", "fast-completion", "high-terminate"][Math.floor(Math.random() * 4)] as any,
-          severity: ["low", "medium", "high"][Math.floor(Math.random() * 3)] as any,
-          vendorId: ["V001", "V002", "V003"][Math.floor(Math.random() * 3)],
-          vendorName: ["Quality Traffic Solutions", "Survey Source Network", "Panel Partners LLC"][Math.floor(Math.random() * 3)],
-          projectId: ["P12345", "P12346", "P12347"][Math.floor(Math.random() * 3)],
-          details: "Automated fraud detection triggered",
-          affectedResponses: [`R${Math.floor(Math.random() * 999)}`],
-          timestamp: new Date().toISOString(),
-          status: "open"
-        };
-        
-        setFraudAlerts(prev => [newAlert, ...prev].slice(0, 20));
-      }
-
-      // Update vendor fraud scores
-      setVendorScores(prev => prev.map(vendor => ({
-        ...vendor,
-        overallScore: Math.max(0, vendor.overallScore + (Math.random() - 0.5) * 0.2),
-        flaggedResponses: vendor.flaggedResponses + Math.floor(Math.random() * 2),
-        lastActivity: new Date().toISOString()
-      })));
-    }, 30000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  const updateAlertStatus = (alertId: string, status: FraudAlert['status'], resolution?: string) => {
-    setFraudAlerts(alerts => alerts.map(alert => 
-      alert.id === alertId 
-        ? { ...alert, status, resolution, investigatedBy: status !== 'open' ? 'Admin' : undefined }
-        : alert
-    ));
-  };
-
-  const blockIP = (ip: string) => {
-    setIpMonitoring(ips => ips.map(ipData =>
-      ipData.ip === ip
-        ? { ...ipData, isBlocked: true, suspiciousActivity: [...ipData.suspiciousActivity, "Blocked by admin"] }
-        : ipData
-    ));
-  };
-
-  const unblockIP = (ip: string) => {
-    setIpMonitoring(ips => ips.map(ipData =>
-      ipData.ip === ip
-        ? { ...ipData, isBlocked: false, suspiciousActivity: ipData.suspiciousActivity.filter(a => a !== 'Blocked by admin') }
-        : ipData
-    ));
-  };
-
-  const viewAlertDetails = (alertId: string) => {
-    const alertData = fraudAlerts.find(a => a.id === alertId);
-    if (alertData) {
-      setSelectedAlert(alertData);
-    }
-  };
-
-  const viewIpDetails = (ip: string) => {
-    const ipData = ipMonitoring.find(i => i.ip === ip);
-    if (ipData) {
-      setSelectedIp(ipData);
-    }
-  };
-
-  const viewVendorDetails = (vendorId: string) => {
-    const vendor = vendorScores.find(v => v.vendorId === vendorId);
-    if (vendor) {
-      setSelectedVendor(vendor);
-    }
-  };
-
-  const investigateIp = (ip: string) => {
-    const ipData = ipMonitoring.find(i => i.ip === ip);
-    if (ipData) {
-      const action = confirm(`Start investigation for IP ${ip}?
-
-This will:
-• Flag all responses from this IP for review
-• Add investigation notes to audit trail
-��� Notify relevant vendor contacts
-• Generate detailed forensic report
-
-Continue with investigation?`);
-
-      if (action) {
-        showToast(`Investigation initiated for IP ${ip} - ID: INV-${Date.now()}`, 'success');
-      }
-    }
-  };
-
-
+    setFraudDetectionStats({
+      totalAlerts: fraudAlerts.length,
+      highSeverityAlerts: fraudAlerts.filter(alert => alert.severity === 'high' || alert.severity === 'critical').length,
+      vendorsUnderReview: vendorFraudScores.filter(vendor => vendor.riskLevel === 'high' || vendor.riskLevel === 'critical').length,
+      responsesBlocked: fraudAlerts.reduce((sum, alert) => sum + alert.affectedResponses.length, 0),
+      suspiciousIPs: ipMonitoring.filter(ip => ip.riskScore >= 6).length,
+      flaggedUniqueUIDs: ipMonitoring.reduce((sum, ip) => sum + (ip.uniqueUIDs === 1 && ip.responseCount > 3 ? 1 : 0), 0),
+      averageDetectionTime: '2.3 minutes'
+    });
+  }, [fraudAlerts, vendorFraudScores, ipMonitoring]);
 
   const getSeverityColor = (severity: string) => {
-    switch(severity) {
-      case 'low': return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'high': return 'bg-orange-100 text-orange-800 border-orange-200';
+    switch (severity) {
       case 'critical': return 'bg-red-100 text-red-800 border-red-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'high': return 'bg-orange-100 text-orange-800 border-orange-200';
+      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      default: return 'bg-blue-100 text-blue-800 border-blue-200';
     }
   };
 
-  const getRiskLevelColor = (level: string) => {
-    switch(level) {
-      case 'low': return 'text-green-600';
-      case 'medium': return 'text-yellow-600';
-      case 'high': return 'text-orange-600';
-      case 'critical': return 'text-red-600';
-      default: return 'text-gray-600';
+  const getRiskLevelColor = (riskLevel: string) => {
+    switch (riskLevel) {
+      case 'critical': return 'bg-red-100 text-red-800 border-red-200';
+      case 'high': return 'bg-orange-100 text-orange-800 border-orange-200';
+      case 'medium': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      default: return 'bg-green-100 text-green-800 border-green-200';
     }
   };
 
-  const getStatusColor = (status: string) => {
-    switch(status) {
-      case 'open': return 'bg-red-100 text-red-800 border-red-200';
-      case 'investigating': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'resolved': return 'bg-green-100 text-green-800 border-green-200';
-      case 'false-positive': return 'bg-gray-100 text-gray-800 border-gray-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
+  const exportFraudData = () => {
+    const exportData = {
+      alerts: fraudAlerts,
+      vendorScores: vendorFraudScores,
+      ipMonitoring: ipMonitoring,
+      stats: fraudDetectionStats,
+      timestamp: new Date().toISOString()
+    };
+    
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData, null, 2));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", `fraud_report_${new Date().toISOString().split('T')[0]}.json`);
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+    
+    showCopySuccess(document.body, 'Fraud report exported successfully!');
   };
-
-  const getFraudTypeIcon = (type: string) => {
-    switch(type) {
-      case 'duplicate-uid': return <Users className="w-4 h-4" />;
-      case 'duplicate-ip': return <Globe className="w-4 h-4" />;
-      case 'fast-completion': return <Zap className="w-4 h-4" />;
-      case 'high-terminate': return <TrendingUp className="w-4 h-4" />;
-      case 'suspicious-pattern': return <Activity className="w-4 h-4" />;
-      case 'geolocation-mismatch': return <MapPin className="w-4 h-4" />;
-      default: return <AlertTriangle className="w-4 h-4" />;
-    }
-  };
-
-  const openAlerts = fraudAlerts.filter(a => a.status === 'open').length;
-  const criticalAlerts = fraudAlerts.filter(a => a.severity === 'critical' && a.status === 'open').length;
-  const highRiskVendors = vendorScores.filter(v => v.riskLevel === 'high' || v.riskLevel === 'critical').length;
-  const blockedIPs = ipMonitoring.filter(ip => ip.isBlocked).length;
 
   return (
     <div className="flex min-h-screen bg-background">
       <Sidebar />
 
-      {/* Main Content */}
       <div className="flex-1 flex flex-col">
-        {/* Header */}
         <header className="bg-card border-b border-border px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-bold text-foreground">Fraud Prevention</h2>
-              <p className="text-muted-foreground">Monitor duplicate UIDs, IP patterns, and fraud scoring with real-time alerts</p>
+              <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+                <Shield className="w-6 h-6" />
+                Fraud Detection
+              </h2>
+              <p className="text-muted-foreground">Monitor and prevent fraudulent survey responses</p>
             </div>
             <div className="flex items-center gap-3">
-              <Badge variant="outline" className="gap-1">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                Live Monitoring
+              <Badge className="bg-green-100 text-green-800 border-green-200">
+                Real-time Monitoring Active
               </Badge>
-              <Button
-                variant="outline"
-                className="gap-2"
-                onClick={() => setShowConfigureDialog(true)}
-              >
-                <Settings className="w-4 h-4" />
-                Configure
+              <Button variant="outline" onClick={exportFraudData} className="gap-2">
+                <Download className="w-4 h-4" />
+                Export Report
               </Button>
             </div>
           </div>
         </header>
 
-        {/* Alert Summary */}
-        <div className="border-b border-border px-6 py-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-                <AlertTriangle className="w-5 h-5 text-red-600" />
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-red-600">{openAlerts}</div>
-                <div className="text-sm text-muted-foreground">Open Alerts</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-                <Shield className="w-5 h-5 text-orange-600" />
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-orange-600">{criticalAlerts}</div>
-                <div className="text-sm text-muted-foreground">Critical Alerts</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
-                <Users className="w-5 h-5 text-yellow-600" />
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-yellow-600">{highRiskVendors}</div>
-                <div className="text-sm text-muted-foreground">High Risk Vendors</div>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
-                <Ban className="w-5 h-5 text-gray-600" />
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-gray-600">{blockedIPs}</div>
-                <div className="text-sm text-muted-foreground">Blocked IPs</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Main Content */}
         <main className="flex-1 p-6">
+          {/* Stats Overview */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-muted-foreground text-sm">Total Alerts</p>
+                    <p className="text-2xl font-bold">{fraudDetectionStats.totalAlerts}</p>
+                  </div>
+                  <AlertTriangle className="w-8 h-8 text-orange-500" />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-muted-foreground text-sm">High Priority</p>
+                    <p className="text-2xl font-bold text-red-600">{fraudDetectionStats.highSeverityAlerts}</p>
+                  </div>
+                  <XCircle className="w-8 h-8 text-red-500" />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-muted-foreground text-sm">Vendors Under Review</p>
+                    <p className="text-2xl font-bold text-yellow-600">{fraudDetectionStats.vendorsUnderReview}</p>
+                  </div>
+                  <Users className="w-8 h-8 text-yellow-500" />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-muted-foreground text-sm">Suspicious IPs</p>
+                    <p className="text-2xl font-bold text-purple-600">{fraudDetectionStats.suspiciousIPs}</p>
+                  </div>
+                  <Globe className="w-8 h-8 text-purple-500" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
           <Tabs defaultValue="alerts" className="w-full">
             <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="alerts">Fraud Alerts</TabsTrigger>
-              <TabsTrigger value="vendor-scores">Vendor Scores</TabsTrigger>
-              <TabsTrigger value="ip-monitoring">IP Monitoring</TabsTrigger>
-              <TabsTrigger value="settings">Settings</TabsTrigger>
+              <TabsTrigger value="alerts">Active Alerts</TabsTrigger>
+              <TabsTrigger value="vendors">Vendor Scores</TabsTrigger>
+              <TabsTrigger value="ips">IP Monitoring</TabsTrigger>
+              <TabsTrigger value="settings">Detection Settings</TabsTrigger>
             </TabsList>
 
             <TabsContent value="alerts" className="space-y-6">
-              {criticalAlerts > 0 && (
-                <Alert className="border-red-200 bg-red-50">
-                  <AlertTriangle className="h-4 w-4 text-red-600" />
-                  <AlertTitle className="text-red-800">Critical Fraud Alerts Detected</AlertTitle>
-                  <AlertDescription className="text-red-700">
-                    {criticalAlerts} critical fraud alert{criticalAlerts > 1 ? 's' : ''} require immediate attention. Review and take action to prevent further fraudulent activity.
-                  </AlertDescription>
-                </Alert>
-              )}
-
-              <div className="space-y-4">
-                {fraudAlerts.map((alert) => (
-                  <Card key={alert.id} className={alert.severity === 'critical' ? 'border-red-200 bg-red-50' : ''}>
-                    <CardContent className="p-6">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-start gap-3">
-                          <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center">
-                            {getFraudTypeIcon(alert.type)}
-                          </div>
-                          <div>
-                            <div className="flex items-center gap-2 mb-1">
-                              <h3 className="text-lg font-semibold capitalize">{alert.type.replace('-', ' ')}</h3>
-                              <Badge className={getSeverityColor(alert.severity)}>
-                                {alert.severity}
-                              </Badge>
-                              <Badge className={getStatusColor(alert.status)}>
-                                {alert.status.replace('-', ' ')}
-                              </Badge>
-                            </div>
-                            <p className="text-sm text-muted-foreground mb-2">
-                              Vendor: {alert.vendorName} ({alert.vendorId}) • Project: {alert.projectId}
-                            </p>
-                            <p className="text-sm font-medium">{alert.details}</p>
-                          </div>
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          {new Date(alert.timestamp).toLocaleString()}
-                        </div>
-                      </div>
-
-                      <div className="flex items-center justify-between">
-                        <div className="text-sm text-muted-foreground">
-                          Affected responses: {alert.affectedResponses.length} 
-                          {alert.investigatedBy && (
-                            <span className="ml-4">Investigated by: {alert.investigatedBy}</span>
-                          )}
-                        </div>
-                        <div className="flex gap-2">
-                          {alert.status === 'open' && (
-                            <>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => updateAlertStatus(alert.id, 'investigating')}
-                              >
-                                Investigate
-                              </Button>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => updateAlertStatus(alert.id, 'false-positive', 'Marked as false positive')}
-                              >
-                                False Positive
-                              </Button>
-                            </>
-                          )}
-                          {alert.status === 'investigating' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <AlertTriangle className="w-5 h-5" />
+                    Fraud Alerts ({fraudAlerts.length})
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Alert ID</TableHead>
+                        <TableHead>Type</TableHead>
+                        <TableHead>Severity</TableHead>
+                        <TableHead>Vendor</TableHead>
+                        <TableHead>Affected</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {fraudAlerts.map((alert) => (
+                        <TableRow key={alert.id}>
+                          <TableCell className="font-mono text-sm">{alert.id}</TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className="capitalize">
+                              {alert.type.replace('-', ' ')}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Badge className={getSeverityColor(alert.severity)}>
+                              {alert.severity.toUpperCase()}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>{alert.vendorName}</TableCell>
+                          <TableCell>{alert.affectedResponses.length} responses</TableCell>
+                          <TableCell>
+                            <Badge className={
+                              alert.status === 'resolved' ? 'bg-green-100 text-green-800' :
+                              alert.status === 'investigating' ? 'bg-blue-100 text-blue-800' :
+                              'bg-gray-100 text-gray-800'
+                            }>
+                              {alert.status.replace('-', ' ')}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => updateAlertStatus(alert.id, 'resolved', 'Investigation completed')}
+                              onClick={() => setSelectedAlert(alert)}
+                              className="gap-1"
                             >
-                              Mark Resolved
+                              <Eye className="w-3 h-3" />
+                              View
                             </Button>
-                          )}
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="gap-1"
-                            onClick={() => viewAlertDetails(alert.id)}
-                          >
-                            <Eye className="w-3 h-3" />
-                            Details
-                          </Button>
-                        </div>
-                      </div>
-
-                      {alert.resolution && (
-                        <div className="mt-4 p-3 bg-muted rounded-lg">
-                          <p className="text-sm"><strong>Resolution:</strong> {alert.resolution}</p>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
             </TabsContent>
 
-            <TabsContent value="vendor-scores" className="space-y-6">
-              <div className="grid gap-4">
-                {vendorScores.map((vendor) => (
-                  <Card key={vendor.vendorId} className={vendor.riskLevel === 'critical' ? 'border-red-200 bg-red-50' : vendor.riskLevel === 'high' ? 'border-orange-200 bg-orange-50' : ''}>
-                    <CardContent className="p-6">
-                      <div className="flex items-start justify-between mb-4">
-                        <div>
-                          <div className="flex items-center gap-3 mb-2">
-                            <h3 className="text-lg font-semibold">{vendor.vendorName}</h3>
-                            <Badge className="font-mono">{vendor.vendorId}</Badge>
-                            <Badge className={`${getRiskLevelColor(vendor.riskLevel)} border-current`}>
-                              {vendor.riskLevel} risk
+            <TabsContent value="vendors" className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Users className="w-5 h-5" />
+                    Vendor Fraud Scores
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Vendor</TableHead>
+                        <TableHead>Overall Score</TableHead>
+                        <TableHead>Risk Level</TableHead>
+                        <TableHead>Total Responses</TableHead>
+                        <TableHead>Flagged</TableHead>
+                        <TableHead>Duplicate IPs</TableHead>
+                        <TableHead>Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {vendorFraudScores.map((vendor) => (
+                        <TableRow key={vendor.vendorId}>
+                          <TableCell className="font-medium">{vendor.vendorName}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <span className="font-bold">{vendor.overallScore.toFixed(1)}/5</span>
+                              <Progress value={(vendor.overallScore / 5) * 100} className="w-16 h-2" />
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Badge className={getRiskLevelColor(vendor.riskLevel)}>
+                              {vendor.riskLevel.toUpperCase()}
                             </Badge>
-                          </div>
-                          <p className="text-sm text-muted-foreground">
-                            Last activity: {new Date(vendor.lastActivity).toLocaleString()}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <div className={`text-3xl font-bold ${getRiskLevelColor(vendor.riskLevel)}`}>
-                            {vendor.overallScore.toFixed(1)}
-                          </div>
-                          <div className="text-sm text-muted-foreground">Fraud Score</div>
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                        <div className="text-center">
-                          <div className="text-lg font-bold text-blue-600">{vendor.totalResponses}</div>
-                          <div className="text-xs text-muted-foreground">Total Responses</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-lg font-bold text-red-600">{vendor.flaggedResponses}</div>
-                          <div className="text-xs text-muted-foreground">Flagged</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-lg font-bold text-orange-600">{vendor.suspiciousPatterns}</div>
-                          <div className="text-xs text-muted-foreground">Suspicious Patterns</div>
-                        </div>
-                        <div className="text-center">
-                          <div className="text-lg font-bold text-purple-600">{((vendor.flaggedResponses / vendor.totalResponses) * 100).toFixed(1)}%</div>
-                          <div className="text-xs text-muted-foreground">Flag Rate</div>
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div>
-                          <div className="flex justify-between text-sm mb-1">
-                            <span>Duplicate IP</span>
-                            <span>{vendor.duplicateIPRate}%</span>
-                          </div>
-                          <Progress value={vendor.duplicateIPRate} className="h-2" />
-                        </div>
-                        <div>
-                          <div className="flex justify-between text-sm mb-1">
-                            <span>Duplicate UID</span>
-                            <span>{vendor.duplicateUIDRate}%</span>
-                          </div>
-                          <Progress value={vendor.duplicateUIDRate} className="h-2" />
-                        </div>
-                        <div>
-                          <div className="flex justify-between text-sm mb-1">
-                            <span>Fast Completion</span>
-                            <span>{vendor.fastCompletionRate}%</span>
-                          </div>
-                          <Progress value={vendor.fastCompletionRate} className="h-2" />
-                        </div>
-                        <div>
-                          <div className="flex justify-between text-sm mb-1">
-                            <span>High Terminate</span>
-                            <span>{vendor.highTerminateRate}%</span>
-                          </div>
-                          <Progress value={vendor.highTerminateRate} className="h-2" />
-                        </div>
-                      </div>
-
-                      <div className="pt-4 border-t border-border/50">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="gap-1 w-full"
-                          onClick={() => viewVendorDetails(vendor.vendorId)}
-                        >
-                          <Eye className="w-3 h-3" />
-                          View Details
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+                          </TableCell>
+                          <TableCell>{vendor.totalResponses}</TableCell>
+                          <TableCell>{vendor.flaggedResponses}</TableCell>
+                          <TableCell>{vendor.duplicateIPRate.toFixed(1)}%</TableCell>
+                          <TableCell>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setSelectedVendor(vendor)}
+                              className="gap-1"
+                            >
+                              <Eye className="w-3 h-3" />
+                              Details
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
             </TabsContent>
 
-            <TabsContent value="ip-monitoring" className="space-y-6">
+            <TabsContent value="ips" className="space-y-6">
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -683,55 +628,31 @@ Continue with investigation?`);
                       {ipMonitoring.map((ip) => (
                         <TableRow key={ip.ip}>
                           <TableCell className="font-mono">{ip.ip}</TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-1">
-                              <MapPin className="w-3 h-3 text-muted-foreground" />
-                              {ip.city}, {ip.country}
-                            </div>
-                          </TableCell>
+                          <TableCell>{ip.city}, {ip.country}</TableCell>
                           <TableCell>{ip.responseCount}</TableCell>
                           <TableCell>{ip.uniqueUIDs}</TableCell>
                           <TableCell>
                             <div className="flex items-center gap-2">
-                              <span className={`font-semibold ${ip.riskScore >= 8 ? 'text-red-600' : ip.riskScore >= 6 ? 'text-orange-600' : 'text-green-600'}`}>
-                                {ip.riskScore.toFixed(1)}
+                              <span className={`font-bold ${ip.riskScore >= 8 ? 'text-red-600' : ip.riskScore >= 6 ? 'text-orange-600' : 'text-green-600'}`}>
+                                {ip.riskScore}/10
                               </span>
-                              <Progress value={ip.riskScore * 10} className="w-16 h-2" />
                             </div>
                           </TableCell>
                           <TableCell>
-                            <Badge className={ip.isBlocked ? 'bg-red-100 text-red-800 border-red-200' : 'bg-green-100 text-green-800 border-green-200'}>
+                            <Badge className={ip.isBlocked ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}>
                               {ip.isBlocked ? 'Blocked' : 'Active'}
                             </Badge>
                           </TableCell>
                           <TableCell>
-                            <div className="flex gap-1">
-                              {ip.isBlocked ? (
-                                <Button variant="outline" size="sm" onClick={() => unblockIP(ip.ip)}>
-                                  Unblock
-                                </Button>
-                              ) : (
-                                <Button variant="outline" size="sm" onClick={() => blockIP(ip.ip)}>
-                                  Block
-                                </Button>
-                              )}
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                className="gap-1"
-                                onClick={() => viewIpDetails(ip.ip)}
-                              >
-                                <Eye className="w-3 h-3" />
-                              </Button>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                className="gap-1"
-                                onClick={() => investigateIp(ip.ip)}
-                              >
-                                Investigate
-                              </Button>
-                            </div>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setSelectedIp(ip)}
+                              className="gap-1"
+                            >
+                              <Eye className="w-3 h-3" />
+                              View
+                            </Button>
                           </TableCell>
                         </TableRow>
                       ))}
@@ -744,97 +665,81 @@ Continue with investigation?`);
             <TabsContent value="settings" className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Fraud Detection Settings</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <Settings className="w-5 h-5" />
+                    Fraud Detection Settings
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <Label className="text-base font-medium">Duplicate UID Detection</Label>
-                          <p className="text-sm text-muted-foreground">Monitor for reused vendor UIDs</p>
-                        </div>
-                        <Switch
-                          checked={fraudSettings.duplicateUIDEnabled}
-                          onCheckedChange={(checked) => setFraudSettings({...fraudSettings, duplicateUIDEnabled: checked})}
+                      <div>
+                        <Label htmlFor="duplicate-ip">Duplicate IP Threshold</Label>
+                        <Input
+                          id="duplicate-ip"
+                          type="number"
+                          value={fraudThresholds.duplicateIPThreshold}
+                          onChange={(e) => setFraudThresholds({...fraudThresholds, duplicateIPThreshold: parseInt(e.target.value)})}
                         />
                       </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="ip-threshold">Duplicate IP Threshold</Label>
+                      <div>
+                        <Label htmlFor="duplicate-uid">Duplicate UID Threshold</Label>
                         <Input
-                          id="ip-threshold"
+                          id="duplicate-uid"
                           type="number"
-                          value={fraudSettings.duplicateIPThreshold}
-                          onChange={(e) => setFraudSettings({...fraudSettings, duplicateIPThreshold: parseInt(e.target.value)})}
+                          value={fraudThresholds.duplicateUIDThreshold}
+                          onChange={(e) => setFraudThresholds({...fraudThresholds, duplicateUIDThreshold: parseInt(e.target.value)})}
                         />
-                        <p className="text-xs text-muted-foreground">Alert when IP has more than this many responses</p>
                       </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="terminate-threshold">High Terminate Rate Threshold (%)</Label>
+                      <div>
+                        <Label htmlFor="fast-completion">Fast Completion Threshold (seconds)</Label>
                         <Input
-                          id="terminate-threshold"
+                          id="fast-completion"
                           type="number"
-                          value={fraudSettings.highTerminateThreshold}
-                          onChange={(e) => setFraudSettings({...fraudSettings, highTerminateThreshold: parseInt(e.target.value)})}
+                          value={fraudThresholds.fastCompletionThreshold}
+                          onChange={(e) => setFraudThresholds({...fraudThresholds, fastCompletionThreshold: parseInt(e.target.value)})}
                         />
-                        <p className="text-xs text-muted-foreground">Alert when vendor terminate rate exceeds this percentage</p>
                       </div>
                     </div>
 
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
                         <div>
-                          <Label className="text-base font-medium">Geolocation Verification</Label>
-                          <p className="text-sm text-muted-foreground">Check for location inconsistencies</p>
+                          <Label className="text-base font-medium">Auto-Suspend Vendors</Label>
+                          <p className="text-sm text-muted-foreground">Automatically suspend high-risk vendors</p>
                         </div>
                         <Switch
-                          checked={fraudSettings.geoLocationCheck}
-                          onCheckedChange={(checked) => setFraudSettings({...fraudSettings, geoLocationCheck: checked})}
+                          checked={fraudThresholds.autoSuspendEnabled}
+                          onCheckedChange={(checked) => setFraudThresholds({...fraudThresholds, autoSuspendEnabled: checked})}
                         />
                       </div>
-
                       <div className="flex items-center justify-between">
                         <div>
-                          <Label className="text-base font-medium">Auto-Block High Risk IPs</Label>
-                          <p className="text-sm text-muted-foreground">Automatically block IPs with high fraud scores</p>
+                          <Label className="text-base font-medium">Real-time Monitoring</Label>
+                          <p className="text-sm text-muted-foreground">Enable real-time fraud detection</p>
                         </div>
                         <Switch
-                          checked={fraudSettings.autoBlockEnabled}
-                          onCheckedChange={(checked) => setFraudSettings({...fraudSettings, autoBlockEnabled: checked})}
+                          checked={fraudThresholds.realTimeMonitoring}
+                          onCheckedChange={(checked) => setFraudThresholds({...fraudThresholds, realTimeMonitoring: checked})}
                         />
                       </div>
-
                       <div className="flex items-center justify-between">
                         <div>
                           <Label className="text-base font-medium">Email Alerts</Label>
                           <p className="text-sm text-muted-foreground">Send email notifications for fraud alerts</p>
                         </div>
                         <Switch
-                          checked={fraudSettings.alertEmailEnabled}
-                          onCheckedChange={(checked) => setFraudSettings({...fraudSettings, alertEmailEnabled: checked})}
+                          checked={fraudThresholds.emailAlertsEnabled}
+                          onCheckedChange={(checked) => setFraudThresholds({...fraudThresholds, emailAlertsEnabled: checked})}
                         />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="completion-threshold">Fast Completion Threshold</Label>
-                        <Input
-                          id="completion-threshold"
-                          type="number"
-                          step="0.1"
-                          value={fraudSettings.fastCompletionThreshold}
-                          onChange={(e) => setFraudSettings({...fraudSettings, fastCompletionThreshold: parseFloat(e.target.value)})}
-                        />
-                        <p className="text-xs text-muted-foreground">Alert when survey completed in less than this ratio of expected time</p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex gap-2 pt-4">
-                    <Button>Save Settings</Button>
-                    <Button variant="outline">Reset to Defaults</Button>
-                  </div>
+                  <Button className="gap-2">
+                    <CheckCircle className="w-4 h-4" />
+                    Save Settings
+                  </Button>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -842,39 +747,30 @@ Continue with investigation?`);
         </main>
       </div>
 
-      {/* Modal Dialogs */}
-      {selectedAlert && (
-        <DetailsModal
-          isOpen={!!selectedAlert}
-          onClose={() => setSelectedAlert(null)}
-          title={`Fraud Alert - ${selectedAlert.id}`}
-          data={selectedAlert}
-          type="alert"
-        />
-      )}
+      {/* Details Modals */}
+      <DetailsModal
+        isOpen={!!selectedAlert}
+        onClose={() => setSelectedAlert(null)}
+        title="Fraud Alert Details"
+        data={selectedAlert}
+        type="alert"
+      />
 
-      {selectedIp && (
-        <DetailsModal
-          isOpen={!!selectedIp}
-          onClose={() => setSelectedIp(null)}
-          title={`IP Monitoring - ${selectedIp.ip}`}
-          data={selectedIp}
-          type="ip"
-        />
-      )}
+      <DetailsModal
+        isOpen={!!selectedVendor}
+        onClose={() => setSelectedVendor(null)}
+        title="Vendor Fraud Analysis"
+        data={selectedVendor}
+        type="vendor"
+      />
 
-      {selectedVendor && (
-        <DetailsModal
-          isOpen={!!selectedVendor}
-          onClose={() => setSelectedVendor(null)}
-          title={`Vendor Analysis - ${selectedVendor.vendorName}`}
-          data={selectedVendor}
-          type="vendor"
-        />
-      )}
-
-      {/* Toast Container */}
-      <ToastContainer />
+      <DetailsModal
+        isOpen={!!selectedIp}
+        onClose={() => setSelectedIp(null)}
+        title="IP Address Analysis"
+        data={selectedIp}
+        type="ip"
+      />
     </div>
   );
 }
