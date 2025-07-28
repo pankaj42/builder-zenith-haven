@@ -679,6 +679,55 @@ export default function Projects() {
                       {selectedProjectForDetails.status}
                     </Badge>
                   </div>
+
+                  {/* Real-time Project Running Status */}
+                  <div className="p-3 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg border">
+                    <h5 className="font-semibold text-green-800 mb-2">🔴 Live Status</h5>
+                    <div className="space-y-1 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-green-700">Running Time:</span>
+                        <span className="font-mono text-green-800">
+                          {(() => {
+                            const createdDate = new Date(selectedProjectForDetails.createdDate);
+                            const now = new Date();
+                            const diffTime = Math.abs(now.getTime() - createdDate.getTime());
+                            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                            return `${diffDays} days`;
+                          })()}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-blue-700">Current CR:</span>
+                        <span className="font-bold text-blue-800">
+                          {(() => {
+                            const total = selectedProjectForDetails.completes + selectedProjectForDetails.terminates + selectedProjectForDetails.quotaFull;
+                            const cr = total > 0 ? ((selectedProjectForDetails.completes / total) * 100).toFixed(1) : '0.0';
+                            return `${cr}%`;
+                          })()}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-purple-700">Quota Progress:</span>
+                        <span className="font-bold text-purple-800">
+                          {selectedProjectForDetails.completes} / {selectedProjectForDetails.totalQuota}
+                          ({((selectedProjectForDetails.completes / selectedProjectForDetails.totalQuota) * 100).toFixed(1)}%)
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-orange-700">Est. Completion:</span>
+                        <span className="font-medium text-orange-800">
+                          {(() => {
+                            const currentRate = selectedProjectForDetails.completes / Math.max(1,
+                              Math.abs(new Date().getTime() - new Date(selectedProjectForDetails.createdDate).getTime()) / (1000 * 60 * 60 * 24)
+                            );
+                            const remaining = selectedProjectForDetails.totalQuota - selectedProjectForDetails.completes;
+                            const daysLeft = remaining > 0 && currentRate > 0 ? Math.ceil(remaining / currentRate) : 0;
+                            return daysLeft > 0 ? `${daysLeft} days` : 'Complete';
+                          })()}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Created Date:</span>
                     <span className="font-medium">{selectedProjectForDetails.createdDate}</span>
