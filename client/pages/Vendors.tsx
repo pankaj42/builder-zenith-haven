@@ -1039,7 +1039,7 @@ export default function Vendors() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => copyToClipboard(selectedVendorForDetails.redirectUrls.studyClosed!, "Study Closed Redirect URL")}
+                          onClick={(e) => copyToClipboard(selectedVendorForDetails.redirectUrls.studyClosed!, e.currentTarget, "Study Closed URL Copied!")}
                         >
                           <Copy className="w-3 h-3" />
                         </Button>
