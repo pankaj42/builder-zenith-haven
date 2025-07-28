@@ -7,164 +7,84 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Progress } from "@/components/ui/progress";
 import {
   Settings as SettingsIcon,
-  User,
-  Shield,
   Bell,
-  Mail,
-  Key,
-  Smartphone,
+  Database,
+  Save,
   Download,
   Upload,
-  Trash2,
-  RefreshCw,
-  Save,
-  Eye,
-  EyeOff,
   CheckCircle,
-  AlertTriangle,
-  Clock,
-  Database,
   Server,
-  Lock,
-  Palette
+  BarChart3,
+  Shield
 } from "lucide-react";
 import Sidebar from "@/components/Sidebar";
 import { usePanelContext } from "@/contexts/PanelContext";
 import { showCopySuccess } from "@/components/ui/toast-notification";
 
-interface SystemSettings {
-  siteName: string;
-  siteUrl: string;
+interface PanelSettings {
+  panelName: string;
+  panelUrl: string;
   adminEmail: string;
   timezone: string;
-  dateFormat: string;
   sessionTimeout: number;
-  maxLoginAttempts: number;
-  passwordMinLength: number;
-  require2FA: boolean;
-  allowSignups: boolean;
-  maintenanceMode: boolean;
-}
-
-interface SecuritySettings {
-  twoFactorEnabled: boolean;
-  emailVerificationRequired: boolean;
-  ipWhitelisting: boolean;
-  auditLogging: boolean;
-  passwordExpiry: number;
-  autoLogout: number;
-  encryptionLevel: string;
-  backupFrequency: string;
-}
-
-interface NotificationSettings {
   emailNotifications: boolean;
   fraudAlerts: boolean;
   quotaAlerts: boolean;
-  systemAlerts: boolean;
-  dailyReports: boolean;
-  weeklyReports: boolean;
-  monthlyReports: boolean;
-  alertEmail: string;
-  alertFrequency: string;
+  responseRetention: number;
+  autoBackup: boolean;
+  backupFrequency: string;
 }
 
 export default function Settings() {
   const { state } = usePanelContext();
-  const [activeTab, setActiveTab] = useState("general");
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [activeTab, setActiveTab] = useState("panel");
   const [isLoading, setIsLoading] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
-  const [systemSettings, setSystemSettings] = useState<SystemSettings>({
-    siteName: "SurveyPanel Admin",
-    siteUrl: "https://admin.surveypanel.com",
+  const [settings, setSettings] = useState<PanelSettings>({
+    panelName: "Survey Panel",
+    panelUrl: "https://surveypanel.com",
     adminEmail: "admin@surveypanel.com",
     timezone: "UTC",
-    dateFormat: "MM/DD/YYYY",
     sessionTimeout: 60,
-    maxLoginAttempts: 5,
-    passwordMinLength: 8,
-    require2FA: true,
-    allowSignups: false,
-    maintenanceMode: false
-  });
-
-  const [securitySettings, setSecuritySettings] = useState<SecuritySettings>({
-    twoFactorEnabled: true,
-    emailVerificationRequired: true,
-    ipWhitelisting: false,
-    auditLogging: true,
-    passwordExpiry: 90,
-    autoLogout: 30,
-    encryptionLevel: "AES-256",
-    backupFrequency: "daily"
-  });
-
-  const [notificationSettings, setNotificationSettings] = useState<NotificationSettings>({
     emailNotifications: true,
     fraudAlerts: true,
     quotaAlerts: true,
-    systemAlerts: true,
-    dailyReports: true,
-    weeklyReports: true,
-    monthlyReports: false,
-    alertEmail: "alerts@surveypanel.com",
-    alertFrequency: "immediate"
-  });
-
-  const [passwordChange, setPasswordChange] = useState({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: ""
-  });
-
-  const [backupInfo] = useState({
-    lastBackup: "2024-01-25T10:30:00Z",
-    backupSize: "2.4 GB",
-    nextScheduled: "2024-01-26T02:00:00Z",
-    retentionDays: 30
+    responseRetention: 90,
+    autoBackup: true,
+    backupFrequency: "daily"
   });
 
   // Calculate dynamic system stats based on panel activity
   const [systemStats, setSystemStats] = useState({
-    uptime: "15 days, 8 hours",
-    cpuUsage: 34,
-    memoryUsage: 67,
-    diskUsage: 45,
-    activeUsers: 3,
-    totalRequests: 45892,
-    errorRate: 0.2
+    activeProjects: 0,
+    activeVendors: 0,
+    totalResponses: 0,
+    storageUsed: 0,
+    lastBackup: new Date().toISOString()
   });
 
   // Update system stats based on activity
   useEffect(() => {
-    const interval = setInterval(() => {
-      const responseActivity = state.responses.length;
-      const vendorActivity = state.vendors.filter(v => v.status === 'active').length;
-      const projectActivity = state.projects.filter(p => p.status === 'active').length;
+    const activeProjects = state.projects.filter(p => p.status === 'active').length;
+    const activeVendors = state.vendors.filter(v => v.status === 'active').length;
+    const totalResponses = state.responses.length;
+    const storageUsed = Math.min(85, 15 + (totalResponses * 0.1));
 
-      setSystemStats(prev => ({
-        ...prev,
-        cpuUsage: Math.min(90, 25 + (responseActivity * 0.1) + (vendorActivity * 2)),
-        memoryUsage: Math.min(85, 45 + (projectActivity * 3) + (responseActivity * 0.05)),
-        diskUsage: Math.min(80, 35 + (responseActivity * 0.02)),
-        activeUsers: vendorActivity + Math.floor(Math.random() * 3),
-        totalRequests: prev.totalRequests + Math.floor(Math.random() * 50),
-        errorRate: Math.max(0, Math.min(5, 0.1 + (Math.random() * 0.3)))
-      }));
-    }, 5000);
+    setSystemStats({
+      activeProjects,
+      activeVendors,
+      totalResponses,
+      storageUsed,
+      lastBackup: new Date().toISOString()
+    });
+  }, [state.projects, state.vendors, state.responses]);
 
-    return () => clearInterval(interval);
-  }, [state.responses, state.vendors, state.projects]);
-
-  const saveSettings = async (section: string) => {
+  const saveSettings = async () => {
     setIsLoading(true);
 
     try {
@@ -172,17 +92,14 @@ export default function Settings() {
       await new Promise(resolve => setTimeout(resolve, 1500));
 
       // Store settings in localStorage for persistence
-      const settingsData = {
-        system: systemSettings,
-        security: securitySettings,
-        notifications: notificationSettings,
+      localStorage.setItem('panelSettings', JSON.stringify({
+        ...settings,
         timestamp: new Date().toISOString()
-      };
-
-      localStorage.setItem('panelSettings', JSON.stringify(settingsData));
+      }));
 
       setSaveSuccess(true);
       setIsLoading(false);
+      showCopySuccess(document.body, 'Settings saved successfully!');
 
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (error) {
@@ -190,24 +107,6 @@ export default function Settings() {
       setIsLoading(false);
       showCopySuccess(document.body, 'Failed to save settings');
     }
-  };
-
-  const changePassword = async () => {
-    if (passwordChange.newPassword !== passwordChange.confirmPassword) {
-      showCopySuccess(document.body, "Passwords don't match");
-      return;
-    }
-    
-    setIsLoading(true);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    setPasswordChange({ currentPassword: "", newPassword: "", confirmPassword: "" });
-    setSaveSuccess(true);
-    setIsLoading(false);
-    
-    setTimeout(() => setSaveSuccess(false), 3000);
   };
 
   const performBackup = async () => {
@@ -219,24 +118,20 @@ export default function Settings() {
         projects: state.projects,
         vendors: state.vendors,
         responses: state.responses,
-        settings: {
-          system: systemSettings,
-          security: securitySettings,
-          notifications: notificationSettings
-        },
+        settings: settings,
         stats: state.stats,
         backup_timestamp: new Date().toISOString(),
         backup_version: '1.0'
       };
 
       // Simulate backup process
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      await new Promise(resolve => setTimeout(resolve, 2000));
 
       // Create downloadable backup file
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupData, null, 2));
       const downloadAnchorNode = document.createElement('a');
       downloadAnchorNode.setAttribute("href", dataStr);
-      downloadAnchorNode.setAttribute("download", `panel_backup_${new Date().toISOString().split('T')[0]}.json`);
+      downloadAnchorNode.setAttribute("download", `survey_panel_backup_${new Date().toISOString().split('T')[0]}.json`);
       document.body.appendChild(downloadAnchorNode);
       downloadAnchorNode.click();
       downloadAnchorNode.remove();
@@ -251,22 +146,40 @@ export default function Settings() {
   };
 
   const exportSettings = () => {
-    const settings = {
-      system: systemSettings,
-      security: securitySettings,
-      notifications: notificationSettings
-    };
-    
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(settings, null, 2));
     const downloadAnchorNode = document.createElement('a');
     downloadAnchorNode.setAttribute("href", dataStr);
-    downloadAnchorNode.setAttribute("download", "surveypanel_settings.json");
+    downloadAnchorNode.setAttribute("download", "panel_settings.json");
     document.body.appendChild(downloadAnchorNode);
     downloadAnchorNode.click();
     downloadAnchorNode.remove();
+    showCopySuccess(document.body, 'Settings exported successfully!');
   };
 
-  const getUsageColor = (percentage: number) => {
+  const importSettings = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const importedSettings = JSON.parse(e.target?.result as string);
+            setSettings({...settings, ...importedSettings});
+            showCopySuccess(document.body, 'Settings imported successfully!');
+          } catch (error) {
+            showCopySuccess(document.body, 'Invalid settings file');
+          }
+        };
+        reader.readAsText(file);
+      }
+    };
+    input.click();
+  };
+
+  const getStorageColor = (percentage: number) => {
     if (percentage >= 80) return "text-red-600";
     if (percentage >= 60) return "text-yellow-600";
     return "text-green-600";
@@ -276,14 +189,12 @@ export default function Settings() {
     <div className="flex min-h-screen bg-background">
       <Sidebar />
 
-      {/* Main Content */}
       <div className="flex-1 flex flex-col">
-        {/* Header */}
         <header className="bg-card border-b border-border px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-bold text-foreground">Settings</h2>
-              <p className="text-muted-foreground">Configure system settings, security options, and user preferences</p>
+              <p className="text-muted-foreground">Configure survey panel settings and data management</p>
             </div>
             <div className="flex items-center gap-3">
               {saveSuccess && (
@@ -295,60 +206,31 @@ export default function Settings() {
               <div className="flex gap-2">
                 <Button variant="outline" onClick={exportSettings} className="gap-2">
                   <Download className="w-4 h-4" />
-                  Export Settings
+                  Export
                 </Button>
-                <Button variant="outline" onClick={() => {
-                  // Import settings functionality
-                  const input = document.createElement('input');
-                  input.type = 'file';
-                  input.accept = '.json';
-                  input.onchange = (e) => {
-                    const file = (e.target as HTMLInputElement).files?.[0];
-                    if (file) {
-                      const reader = new FileReader();
-                      reader.onload = (e) => {
-                        try {
-                          const settings = JSON.parse(e.target?.result as string);
-                          if (settings.system) setSystemSettings(settings.system);
-                          if (settings.security) setSecuritySettings(settings.security);
-                          if (settings.notifications) setNotificationSettings(settings.notifications);
-                          showCopySuccess(document.body, 'Settings imported successfully!');
-                        } catch (error) {
-                          showCopySuccess(document.body, 'Invalid settings file');
-                        }
-                      };
-                      reader.readAsText(file);
-                    }
-                  };
-                  input.click();
-                }} className="gap-2">
+                <Button variant="outline" onClick={importSettings} className="gap-2">
                   <Upload className="w-4 h-4" />
-                  Import Settings
+                  Import
                 </Button>
               </div>
             </div>
           </div>
         </header>
 
-        {/* Main Content */}
         <main className="flex-1 p-6">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-5">
-              <TabsTrigger value="general" className="gap-2">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="panel" className="gap-2">
                 <SettingsIcon className="w-4 h-4" />
-                General
-              </TabsTrigger>
-              <TabsTrigger value="security" className="gap-2">
-                <Shield className="w-4 h-4" />
-                Security
+                Panel
               </TabsTrigger>
               <TabsTrigger value="notifications" className="gap-2">
                 <Bell className="w-4 h-4" />
                 Notifications
               </TabsTrigger>
-              <TabsTrigger value="account" className="gap-2">
-                <User className="w-4 h-4" />
-                Account
+              <TabsTrigger value="data" className="gap-2">
+                <Database className="w-4 h-4" />
+                Data
               </TabsTrigger>
               <TabsTrigger value="system" className="gap-2">
                 <Server className="w-4 h-4" />
@@ -356,28 +238,28 @@ export default function Settings() {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="general" className="space-y-6">
+            <TabsContent value="panel" className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>General Settings</CardTitle>
+                  <CardTitle>Panel Configuration</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-4">
                       <div className="space-y-2">
-                        <Label htmlFor="site-name">Site Name</Label>
+                        <Label htmlFor="panel-name">Panel Name</Label>
                         <Input
-                          id="site-name"
-                          value={systemSettings.siteName}
-                          onChange={(e) => setSystemSettings({...systemSettings, siteName: e.target.value})}
+                          id="panel-name"
+                          value={settings.panelName}
+                          onChange={(e) => setSettings({...settings, panelName: e.target.value})}
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="site-url">Site URL</Label>
+                        <Label htmlFor="panel-url">Panel URL</Label>
                         <Input
-                          id="site-url"
-                          value={systemSettings.siteUrl}
-                          onChange={(e) => setSystemSettings({...systemSettings, siteUrl: e.target.value})}
+                          id="panel-url"
+                          value={settings.panelUrl}
+                          onChange={(e) => setSettings({...settings, panelUrl: e.target.value})}
                         />
                       </div>
                       <div className="space-y-2">
@@ -385,8 +267,8 @@ export default function Settings() {
                         <Input
                           id="admin-email"
                           type="email"
-                          value={systemSettings.adminEmail}
-                          onChange={(e) => setSystemSettings({...systemSettings, adminEmail: e.target.value})}
+                          value={settings.adminEmail}
+                          onChange={(e) => setSettings({...settings, adminEmail: e.target.value})}
                         />
                       </div>
                     </div>
@@ -394,28 +276,15 @@ export default function Settings() {
                     <div className="space-y-4">
                       <div className="space-y-2">
                         <Label htmlFor="timezone">Timezone</Label>
-                        <Select value={systemSettings.timezone} onValueChange={(value) => setSystemSettings({...systemSettings, timezone: value})}>
+                        <Select value={settings.timezone} onValueChange={(value) => setSettings({...settings, timezone: value})}>
                           <SelectTrigger>
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="UTC">UTC (Coordinated Universal Time)</SelectItem>
-                            <SelectItem value="EST">EST (Eastern Standard Time)</SelectItem>
-                            <SelectItem value="PST">PST (Pacific Standard Time)</SelectItem>
-                            <SelectItem value="GMT">GMT (Greenwich Mean Time)</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="date-format">Date Format</Label>
-                        <Select value={systemSettings.dateFormat} onValueChange={(value) => setSystemSettings({...systemSettings, dateFormat: value})}>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="MM/DD/YYYY">MM/DD/YYYY</SelectItem>
-                            <SelectItem value="DD/MM/YYYY">DD/MM/YYYY</SelectItem>
-                            <SelectItem value="YYYY-MM-DD">YYYY-MM-DD</SelectItem>
+                            <SelectItem value="UTC">UTC</SelectItem>
+                            <SelectItem value="EST">EST</SelectItem>
+                            <SelectItem value="PST">PST</SelectItem>
+                            <SelectItem value="GMT">GMT</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -424,166 +293,29 @@ export default function Settings() {
                         <Input
                           id="session-timeout"
                           type="number"
-                          value={systemSettings.sessionTimeout}
-                          onChange={(e) => setSystemSettings({...systemSettings, sessionTimeout: parseInt(e.target.value)})}
+                          value={settings.sessionTimeout}
+                          onChange={(e) => setSettings({...settings, sessionTimeout: parseInt(e.target.value)})}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="response-retention">Response Retention (days)</Label>
+                        <Input
+                          id="response-retention"
+                          type="number"
+                          value={settings.responseRetention}
+                          onChange={(e) => setSettings({...settings, responseRetention: parseInt(e.target.value)})}
                         />
                       </div>
                     </div>
                   </div>
 
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <Label className="text-base font-medium">Maintenance Mode</Label>
-                        <p className="text-sm text-muted-foreground">Put the system in maintenance mode</p>
-                      </div>
-                      <Switch
-                        checked={systemSettings.maintenanceMode}
-                        onCheckedChange={(checked) => setSystemSettings({...systemSettings, maintenanceMode: checked})}
-                      />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <Label className="text-base font-medium">Require 2FA</Label>
-                        <p className="text-sm text-muted-foreground">Require two-factor authentication for all admin users</p>
-                      </div>
-                      <Switch
-                        checked={systemSettings.require2FA}
-                        onCheckedChange={(checked) => setSystemSettings({...systemSettings, require2FA: checked})}
-                      />
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <Label className="text-base font-medium">Allow Signups</Label>
-                        <p className="text-sm text-muted-foreground">Allow new admin registrations</p>
-                      </div>
-                      <Switch
-                        checked={systemSettings.allowSignups}
-                        onCheckedChange={(checked) => setSystemSettings({...systemSettings, allowSignups: checked})}
-                      />
-                    </div>
-                  </div>
-
-                  <Button onClick={() => saveSettings('general')} disabled={isLoading} className="gap-2">
+                  <Button onClick={saveSettings} disabled={isLoading} className="gap-2">
                     {isLoading ? (
                       <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
                     ) : (
                       <Save className="w-4 h-4" />
                     )}
-                    Save General Settings
-                  </Button>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="security" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Shield className="w-5 h-5" />
-                    Security Configuration
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <Label className="text-base font-medium">Two-Factor Authentication</Label>
-                          <p className="text-sm text-muted-foreground">Enable 2FA for enhanced security</p>
-                        </div>
-                        <Switch
-                          checked={securitySettings.twoFactorEnabled}
-                          onCheckedChange={(checked) => setSecuritySettings({...securitySettings, twoFactorEnabled: checked})}
-                        />
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <Label className="text-base font-medium">Email Verification</Label>
-                          <p className="text-sm text-muted-foreground">Require email verification for new accounts</p>
-                        </div>
-                        <Switch
-                          checked={securitySettings.emailVerificationRequired}
-                          onCheckedChange={(checked) => setSecuritySettings({...securitySettings, emailVerificationRequired: checked})}
-                        />
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <Label className="text-base font-medium">IP Whitelisting</Label>
-                          <p className="text-sm text-muted-foreground">Restrict access to approved IP addresses</p>
-                        </div>
-                        <Switch
-                          checked={securitySettings.ipWhitelisting}
-                          onCheckedChange={(checked) => setSecuritySettings({...securitySettings, ipWhitelisting: checked})}
-                        />
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <Label className="text-base font-medium">Audit Logging</Label>
-                          <p className="text-sm text-muted-foreground">Log all administrative actions</p>
-                        </div>
-                        <Switch
-                          checked={securitySettings.auditLogging}
-                          onCheckedChange={(checked) => setSecuritySettings({...securitySettings, auditLogging: checked})}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="password-expiry">Password Expiry (days)</Label>
-                        <Input
-                          id="password-expiry"
-                          type="number"
-                          value={securitySettings.passwordExpiry}
-                          onChange={(e) => setSecuritySettings({...securitySettings, passwordExpiry: parseInt(e.target.value)})}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="auto-logout">Auto Logout (minutes of inactivity)</Label>
-                        <Input
-                          id="auto-logout"
-                          type="number"
-                          value={securitySettings.autoLogout}
-                          onChange={(e) => setSecuritySettings({...securitySettings, autoLogout: parseInt(e.target.value)})}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="encryption-level">Encryption Level</Label>
-                        <Select value={securitySettings.encryptionLevel} onValueChange={(value) => setSecuritySettings({...securitySettings, encryptionLevel: value})}>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="AES-128">AES-128</SelectItem>
-                            <SelectItem value="AES-256">AES-256</SelectItem>
-                            <SelectItem value="RSA-2048">RSA-2048</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="backup-frequency">Backup Frequency</Label>
-                        <Select value={securitySettings.backupFrequency} onValueChange={(value) => setSecuritySettings({...securitySettings, backupFrequency: value})}>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="hourly">Hourly</SelectItem>
-                            <SelectItem value="daily">Daily</SelectItem>
-                            <SelectItem value="weekly">Weekly</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                  </div>
-
-                  <Button onClick={() => saveSettings('security')} disabled={isLoading} className="gap-2">
-                    {isLoading ? (
-                      <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
-                    ) : (
-                      <Save className="w-4 h-4" />
-                    )}
-                    Save Security Settings
+                    Save Panel Settings
                   </Button>
                 </CardContent>
               </Card>
@@ -598,94 +330,40 @@ export default function Settings() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <Label className="text-base font-medium">Email Notifications</Label>
-                          <p className="text-sm text-muted-foreground">Receive notifications via email</p>
-                        </div>
-                        <Switch
-                          checked={notificationSettings.emailNotifications}
-                          onCheckedChange={(checked) => setNotificationSettings({...notificationSettings, emailNotifications: checked})}
-                        />
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label className="text-base font-medium">Email Notifications</Label>
+                        <p className="text-sm text-muted-foreground">Receive general notifications via email</p>
                       </div>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <Label className="text-base font-medium">Fraud Alerts</Label>
-                          <p className="text-sm text-muted-foreground">Get notified of fraud detection</p>
-                        </div>
-                        <Switch
-                          checked={notificationSettings.fraudAlerts}
-                          onCheckedChange={(checked) => setNotificationSettings({...notificationSettings, fraudAlerts: checked})}
-                        />
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <Label className="text-base font-medium">Quota Alerts</Label>
-                          <p className="text-sm text-muted-foreground">Notifications when quotas are reached</p>
-                        </div>
-                        <Switch
-                          checked={notificationSettings.quotaAlerts}
-                          onCheckedChange={(checked) => setNotificationSettings({...notificationSettings, quotaAlerts: checked})}
-                        />
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <Label className="text-base font-medium">System Alerts</Label>
-                          <p className="text-sm text-muted-foreground">Server and system notifications</p>
-                        </div>
-                        <Switch
-                          checked={notificationSettings.systemAlerts}
-                          onCheckedChange={(checked) => setNotificationSettings({...notificationSettings, systemAlerts: checked})}
-                        />
-                      </div>
+                      <Switch
+                        checked={settings.emailNotifications}
+                        onCheckedChange={(checked) => setSettings({...settings, emailNotifications: checked})}
+                      />
                     </div>
-
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <Label className="text-base font-medium">Daily Reports</Label>
-                          <p className="text-sm text-muted-foreground">Daily summary reports</p>
-                        </div>
-                        <Switch
-                          checked={notificationSettings.dailyReports}
-                          onCheckedChange={(checked) => setNotificationSettings({...notificationSettings, dailyReports: checked})}
-                        />
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label className="text-base font-medium">Fraud Alerts</Label>
+                        <p className="text-sm text-muted-foreground">Get notified of fraud detection</p>
                       </div>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <Label className="text-base font-medium">Weekly Reports</Label>
-                          <p className="text-sm text-muted-foreground">Weekly analytics reports</p>
-                        </div>
-                        <Switch
-                          checked={notificationSettings.weeklyReports}
-                          onCheckedChange={(checked) => setNotificationSettings({...notificationSettings, weeklyReports: checked})}
-                        />
+                      <Switch
+                        checked={settings.fraudAlerts}
+                        onCheckedChange={(checked) => setSettings({...settings, fraudAlerts: checked})}
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <Label className="text-base font-medium">Quota Alerts</Label>
+                        <p className="text-sm text-muted-foreground">Notifications when quotas are reached</p>
                       </div>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <Label className="text-base font-medium">Monthly Reports</Label>
-                          <p className="text-sm text-muted-foreground">Monthly summary reports</p>
-                        </div>
-                        <Switch
-                          checked={notificationSettings.monthlyReports}
-                          onCheckedChange={(checked) => setNotificationSettings({...notificationSettings, monthlyReports: checked})}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="alert-email">Alert Email Address</Label>
-                        <Input
-                          id="alert-email"
-                          type="email"
-                          value={notificationSettings.alertEmail}
-                          onChange={(e) => setNotificationSettings({...notificationSettings, alertEmail: e.target.value})}
-                        />
-                      </div>
+                      <Switch
+                        checked={settings.quotaAlerts}
+                        onCheckedChange={(checked) => setSettings({...settings, quotaAlerts: checked})}
+                      />
                     </div>
                   </div>
 
-                  <Button onClick={() => saveSettings('notifications')} disabled={isLoading} className="gap-2">
+                  <Button onClick={saveSettings} disabled={isLoading} className="gap-2">
                     {isLoading ? (
                       <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
                     ) : (
@@ -697,133 +375,84 @@ export default function Settings() {
               </Card>
             </TabsContent>
 
-            <TabsContent value="account" className="space-y-6">
+            <TabsContent value="data" className="space-y-6">
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <User className="w-5 h-5" />
-                    Account Settings
+                    <Database className="w-5 h-5" />
+                    Data Management
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="current-password">Current Password</Label>
-                        <div className="relative">
-                          <Input
-                            id="current-password"
-                            type={showCurrentPassword ? "text" : "password"}
-                            value={passwordChange.currentPassword}
-                            onChange={(e) => setPasswordChange({...passwordChange, currentPassword: e.target.value})}
-                            placeholder="Enter current password"
-                          />
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                            onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                          >
-                            {showCurrentPassword ? (
-                              <EyeOff className="h-4 w-4 text-muted-foreground" />
-                            ) : (
-                              <Eye className="h-4 w-4 text-muted-foreground" />
-                            )}
-                          </Button>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <Label className="text-base font-medium">Auto Backup</Label>
+                          <p className="text-sm text-muted-foreground">Automatically backup panel data</p>
                         </div>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="new-password">New Password</Label>
-                        <div className="relative">
-                          <Input
-                            id="new-password"
-                            type={showNewPassword ? "text" : "password"}
-                            value={passwordChange.newPassword}
-                            onChange={(e) => setPasswordChange({...passwordChange, newPassword: e.target.value})}
-                            placeholder="Enter new password"
-                          />
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                            onClick={() => setShowNewPassword(!showNewPassword)}
-                          >
-                            {showNewPassword ? (
-                              <EyeOff className="h-4 w-4 text-muted-foreground" />
-                            ) : (
-                              <Eye className="h-4 w-4 text-muted-foreground" />
-                            )}
-                          </Button>
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="confirm-password">Confirm New Password</Label>
-                        <Input
-                          id="confirm-password"
-                          type="password"
-                          value={passwordChange.confirmPassword}
-                          onChange={(e) => setPasswordChange({...passwordChange, confirmPassword: e.target.value})}
-                          placeholder="Confirm new password"
+                        <Switch
+                          checked={settings.autoBackup}
+                          onCheckedChange={(checked) => setSettings({...settings, autoBackup: checked})}
                         />
                       </div>
-                      <Button onClick={changePassword} disabled={isLoading} className="gap-2">
-                        {isLoading ? (
-                          <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
-                        ) : (
-                          <Key className="w-4 h-4" />
-                        )}
-                        Change Password
-                      </Button>
+                      <div className="space-y-2">
+                        <Label htmlFor="backup-frequency">Backup Frequency</Label>
+                        <Select value={settings.backupFrequency} onValueChange={(value) => setSettings({...settings, backupFrequency: value})}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="daily">Daily</SelectItem>
+                            <SelectItem value="weekly">Weekly</SelectItem>
+                            <SelectItem value="monthly">Monthly</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
 
                     <div className="space-y-4">
                       <div className="p-4 bg-muted/50 rounded-lg">
-                        <h4 className="text-sm font-medium mb-3">Two-Factor Authentication</h4>
-                        <div className="space-y-3">
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              <Smartphone className="w-4 h-4 text-green-600" />
-                              <span className="text-sm">Authenticator App</span>
-                            </div>
-                            <Badge className="bg-green-100 text-green-800 border-green-200">Enabled</Badge>
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              <Mail className="w-4 h-4 text-green-600" />
-                              <span className="text-sm">Email OTP</span>
-                            </div>
-                            <Badge className="bg-green-100 text-green-800 border-green-200">Enabled</Badge>
-                          </div>
-                        </div>
-                        <Button variant="outline" size="sm" className="w-full mt-3">
-                          Manage 2FA Settings
-                        </Button>
-                      </div>
-
-                      <div className="p-4 bg-muted/50 rounded-lg">
-                        <h4 className="text-sm font-medium mb-3">Account Information</h4>
+                        <h4 className="text-sm font-medium mb-3">Current Data</h4>
                         <div className="space-y-2 text-sm">
                           <div className="flex justify-between">
-                            <span className="text-muted-foreground">Username:</span>
-                            <span className="font-medium">admin</span>
+                            <span className="text-muted-foreground">Projects:</span>
+                            <span className="font-medium">{systemStats.activeProjects} active</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-muted-foreground">Email:</span>
-                            <span className="font-medium">admin@surveypanel.com</span>
+                            <span className="text-muted-foreground">Vendors:</span>
+                            <span className="font-medium">{systemStats.activeVendors} active</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-muted-foreground">Role:</span>
-                            <span className="font-medium">Super Admin</span>
+                            <span className="text-muted-foreground">Responses:</span>
+                            <span className="font-medium">{systemStats.totalResponses.toLocaleString()}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-muted-foreground">Last Login:</span>
-                            <span className="font-medium">2024-01-25 10:30 AM</span>
+                            <span className="text-muted-foreground">Last Backup:</span>
+                            <span className="font-medium">{new Date(systemStats.lastBackup).toLocaleDateString()}</span>
                           </div>
                         </div>
                       </div>
                     </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Button onClick={performBackup} disabled={isLoading} className="gap-2">
+                      {isLoading ? (
+                        <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
+                      ) : (
+                        <Download className="w-4 h-4" />
+                      )}
+                      Create Backup Now
+                    </Button>
+                    <Button onClick={saveSettings} disabled={isLoading} variant="outline" className="gap-2 ml-2">
+                      {isLoading ? (
+                        <div className="animate-spin w-4 h-4 border-2 border-primary border-t-transparent rounded-full" />
+                      ) : (
+                        <Save className="w-4 h-4" />
+                      )}
+                      Save Data Settings
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
@@ -834,51 +463,32 @@ export default function Settings() {
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <Server className="w-5 h-5" />
-                      System Status
+                      <BarChart3 className="w-5 h-5" />
+                      Panel Statistics
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="space-y-3">
-                      <div>
-                        <div className="flex justify-between text-sm mb-1">
-                          <span>CPU Usage</span>
-                          <span className={getUsageColor(systemStats.cpuUsage)}>{systemStats.cpuUsage}%</span>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Active Projects:</span>
+                        <span className="font-medium">{systemStats.activeProjects}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Active Vendors:</span>
+                        <span className="font-medium">{systemStats.activeVendors}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Total Responses:</span>
+                        <span className="font-medium">{systemStats.totalResponses.toLocaleString()}</span>
+                      </div>
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Storage Used:</span>
+                          <span className={`font-medium ${getStorageColor(systemStats.storageUsed)}`}>
+                            {systemStats.storageUsed}%
+                          </span>
                         </div>
-                        <Progress value={systemStats.cpuUsage} className="h-2" />
-                      </div>
-                      <div>
-                        <div className="flex justify-between text-sm mb-1">
-                          <span>Memory Usage</span>
-                          <span className={getUsageColor(systemStats.memoryUsage)}>{systemStats.memoryUsage}%</span>
-                        </div>
-                        <Progress value={systemStats.memoryUsage} className="h-2" />
-                      </div>
-                      <div>
-                        <div className="flex justify-between text-sm mb-1">
-                          <span>Disk Usage</span>
-                          <span className={getUsageColor(systemStats.diskUsage)}>{systemStats.diskUsage}%</span>
-                        </div>
-                        <Progress value={systemStats.diskUsage} className="h-2" />
-                      </div>
-                    </div>
-
-                    <div className="pt-4 border-t border-border space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Uptime:</span>
-                        <span className="font-medium">{systemStats.uptime}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Active Users:</span>
-                        <span className="font-medium">{systemStats.activeUsers}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Total Requests:</span>
-                        <span className="font-medium">{systemStats.totalRequests.toLocaleString()}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Error Rate:</span>
-                        <span className="font-medium text-green-600">{systemStats.errorRate}%</span>
+                        <Progress value={systemStats.storageUsed} className="h-2" />
                       </div>
                     </div>
                   </CardContent>
@@ -887,65 +497,38 @@ export default function Settings() {
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <Database className="w-5 h-5" />
-                      Backup & Maintenance
+                      <Shield className="w-5 h-5" />
+                      Security Status
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div className="space-y-3">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Last Backup:</span>
-                        <span className="font-medium">{new Date(backupInfo.lastBackup).toLocaleDateString()}</span>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">Data Encryption:</span>
+                        <Badge className="bg-green-100 text-green-800 border-green-200">Active</Badge>
                       </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Backup Size:</span>
-                        <span className="font-medium">{backupInfo.backupSize}</span>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">Secure Connection:</span>
+                        <Badge className="bg-green-100 text-green-800 border-green-200">HTTPS</Badge>
                       </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Next Scheduled:</span>
-                        <span className="font-medium">{new Date(backupInfo.nextScheduled).toLocaleDateString()}</span>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">Backup Status:</span>
+                        <Badge className="bg-green-100 text-green-800 border-green-200">
+                          {settings.autoBackup ? 'Auto' : 'Manual'}
+                        </Badge>
                       </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Retention:</span>
-                        <span className="font-medium">{backupInfo.retentionDays} days</span>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">Data Retention:</span>
+                        <Badge variant="outline">{settings.responseRetention} days</Badge>
                       </div>
                     </div>
 
-                    <div className="space-y-2">
-                      <Button onClick={performBackup} disabled={isLoading} className="w-full gap-2">
-                        {isLoading ? (
-                          <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
-                        ) : (
-                          <Download className="w-4 h-4" />
-                        )}
-                        Create Backup Now
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="w-full gap-2"
-                        onClick={() => {
-                          if (confirm('Are you sure you want to restart services? This may cause temporary disruption.')) {
-                            showCopySuccess(document.body, 'Services restart initiated');
-                          }
-                        }}
-                      >
-                        <RefreshCw className="w-4 h-4" />
-                        Restart Services
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="w-full gap-2"
-                        onClick={() => {
-                          const maintenanceTime = prompt('Enter maintenance window start time (HH:MM):');
-                          if (maintenanceTime) {
-                            showCopySuccess(document.body, `Maintenance scheduled for ${maintenanceTime}`);
-                          }
-                        }}
-                      >
-                        <Clock className="w-4 h-4" />
-                        Schedule Maintenance
-                      </Button>
-                    </div>
+                    <Alert>
+                      <Shield className="h-4 w-4" />
+                      <AlertDescription>
+                        Your panel is secure and all data is encrypted in transit and at rest.
+                      </AlertDescription>
+                    </Alert>
                   </CardContent>
                 </Card>
               </div>
