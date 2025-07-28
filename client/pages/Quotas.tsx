@@ -68,63 +68,60 @@ interface VendorQuotaStatus {
 }
 
 export default function Quotas() {
-  const [quotaRules, setQuotaRules] = useState<QuotaRule[]>([
-    {
-      id: "QR001",
-      name: "Global Complete Limit - Consumer Study",
-      projectId: "P12345",
-      projectName: "Consumer Behavior Study 2024",
-      type: "global",
-      criteria: {},
-      quotaLimit: 1000,
-      currentCount: 847,
-      autoAction: "redirect-quota-full",
-      isActive: true,
-      createdDate: "2024-01-15",
-      lastTriggered: "2024-01-24T15:30:00Z"
-    },
-    {
-      id: "QR002",
-      name: "Male Demographics Quota",
-      projectId: "P12345",
-      projectName: "Consumer Behavior Study 2024",
-      type: "demographic",
-      criteria: { gender: "male", ageMin: 25, ageMax: 54 },
-      quotaLimit: 500,
-      currentCount: 420,
-      autoAction: "redirect-quota-full",
-      isActive: true,
-      createdDate: "2024-01-15"
-    },
-    {
-      id: "QR003",
-      name: "Vendor V001 Daily Limit",
-      projectId: "P12345",
-      projectName: "Consumer Behavior Study 2024",
-      type: "vendor-specific",
-      vendorId: "V001",
-      vendorName: "Quality Traffic Solutions",
-      criteria: {},
-      quotaLimit: 200,
-      currentCount: 156,
-      autoAction: "pause-vendor",
-      isActive: true,
-      createdDate: "2024-01-15"
-    },
-    {
-      id: "QR004",
-      name: "US Region Quota",
-      projectId: "P12346",
-      projectName: "Brand Awareness Survey",
-      type: "demographic",
-      criteria: { country: "US" },
-      quotaLimit: 300,
-      currentCount: 234,
-      autoAction: "redirect-quota-full",
-      isActive: true,
-      createdDate: "2024-01-20"
-    }
-  ]);
+  const { state } = usePanelContext();
+
+  // Generate dynamic quota rules based on project data
+  const generateDynamicQuotaRules = (): QuotaRule[] => {
+    const rules: QuotaRule[] = [];
+
+    // Create global quotas for each project
+    state.projects.forEach(project => {
+      rules.push({
+        id: `QR-Global-${project.id}`,
+        name: `Global Quota - ${project.name}`,
+        projectId: project.id,
+        projectName: project.name,
+        type: 'global',
+        criteria: {},
+        quotaLimit: project.totalQuota,
+        currentCount: project.completes,
+        autoAction: 'redirect-quota-full',
+        isActive: project.status === 'active',
+        createdDate: project.createdDate,
+        lastTriggered: project.completes >= project.totalQuota ? new Date().toISOString() : undefined
+      });
+
+      // Create vendor-specific quotas for assigned vendors
+      project.vendors.forEach(vendorId => {
+        const vendor = state.vendors.find(v => v.id === vendorId);
+        if (vendor) {
+          const vendorResponses = state.responses.filter(r => r.vendorId === vendorId && r.projectId === project.id);
+          const vendorCompletes = vendorResponses.filter(r => r.status === 'complete').length;
+
+          rules.push({
+            id: `QR-Vendor-${project.id}-${vendorId}`,
+            name: `Daily Limit - ${vendor.name}`,
+            projectId: project.id,
+            projectName: project.name,
+            type: 'vendor-specific',
+            vendorId: vendorId,
+            vendorName: vendor.name,
+            criteria: {},
+            quotaLimit: Math.floor(project.totalQuota / project.vendors.length * 0.3), // 30% of proportional share as daily limit
+            currentCount: vendorCompletes,
+            autoAction: 'pause-vendor',
+            isActive: vendor.status === 'active' && project.status === 'active',
+            createdDate: project.createdDate
+          });
+        }
+      });
+    });
+
+    return rules;
+  };
+
+  const dynamicQuotaRules = generateDynamicQuotaRules();
+  const [quotaRules, setQuotaRules] = useState<QuotaRule[]>(dynamicQuotaRules);
 
   const [vendorStatuses, setVendorStatuses] = useState<VendorQuotaStatus[]>([
     {
