@@ -173,6 +173,14 @@ export default function Quotas() {
     isActive: true
   });
 
+  // Update quotas when global state changes
+  useEffect(() => {
+    const updatedRules = generateDynamicQuotaRules();
+    const updatedStatuses = generateDynamicVendorStatuses();
+    setQuotaRules(updatedRules);
+    setVendorStatuses(updatedStatuses);
+  }, [state.projects, state.vendors, state.responses]);
+
   // Simulate real-time quota monitoring
   useEffect(() => {
     const interval = setInterval(() => {
