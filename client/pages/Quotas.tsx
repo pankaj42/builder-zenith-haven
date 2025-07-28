@@ -123,48 +123,44 @@ export default function Quotas() {
   const dynamicQuotaRules = generateDynamicQuotaRules();
   const [quotaRules, setQuotaRules] = useState<QuotaRule[]>(dynamicQuotaRules);
 
-  const [vendorStatuses, setVendorStatuses] = useState<VendorQuotaStatus[]>([
-    {
-      vendorId: "V001",
-      vendorName: "Quality Traffic Solutions",
-      projectId: "P12345",
-      projectName: "Consumer Behavior Study 2024",
-      totalSent: 1200,
-      completes: 942,
-      terminates: 218,
-      quotaFull: 40,
-      completionRate: 78.5,
-      isPaused: false,
-      quotaRules: quotaRules.filter(r => r.vendorId === "V001" || r.type === "global")
-    },
-    {
-      vendorId: "V002",
-      vendorName: "Survey Source Network",
-      projectId: "P12345",
-      projectName: "Consumer Behavior Study 2024",
-      totalSent: 950,
-      completes: 779,
-      terminates: 145,
-      quotaFull: 26,
-      completionRate: 82.1,
-      isPaused: false,
-      quotaRules: quotaRules.filter(r => r.vendorId === "V002" || r.type === "global")
-    },
-    {
-      vendorId: "V003",
-      vendorName: "Panel Partners LLC",
-      projectId: "P12347",
-      projectName: "Product Feedback Collection",
-      totalSent: 500,
-      completes: 327,
-      terminates: 143,
-      quotaFull: 30,
-      completionRate: 65.4,
-      isPaused: true,
-      pauseReason: "Quota rule QR005 triggered - Daily limit exceeded",
-      quotaRules: quotaRules.filter(r => r.vendorId === "V003" || r.type === "global")
-    }
-  ]);
+  // Generate dynamic vendor statuses from global state
+  const generateDynamicVendorStatuses = (): VendorQuotaStatus[] => {
+    const statuses: VendorQuotaStatus[] = [];
+
+    state.vendors.forEach(vendor => {
+      vendor.assignedProjects.forEach(projectId => {
+        const project = state.projects.find(p => p.id === projectId);
+        if (project) {
+          const vendorResponses = state.responses.filter(r => r.vendorId === vendor.id && r.projectId === projectId);
+          const completes = vendorResponses.filter(r => r.status === 'complete').length;
+          const terminates = vendorResponses.filter(r => r.status === 'terminate').length;
+          const quotaFull = vendorResponses.filter(r => r.status === 'quota-full').length;
+          const totalResponses = vendorResponses.length;
+          const completionRate = totalResponses > 0 ? (completes / totalResponses) * 100 : 0;
+
+          statuses.push({
+            vendorId: vendor.id,
+            vendorName: vendor.name,
+            projectId: projectId,
+            projectName: project.name,
+            totalSent: vendor.totalSent,
+            completes: completes,
+            terminates: terminates,
+            quotaFull: quotaFull,
+            completionRate: Math.round(completionRate * 10) / 10,
+            isPaused: vendor.status !== 'active',
+            pauseReason: vendor.status !== 'active' ? `Vendor status: ${vendor.status}` : undefined,
+            quotaRules: dynamicQuotaRules.filter(r => r.vendorId === vendor.id || r.type === 'global')
+          });
+        }
+      });
+    });
+
+    return statuses;
+  };
+
+  const dynamicVendorStatuses = generateDynamicVendorStatuses();
+  const [vendorStatuses, setVendorStatuses] = useState<VendorQuotaStatus[]>(dynamicVendorStatuses);
 
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [newQuotaRule, setNewQuotaRule] = useState<Partial<QuotaRule>>({
