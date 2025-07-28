@@ -141,26 +141,30 @@ export const DetailsModal: React.FC<DetailsModalProps> = ({
         <label className="text-sm font-medium text-gray-700">Affected Responses</label>
         <div className="mt-1 bg-gray-50 p-3 rounded border">
           <div className="flex flex-wrap gap-2">
-            {data.affectedResponses.map((response: string) => (
-              <div key={response} className="flex items-center gap-1">
-                <span className="font-mono text-xs bg-white px-2 py-1 rounded border">{response}</span>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={(e) => copyToClipboard(response, e.currentTarget)}
-                  className="h-5 w-5 p-0"
-                >
-                  <Copy className="w-2 h-2" />
-                </Button>
-              </div>
-            ))}
+            {data?.affectedResponses && data.affectedResponses.length > 0 ? (
+              data.affectedResponses.map((response: string) => (
+                <div key={response} className="flex items-center gap-1">
+                  <span className="font-mono text-xs bg-white px-2 py-1 rounded border">{response}</span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={(e) => copyToClipboard(response, e.currentTarget)}
+                    className="h-5 w-5 p-0"
+                  >
+                    <Copy className="w-2 h-2" />
+                  </Button>
+                </div>
+              ))
+            ) : (
+              <span className="text-sm text-muted-foreground">No affected responses</span>
+            )}
           </div>
         </div>
       </div>
 
       <div>
         <label className="text-sm font-medium text-gray-700">Timestamp</label>
-        <p className="mt-1 text-sm">{new Date(data.timestamp).toLocaleString()}</p>
+        <p className="mt-1 text-sm">{data?.timestamp ? new Date(data.timestamp).toLocaleString() : 'Unknown'}</p>
       </div>
 
       {data.investigatedBy && (
