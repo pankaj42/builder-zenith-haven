@@ -167,14 +167,14 @@ export const DetailsModal: React.FC<DetailsModalProps> = ({
         <p className="mt-1 text-sm">{data?.timestamp ? new Date(data.timestamp).toLocaleString() : 'Unknown'}</p>
       </div>
 
-      {data.investigatedBy && (
+      {data?.investigatedBy && (
         <div>
           <label className="text-sm font-medium text-gray-700">Investigated By</label>
           <p className="mt-1 text-sm">{data.investigatedBy}</p>
         </div>
       )}
 
-      {data.resolution && (
+      {data?.resolution && (
         <div>
           <label className="text-sm font-medium text-gray-700">Resolution</label>
           <p className="mt-1 text-sm bg-green-50 p-3 rounded border">{data.resolution}</p>
