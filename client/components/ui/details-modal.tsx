@@ -48,21 +48,23 @@ export const DetailsModal: React.FC<DetailsModalProps> = ({
         <div>
           <label className="text-sm font-medium text-gray-700">Alert ID</label>
           <div className="flex items-center gap-2 mt-1">
-            <span className="font-mono text-sm bg-gray-100 px-2 py-1 rounded">{data.id}</span>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={(e) => copyToClipboard(data.id, e.currentTarget)}
-              className="h-6 w-6 p-0"
-            >
-              <Copy className="w-3 h-3" />
-            </Button>
+            <span className="font-mono text-sm bg-gray-100 px-2 py-1 rounded">{data?.id || 'N/A'}</span>
+            {data?.id && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={(e) => copyToClipboard(data.id, e.currentTarget)}
+                className="h-6 w-6 p-0"
+              >
+                <Copy className="w-3 h-3" />
+              </Button>
+            )}
           </div>
         </div>
         <div>
           <label className="text-sm font-medium text-gray-700">Type</label>
           <div className="mt-1">
-            <Badge className="bg-blue-100 text-blue-800">{data.type.replace('-', ' ')}</Badge>
+            <Badge className="bg-blue-100 text-blue-800">{data?.type?.replace('-', ' ') || 'Unknown'}</Badge>
           </div>
         </div>
       </div>
