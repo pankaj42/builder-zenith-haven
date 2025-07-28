@@ -27,6 +27,7 @@ import {
   Globe
 } from "lucide-react";
 import Sidebar from "@/components/Sidebar";
+import { usePanelContext } from "@/contexts/PanelContext";
 
 interface QuotaRule {
   id: string;
