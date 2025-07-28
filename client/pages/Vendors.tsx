@@ -208,6 +208,20 @@ export default function Vendors() {
     deleteVendor(vendorId);
   };
 
+  const editVendorAction = (vendor: Vendor) => {
+    setEditingVendor(vendor);
+    setShowEditDialog(true);
+  };
+
+  const updateVendorAction = () => {
+    if (editingVendor) {
+      updateVendor(editingVendor.id, editingVendor);
+      setShowEditDialog(false);
+      setEditingVendor(null);
+      showCopySuccess(document.body, "Vendor updated successfully!");
+    }
+  };
+
   // Reusable copy function that works in all contexts
   const copyToClipboard = (text: string, buttonElement: HTMLElement, description: string = "Copied!") => {
     try {
