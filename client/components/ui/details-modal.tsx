@@ -74,12 +74,12 @@ export const DetailsModal: React.FC<DetailsModalProps> = ({
           <label className="text-sm font-medium text-gray-700">Severity</label>
           <div className="mt-1">
             <Badge className={
-              data.severity === 'critical' ? 'bg-red-100 text-red-800' :
-              data.severity === 'high' ? 'bg-orange-100 text-orange-800' :
-              data.severity === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+              data?.severity === 'critical' ? 'bg-red-100 text-red-800' :
+              data?.severity === 'high' ? 'bg-orange-100 text-orange-800' :
+              data?.severity === 'medium' ? 'bg-yellow-100 text-yellow-800' :
               'bg-blue-100 text-blue-800'
             }>
-              {data.severity}
+              {data?.severity || 'low'}
             </Badge>
           </div>
         </div>
@@ -87,11 +87,11 @@ export const DetailsModal: React.FC<DetailsModalProps> = ({
           <label className="text-sm font-medium text-gray-700">Status</label>
           <div className="mt-1">
             <Badge className={
-              data.status === 'resolved' ? 'bg-green-100 text-green-800' :
-              data.status === 'investigating' ? 'bg-blue-100 text-blue-800' :
+              data?.status === 'resolved' ? 'bg-green-100 text-green-800' :
+              data?.status === 'investigating' ? 'bg-blue-100 text-blue-800' :
               'bg-gray-100 text-gray-800'
             }>
-              {data.status.replace('-', ' ')}
+              {data?.status?.replace('-', ' ') || 'pending'}
             </Badge>
           </div>
         </div>
@@ -99,7 +99,7 @@ export const DetailsModal: React.FC<DetailsModalProps> = ({
 
       <div>
         <label className="text-sm font-medium text-gray-700">Details</label>
-        <p className="mt-1 text-sm bg-gray-50 p-3 rounded border">{data.details}</p>
+        <p className="mt-1 text-sm bg-gray-50 p-3 rounded border">{data?.details || 'No details available'}</p>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
