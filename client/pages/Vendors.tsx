@@ -598,7 +598,12 @@ export default function Vendors() {
                             <Eye className="w-3 h-3" />
                             View Details
                           </Button>
-                          <Button variant="outline" size="sm" className="gap-1">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="gap-1"
+                            onClick={() => editVendorAction(vendor)}
+                          >
                             <Edit className="w-3 h-3" />
                           </Button>
                         </div>
