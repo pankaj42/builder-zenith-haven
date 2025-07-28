@@ -1009,7 +1009,7 @@ export default function Vendors() {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => copyToClipboard(selectedVendorForDetails.redirectUrls.quotaFull, "Quota Full Redirect URL")}
+                        onClick={(e) => copyToClipboard(selectedVendorForDetails.redirectUrls.quotaFull, e.currentTarget, "Quota Full URL Copied!")}
                       >
                         <Copy className="w-3 h-3" />
                       </Button>
