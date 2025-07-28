@@ -389,9 +389,11 @@ export default function Quotas() {
                           <SelectValue placeholder="Select vendor" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="V001">V001 - Quality Traffic Solutions</SelectItem>
-                          <SelectItem value="V002">V002 - Survey Source Network</SelectItem>
-                          <SelectItem value="V003">V003 - Panel Partners LLC</SelectItem>
+                          {state.vendors.map(vendor => (
+                            <SelectItem key={vendor.id} value={vendor.id}>
+                              {vendor.id} - {vendor.name}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>
