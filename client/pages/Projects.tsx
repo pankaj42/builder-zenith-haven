@@ -705,6 +705,25 @@ export default function Projects() {
                 <div className="mt-4 space-y-4">
                   <h4 className="text-md font-semibold mb-2">Link Flow Management</h4>
 
+                  {/* Explanation Box */}
+                  <div className="p-4 bg-gradient-to-r from-blue-50 to-green-50 rounded-lg border border-blue-200">
+                    <h5 className="font-semibold text-blue-800 mb-2">How Survey Links Work in Your Panel</h5>
+                    <div className="space-y-2 text-sm text-blue-700">
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                        <span><strong>Original Client Link:</strong> This is your client's survey URL where respondents actually take the survey</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <span><strong>Modified Link:</strong> Add redirect parameters to capture completions back to your panel</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                        <span><strong>Vendor Start Links:</strong> Generated automatically with tracking for each vendor you assign</span>
+                      </div>
+                    </div>
+                  </div>
+
                   {/* Original Client Link */}
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-blue-600">1. Original Client Survey Link</Label>
