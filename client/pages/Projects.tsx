@@ -922,27 +922,77 @@ export default function Projects() {
                   </div>
                 </div>
 
-                {/* Assigned Vendors */}
+                {/* Assigned Vendors with Performance */}
                 <div className="mt-4">
-                  <h4 className="text-md font-semibold mb-2">Assigned Vendors ({selectedProjectForDetails.vendors.length})</h4>
-                  <div className="space-y-2">
+                  <h4 className="text-md font-semibold mb-2">Assigned Vendors Performance ({selectedProjectForDetails.vendors.length})</h4>
+                  <div className="space-y-3">
                     {selectedProjectForDetails.vendors.length > 0 ? (
-                      selectedProjectForDetails.vendors.map((vendorId, index) => (
-                        <div key={index} className="flex items-center justify-between p-2 bg-muted rounded-lg">
-                          <span className="font-mono text-sm">{vendorId}</span>
-                          <div className="flex gap-1">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={(e) => copyProjectLink(selectedProjectForDetails.id, e.currentTarget, vendorId)}
-                              className="gap-1"
-                            >
-                              <Copy className="w-3 h-3" />
-                              Copy Start Link
-                            </Button>
+                      selectedProjectForDetails.vendors.map((vendorId, index) => {
+                        // Calculate dynamic vendor performance for this project
+                        const vendor = state.vendors.find(v => v.id === vendorId);
+                        const vendorResponses = state.responses.filter(r => r.vendorId === vendorId && r.projectId === selectedProjectForDetails.id);
+                        const completes = vendorResponses.filter(r => r.status === 'complete').length;
+                        const terminates = vendorResponses.filter(r => r.status === 'terminate').length;
+                        const quotaFull = vendorResponses.filter(r => r.status === 'quota-full').length;
+                        const totalResponses = vendorResponses.length;
+                        const completionRate = totalResponses > 0 ? ((completes / totalResponses) * 100).toFixed(1) : '0.0';
+                        const incentiveAmount = selectedProjectForDetails.incentive ? parseFloat(selectedProjectForDetails.incentive.replace('$', '')) : 0;
+                        const earnings = (completes * incentiveAmount).toFixed(2);
+
+                        return (
+                          <div key={index} className="p-3 bg-muted rounded-lg border">
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="flex items-center gap-2">
+                                <span className="font-mono text-sm font-medium">{vendorId}</span>
+                                <span className="text-xs text-muted-foreground">{vendor?.name || 'Unknown Vendor'}</span>
+                              </div>
+                              <Badge className={totalResponses > 0 ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
+                                {totalResponses > 0 ? 'Active' : 'No Data'}
+                              </Badge>
+                            </div>
+
+                            {/* Performance Metrics */}
+                            <div className="grid grid-cols-4 gap-2 mb-2 text-xs">
+                              <div className="text-center">
+                                <div className="font-bold text-green-600">{completes}</div>
+                                <div className="text-muted-foreground">Completes</div>
+                              </div>
+                              <div className="text-center">
+                                <div className="font-bold text-orange-600">{terminates}</div>
+                                <div className="text-muted-foreground">Terminates</div>
+                              </div>
+                              <div className="text-center">
+                                <div className="font-bold text-blue-600">{completionRate}%</div>
+                                <div className="text-muted-foreground">CR</div>
+                              </div>
+                              <div className="text-center">
+                                <div className="font-bold text-purple-600">${earnings}</div>
+                                <div className="text-muted-foreground">Earned</div>
+                              </div>
+                            </div>
+
+                            <div className="flex gap-1">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={(e) => copyProjectLink(selectedProjectForDetails.id, e.currentTarget, vendorId)}
+                                className="gap-1 flex-1"
+                              >
+                                <Copy className="w-3 h-3" />
+                                Copy Start Link
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => window.open(`https://yourpanel.com/start/${selectedProjectForDetails.id}/${vendorId}/?ID=`, '_blank')}
+                                className="gap-1"
+                              >
+                                <ExternalLink className="w-3 h-3" />
+                              </Button>
+                            </div>
                           </div>
-                        </div>
-                      ))
+                        );
+                      })
                     ) : (
                       <p className="text-muted-foreground text-sm">No vendors assigned</p>
                     )}
