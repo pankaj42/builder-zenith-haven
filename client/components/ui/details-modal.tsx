@@ -179,27 +179,29 @@ export const DetailsModal: React.FC<DetailsModalProps> = ({
         <div>
           <label className="text-sm font-medium text-gray-700">Vendor ID</label>
           <div className="flex items-center gap-2 mt-1">
-            <span className="font-mono text-sm bg-gray-100 px-2 py-1 rounded">{data.vendorId}</span>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={(e) => copyToClipboard(data.vendorId, e.currentTarget)}
-              className="h-6 w-6 p-0"
-            >
-              <Copy className="w-3 h-3" />
-            </Button>
+            <span className="font-mono text-sm bg-gray-100 px-2 py-1 rounded">{data?.vendorId || 'N/A'}</span>
+            {data?.vendorId && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={(e) => copyToClipboard(data.vendorId, e.currentTarget)}
+                className="h-6 w-6 p-0"
+              >
+                <Copy className="w-3 h-3" />
+              </Button>
+            )}
           </div>
         </div>
         <div>
           <label className="text-sm font-medium text-gray-700">Risk Level</label>
           <div className="mt-1">
             <Badge className={
-              data.riskLevel === 'critical' ? 'bg-red-100 text-red-800' :
-              data.riskLevel === 'high' ? 'bg-orange-100 text-orange-800' :
-              data.riskLevel === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+              data?.riskLevel === 'critical' ? 'bg-red-100 text-red-800' :
+              data?.riskLevel === 'high' ? 'bg-orange-100 text-orange-800' :
+              data?.riskLevel === 'medium' ? 'bg-yellow-100 text-yellow-800' :
               'bg-green-100 text-green-800'
             }>
-              {data.riskLevel?.toUpperCase()}
+              {data?.riskLevel?.toUpperCase() || 'LOW'}
             </Badge>
           </div>
         </div>
@@ -208,24 +210,26 @@ export const DetailsModal: React.FC<DetailsModalProps> = ({
       <div className="bg-gray-50 p-4 rounded border">
         <h4 className="font-medium mb-3">Performance Metrics</h4>
         <div className="grid grid-cols-2 gap-4 text-sm">
-          <div>Overall Score: <span className="font-bold">{data.overallScore || data.fraudScore}/5</span></div>
-          <div>Completion Rate: <span className="font-bold">{data.completionRate}%</span></div>
-          <div>Terminate Rate: <span className="font-bold">{data.terminateRate}%</span></div>
-          <div>Total Responses: <span className="font-bold">{data.totalResponses}</span></div>
+          <div>Overall Score: <span className="font-bold">{data?.overallScore || data?.fraudScore || 0}/5</span></div>
+          <div>Completion Rate: <span className="font-bold">{data?.completionRate || 0}%</span></div>
+          <div>Terminate Rate: <span className="font-bold">{data?.terminateRate || 0}%</span></div>
+          <div>Total Responses: <span className="font-bold">{data?.totalResponses || data?.totalCompletes || 0}</span></div>
         </div>
       </div>
 
-      {data.earnings && (
+      {data?.earnings && (
         <div>
           <label className="text-sm font-medium text-gray-700">Total Earnings</label>
           <p className="mt-1 text-lg font-bold text-green-600">${data.earnings.toLocaleString()}</p>
         </div>
       )}
 
-      <div>
-        <label className="text-sm font-medium text-gray-700">Last Activity</label>
-        <p className="mt-1 text-sm">{new Date(data.lastActivity || data.lastActive).toLocaleString()}</p>
-      </div>
+      {(data?.lastActivity || data?.lastActive) && (
+        <div>
+          <label className="text-sm font-medium text-gray-700">Last Activity</label>
+          <p className="mt-1 text-sm">{new Date(data.lastActivity || data.lastActive).toLocaleString()}</p>
+        </div>
+      )}
     </div>
   );
 
