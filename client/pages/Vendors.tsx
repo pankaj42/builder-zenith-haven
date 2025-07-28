@@ -147,10 +147,12 @@ export default function Vendors() {
   const dynamicAssignments = generateAssignments(); // Always use dynamic data
 
   const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
   const [showAssignDialog, setShowAssignDialog] = useState(false);
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
   const [selectedVendor, setSelectedVendor] = useState<string>("");
   const [selectedVendorForDetails, setSelectedVendorForDetails] = useState<Vendor | null>(null);
+  const [editingVendor, setEditingVendor] = useState<Vendor | null>(null);
   const [newVendor, setNewVendor] = useState<Partial<Vendor>>({
     name: "",
     email: "",
