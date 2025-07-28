@@ -241,22 +241,24 @@ export const DetailsModal: React.FC<DetailsModalProps> = ({
         <div>
           <label className="text-sm font-medium text-gray-700">IP Address</label>
           <div className="flex items-center gap-2 mt-1">
-            <span className="font-mono text-sm bg-gray-100 px-2 py-1 rounded">{data.ip}</span>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={(e) => copyToClipboard(data.ip, e.currentTarget)}
-              className="h-6 w-6 p-0"
-            >
-              <Copy className="w-3 h-3" />
-            </Button>
+            <span className="font-mono text-sm bg-gray-100 px-2 py-1 rounded">{data?.ip || 'N/A'}</span>
+            {data?.ip && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={(e) => copyToClipboard(data.ip, e.currentTarget)}
+                className="h-6 w-6 p-0"
+              >
+                <Copy className="w-3 h-3" />
+              </Button>
+            )}
           </div>
         </div>
         <div>
           <label className="text-sm font-medium text-gray-700">Risk Score</label>
           <div className="mt-1">
-            <span className={`font-bold ${data.riskScore >= 8 ? 'text-red-600' : data.riskScore >= 6 ? 'text-orange-600' : 'text-green-600'}`}>
-              {data.riskScore}/10
+            <span className={`font-bold ${(data?.riskScore || 0) >= 8 ? 'text-red-600' : (data?.riskScore || 0) >= 6 ? 'text-orange-600' : 'text-green-600'}`}>
+              {data?.riskScore || 0}/10
             </span>
           </div>
         </div>
