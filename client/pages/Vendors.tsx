@@ -1106,6 +1106,130 @@ export default function Vendors() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Edit Vendor Dialog */}
+      <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Edit Vendor - {editingVendor?.name}</DialogTitle>
+          </DialogHeader>
+          {editingVendor && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Basic Information */}
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-vendor-name">Contact Name</Label>
+                  <Input
+                    id="edit-vendor-name"
+                    value={editingVendor.name}
+                    onChange={(e) => setEditingVendor({...editingVendor, name: e.target.value})}
+                    placeholder="Enter contact name"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-vendor-email">Email</Label>
+                  <Input
+                    id="edit-vendor-email"
+                    type="email"
+                    value={editingVendor.email}
+                    onChange={(e) => setEditingVendor({...editingVendor, email: e.target.value})}
+                    placeholder="vendor@company.com"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-vendor-phone">Phone</Label>
+                  <Input
+                    id="edit-vendor-phone"
+                    value={editingVendor.phone}
+                    onChange={(e) => setEditingVendor({...editingVendor, phone: e.target.value})}
+                    placeholder="+1-555-0123"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-vendor-company">Company</Label>
+                  <Input
+                    id="edit-vendor-company"
+                    value={editingVendor.company}
+                    onChange={(e) => setEditingVendor({...editingVendor, company: e.target.value})}
+                    placeholder="Company name"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-payment-method">Payment Method</Label>
+                  <Select
+                    value={editingVendor.paymentMethod}
+                    onValueChange={(value) => setEditingVendor({...editingVendor, paymentMethod: value})}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="PayPal">PayPal</SelectItem>
+                      <SelectItem value="Bank Transfer">Bank Transfer</SelectItem>
+                      <SelectItem value="Wire Transfer">Wire Transfer</SelectItem>
+                      <SelectItem value="Check">Check</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Redirect URLs */}
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-complete-url">Complete Redirect URL</Label>
+                  <Input
+                    id="edit-complete-url"
+                    value={editingVendor.redirectUrls?.complete || ''}
+                    onChange={(e) => setEditingVendor({
+                      ...editingVendor,
+                      redirectUrls: { ...editingVendor.redirectUrls!, complete: e.target.value }
+                    })}
+                    placeholder="https://vendor.com/complete"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-terminate-url">Terminate Redirect URL</Label>
+                  <Input
+                    id="edit-terminate-url"
+                    value={editingVendor.redirectUrls?.terminate || ''}
+                    onChange={(e) => setEditingVendor({
+                      ...editingVendor,
+                      redirectUrls: { ...editingVendor.redirectUrls!, terminate: e.target.value }
+                    })}
+                    placeholder="https://vendor.com/terminate"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-quota-full-url">Quota Full Redirect URL</Label>
+                  <Input
+                    id="edit-quota-full-url"
+                    value={editingVendor.redirectUrls?.quotaFull || ''}
+                    onChange={(e) => setEditingVendor({
+                      ...editingVendor,
+                      redirectUrls: { ...editingVendor.redirectUrls!, quotaFull: e.target.value }
+                    })}
+                    placeholder="https://vendor.com/quota-full"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-vendor-notes">Notes</Label>
+                  <Textarea
+                    id="edit-vendor-notes"
+                    value={editingVendor.notes}
+                    onChange={(e) => setEditingVendor({...editingVendor, notes: e.target.value})}
+                    placeholder="Additional notes about vendor"
+                    rows={3}
+                  />
+                </div>
+                <div className="flex gap-2 pt-4">
+                  <Button onClick={updateVendorAction} className="flex-1">Save Changes</Button>
+                  <Button variant="outline" onClick={() => setShowEditDialog(false)}>Cancel</Button>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
