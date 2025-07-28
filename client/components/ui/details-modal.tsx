@@ -266,31 +266,31 @@ export const DetailsModal: React.FC<DetailsModalProps> = ({
 
       <div>
         <label className="text-sm font-medium text-gray-700">Location</label>
-        <p className="mt-1 text-sm">{data.city}, {data.country}</p>
+        <p className="mt-1 text-sm">{data?.city || 'Unknown'}, {data?.country || 'Unknown'}</p>
       </div>
 
       <div className="bg-gray-50 p-4 rounded border">
         <h4 className="font-medium mb-3">Activity Summary</h4>
         <div className="grid grid-cols-2 gap-4 text-sm">
-          <div>Response Count: <span className="font-bold">{data.responseCount}</span></div>
-          <div>Unique UIDs: <span className="font-bold">{data.uniqueUIDs}</span></div>
-          <div>Vendors: <span className="font-bold">{data.vendors?.join(', ')}</span></div>
-          <div>Projects: <span className="font-bold">{data.projects?.join(', ')}</span></div>
+          <div>Response Count: <span className="font-bold">{data?.responseCount || 0}</span></div>
+          <div>Unique UIDs: <span className="font-bold">{data?.uniqueUIDs || 0}</span></div>
+          <div>Vendors: <span className="font-bold">{data?.vendors?.join(', ') || 'None'}</span></div>
+          <div>Projects: <span className="font-bold">{data?.projects?.join(', ') || 'None'}</span></div>
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className="text-sm font-medium text-gray-700">First Seen</label>
-          <p className="mt-1 text-sm">{new Date(data.firstSeen).toLocaleString()}</p>
+          <p className="mt-1 text-sm">{data?.firstSeen ? new Date(data.firstSeen).toLocaleString() : 'Unknown'}</p>
         </div>
         <div>
           <label className="text-sm font-medium text-gray-700">Last Seen</label>
-          <p className="mt-1 text-sm">{new Date(data.lastSeen).toLocaleString()}</p>
+          <p className="mt-1 text-sm">{data?.lastSeen ? new Date(data.lastSeen).toLocaleString() : 'Unknown'}</p>
         </div>
       </div>
 
-      {data.suspiciousActivity && (
+      {data?.suspiciousActivity && data.suspiciousActivity.length > 0 && (
         <div>
           <label className="text-sm font-medium text-gray-700">Suspicious Activity</label>
           <div className="mt-1 space-y-1">
